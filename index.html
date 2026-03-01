@@ -1,42 +1,17 @@
 <!doctype html>
-<!-- Generated file. Edit src/layout.html and run: npm run build -->
-<html lang="he" dir="rtl" data-theme="dusk">
+<html lang="he" dir="rtl">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  
-
   <meta name="description" content="אתר הנצחה לאלו שנלקחו מאיתנו בשביעי באוקטובר 2023" />
   <title>אתר הנצחה | שדה אורות</title>
+  <link rel="stylesheet" href="assets/styles.css?v=navyblue1" />
 
-  <!-- Performance -->
-  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-
-  <!-- Open Graph / Social -->
-  <meta property="og:locale" content="he_IL" />
-  <meta property="og:site_name" content="אתר הנצחה" />
-  <meta property="og:title" content="אתר הנצחה | שדה אורות" />
-  <meta property="og:description" content="אתר הנצחה לאלו שנלקחו מאיתנו בשביעי באוקטובר 2023" />
-  <meta property="og:type" content="website" />
-  <meta property="og:image" content="assets/default-share-image.png" />
-  <meta property="og:url" content="index.html" />
-
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="אתר הנצחה | שדה אורות" />
-  <meta name="twitter:description" content="אתר הנצחה לאלו שנלקחו מאיתנו בשביעי באוקטובר 2023" />
-  <meta name="twitter:image" content="assets/default-share-image.png" />
-
-  <link rel="canonical" href="index.html" />
-
-  <link rel="stylesheet" href="assets/styles.css?v=20260301b" />
-
-  
-
-  <script defer src="assets/app.js?v=20260301b"></script>
-  <script defer src="assets/premium.js?v=20260301"></script>
+  <script defer src="assets/app.js?v=navyblue1"></script>
+  <script defer src="assets/premium.js?v=navyblue1"></script>
 </head>
 <body>
-  <a class="skip-link" href="#main">דלג לתוכן</a>
+  <a class="skip" href="#main">דלג לתוכן</a>
 
   <header class="site-header">
     <div class="wrap nav">
@@ -97,15 +72,8 @@
         </div>
 
         <div class="canvas-wrap">
-          <canvas id="field" tabindex="0" aria-label="שדה אורות אינטראקטיבי"></canvas>
+          <canvas id="field" aria-label="שדה אורות אינטראקטיבי"></canvas>
           <div id="tooltip" class="tooltip" role="status" aria-live="polite"></div>
-
-          <!-- a11y: אלטרנטיבה טקסטואלית לקנבס עבור קוראי מסך -->
-          <nav class="sr-only" aria-label="רשימת חללים (אלטרנטיבה לקנבס)">
-            <h2>רשימת חללים</h2>
-            <p>רשימה טקסטואלית של שמות, עם קישורים לדפי הזיכרון.</p>
-            <ul id="a11yList"></ul>
-          </nav>
         </div>
 
         </div>

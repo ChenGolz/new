@@ -1,7 +1,6 @@
 /* Premium “מושקע” layer – tiny, safe enhancements (no framework). */
 
 (function(){
-  const reduceMotion = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
   function clamp(v, a, b){ return Math.max(a, Math.min(b, v)); }
 
   function addAmbient(){
@@ -56,16 +55,15 @@
 
   document.addEventListener('DOMContentLoaded', () => {
     // “loaded” transition
-    if (reduceMotion) document.body.classList.add('is-loaded');
-    else requestAnimationFrame(() => document.body.classList.add('is-loaded'));
+    requestAnimationFrame(() => document.body.classList.add('is-loaded'));
 
-    // add subtle polish    addAmbient();
-    if (!reduceMotion) {
-      addProgress();
-      initReveal();
-      // re-run reveal after the app renders dynamic lists
-      setTimeout(initReveal, 300);
-      setTimeout(initReveal, 900);
-    }
+    // add subtle polish
+    addAmbient();
+    addProgress();
+    initReveal();
+
+    // re-run reveal after the app renders dynamic lists
+    setTimeout(initReveal, 300);
+    setTimeout(initReveal, 900);
   });
 })();
