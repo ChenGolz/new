@@ -979,6 +979,7 @@ async function initPersonPage() {
    Init
 ======================= */
 document.addEventListener("DOMContentLoaded", async () => {
+  try{ document.body.classList.add("is-loaded"); }catch{}
   setYear();
   bindMenu();
   setActiveNav();

@@ -762,30 +762,30 @@ input[type="text"]:focus, input[type="url"]:focus, textarea:focus{ box-shadow: v
 ========================================================= */
 
 :root{
-  --bg0:#070F1F;         /* deep navy */
-  --bg1:#0B1630;         /* navy */
-  --card:rgba(9, 20, 48, .74);
-  --card2:rgba(13, 28, 64, .88);
+  --bg0:#08162D;         /* soft deep navy */         /* deep navy */
+  --bg1:#0C2141;         /* soft navy */         /* navy */
+  --card:rgba(255,255,255,.07);
+  --card2:rgba(255,255,255,.10);
 
   --ink:#EAF2FF;
   --muted:#B9C9E6;
   --muted2:#8EA8D8;
 
-  --stroke:rgba(185, 215, 255, .18);
-  --stroke2:rgba(185, 215, 255, .12);
+  --stroke:rgba(189,235,255,.16);
+  --stroke2:rgba(189,235,255,.10);
 
-  --accent:#6BB7FF;      /* light blue */
-  --accent2:#9AD7FF;
-  --chip:rgba(107,183,255,.18);
+  --accent:#86D3FF;      /* soft light blue */      /* light blue */
+  --accent2:#BDEBFF;
+  --chip:rgba(134,211,255,.18);
 
   --shadow:0 26px 70px rgba(0,0,0,.35);
   --shadow-sm:0 14px 34px rgba(0,0,0,.28);
 
   --panel0:#050A17;
   --panel1:#0A1736;
-  --panelStroke:rgba(185,215,255,.16);
+  --panelStroke:rgba(189,235,255,.14);
 
-  --focus:0 0 0 3px rgba(154,215,255,.92), 0 0 0 7px rgba(107,183,255,.25);
+  --focus:0 0 0 3px rgba(189,235,255,.78), 0 0 0 7px rgba(134,211,255,.22);
 
   --sans:'Heebo','Assistant','Noto Sans Hebrew',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
   --serif:'Frank Ruhl Libre','Noto Serif Hebrew','Noto Sans Hebrew',serif;
@@ -922,3 +922,113 @@ input[type="text"]:focus, input[type="url"]:focus, textarea:focus, select:focus{
 
 /* footer */
 .site-footer{border-top:1px solid var(--stroke2); background:rgba(7,15,31,.38);}
+
+
+/* =========================================================
+   Navy Mist Overrides (fix specificity issues + make content readable everywhere)
+========================================================= */
+
+/* nav specificity: base CSS uses .nav a which beats .pill */
+.nav a{
+  background:rgba(255,255,255,.06);
+  border:1px solid var(--stroke2);
+  color:var(--ink);
+}
+.nav a:hover{
+  background:rgba(255,255,255,.09);
+  border-color:rgba(189,235,255,.35);
+}
+.nav a.is-active,
+.nav a.active{
+  background:rgba(134,211,255,.14);
+  border-color:rgba(189,235,255,.52);
+  box-shadow:0 18px 40px rgba(134,211,255,.10);
+}
+
+/* menu button hover was orange */
+.menu-btn{
+  background:rgba(255,255,255,.06);
+  border-color:var(--stroke2);
+  box-shadow:0 10px 24px rgba(0,0,0,.18);
+}
+.menu-btn:hover{ border-color:rgba(189,235,255,.45); }
+
+/* hero “paper” was warm; make it cool */
+.hero{
+  border:1px solid var(--stroke2);
+  background:
+    radial-gradient(900px 420px at 18% -10%, rgba(134,211,255,.16), transparent 60%),
+    radial-gradient(760px 420px at 92% 20%, rgba(189,235,255,.10), transparent 60%),
+    linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.05));
+}
+.hero::before{opacity:.55; filter:saturate(.6) hue-rotate(180deg);}
+
+/* article cards: your markup uses h3 + p, not .left/.right */
+.card.article{
+  display:block;
+  padding:14px 14px;
+  text-decoration:none;
+}
+.card.article:hover{ background:rgba(255,255,255,.09); }
+.card.article h3{ margin:0; font-size:16px; line-height:1.35; color:var(--ink); }
+.card.article p{ margin:6px 0 0; color:var(--muted); line-height:1.55; }
+.card.article a{ color:var(--accent); font-weight:900; text-decoration:none; }
+.card.article a:hover{ text-decoration:underline; }
+
+/* list items were bright white */
+.list li{
+  background:rgba(255,255,255,.06);
+  border:1px solid var(--stroke2);
+}
+
+/* badges + readmore links were dark-blue (invisible on dark bg) */
+.badge{
+  background:rgba(134,211,255,.14);
+  border-color:rgba(189,235,255,.22);
+  color:var(--ink);
+}
+.badge.gray{
+  background:rgba(255,255,255,.06);
+  border-color:var(--stroke2);
+  color:var(--muted);
+}
+.readmore{ color:var(--accent); }
+.readmore:hover{ text-decoration:underline; }
+
+/* person art tile: make it fit dark theme */
+.person-art{
+  background:rgba(255,255,255,.06);
+  border-color:var(--stroke2);
+  color:var(--muted);
+}
+.art-initials{ color:var(--ink); }
+.art-hint{ color:var(--muted2); }
+
+
+/* people card accents (remove warm orange) */
+.person-card::before{
+  background: radial-gradient(circle at 35% 35%, rgba(134,211,255,.18), rgba(134,211,255,0) 62%);
+}
+.person-card::after{
+  border-color: rgba(189,235,255,.18);
+}
+
+/* scroll progress (was orange) */
+#scrollProgress{
+  background:linear-gradient(90deg, rgba(134,211,255,.92), rgba(189,235,255,.92));
+  box-shadow:0 10px 26px rgba(134,211,255,.14);
+}
+
+/* ambient blobs (was warm) */
+#ambient span{
+  background: radial-gradient(circle at 35% 30%, rgba(134,211,255,.85), rgba(134,211,255,0) 60%);
+}
+#ambient span:nth-child(2){ background: radial-gradient(circle at 40% 40%, rgba(189,235,255,.75), rgba(189,235,255,0) 62%); }
+#ambient span:nth-child(3){ background: radial-gradient(circle at 45% 30%, rgba(134,211,255,.55), rgba(134,211,255,0) 62%); }
+#ambient span:nth-child(4){ background: radial-gradient(circle at 55% 45%, rgba(189,235,255,.35), rgba(189,235,255,0) 60%); }
+
+/* reveal safety: never leave content invisible */
+.reveal{opacity:1; transform:none;}
+
+/* if premium.js isn't loaded, don't leave the page invisible */
+body{ opacity:1; transform:none; }
