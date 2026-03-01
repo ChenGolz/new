@@ -996,3 +996,106 @@ document.addEventListener("DOMContentLoaded", async () => {
     console.error(e);
   }
 });
+
+
+
+function initSilentMode(){
+  const btn = document.getElementById("silentToggle");
+  if(!btn) return;
+  const key = "silent-mode";
+  const html = document.documentElement;
+  const saved = localStorage.getItem(key);
+  if(saved === "1"){ html.classList.add("silent"); btn.setAttribute("aria-pressed","true"); }
+  btn.addEventListener("click", ()=>{
+    const on = html.classList.toggle("silent");
+    localStorage.setItem(key, on ? "1" : "0");
+    btn.setAttribute("aria-pressed", on ? "true" : "false");
+  });
+}
+
+function initLitePersonPage(){
+  const body = document.body;
+  const pid = body?.dataset?.personId || body?.getAttribute("data-person-id");
+  const pname = body?.dataset?.personName || body?.getAttribute("data-person-name") || "";
+  if(!pid) return;
+
+  const candleBtn = document.getElementById("candleBtnLite") || document.getElementById("candleBtn");
+  const status = document.getElementById("candleStatusLite") || document.getElementById("candleStatus");
+  const shareBtn = document.getElementById("shareBtnLite") || document.getElementById("shareBtn");
+
+  const key = "candle-lit:" + pid;
+  function setLit(lit){
+    if(!candleBtn) return;
+    candleBtn.classList.toggle("lit", lit);
+    const txt = candleBtn.querySelector(".candle-text");
+    if(txt) txt.textContent = lit ? "נר דולק" : "הדלקת נר";
+    if(status) status.textContent = lit ? "נר דולק לזכרם. יהי זכרם ברוך." : "";
+  }
+
+  if(candleBtn){
+    setLit(localStorage.getItem(key) === "1");
+    candleBtn.addEventListener("click", ()=>{
+      const lit = localStorage.getItem(key) !== "1";
+      localStorage.setItem(key, lit ? "1" : "0");
+      setLit(lit);
+    });
+  }
+
+  if(shareBtn){
+    shareBtn.addEventListener("click", async ()=>{
+      const url = location.href;
+      const title = pname ? ("לזכר " + pname) : document.title;
+      try{
+        if(navigator.share){
+          await navigator.share({ title, url });
+          return;
+        }
+      }catch(e){}
+      try{
+        await navigator.clipboard.writeText(url);
+        if(status) status.textContent = "הקישור הועתק ללוח.";
+      }catch(e){
+        prompt("העתיקו את הקישור:", url);
+      }
+    });
+  }
+}
+
+
+
+document.addEventListener('DOMContentLoaded', ()=>{ try{ initSilentMode(); }catch(e){} try{ initLitePersonPage(); }catch(e){} });
+
+function initShareSite(){
+  const btn = document.getElementById("shareSiteBtn");
+  if(!btn) return;
+  btn.addEventListener("click", async ()=>{
+    const url = location.origin + location.pathname.replace(/\/[^\/]*$/, "/");
+    const title = "אתר הנצחה | ספר זיכרון";
+    try{
+      if(navigator.share){
+        await navigator.share({ title, url });
+        return;
+      }
+    }catch(e){}
+    try{
+      await navigator.clipboard.writeText(url);
+      btn.textContent = "הועתק!";
+      setTimeout(()=> btn.textContent = "שיתוף", 1200);
+    }catch(e){
+      prompt("העתיקו את הקישור:", url);
+    }
+  });
+}
+document.addEventListener('DOMContentLoaded', ()=>{ try{ initShareSite(); }catch(e){} });
+
+function initWhatsAppShare(){
+  const btn = document.getElementById("whatsAppBtn");
+  if(!btn) return;
+  btn.addEventListener("click", ()=>{
+    const url = location.href;
+    const msg = "אתר הנצחה | ספר זיכרון: " + url;
+    const wa = "https://wa.me/?text=" + encodeURIComponent(msg);
+    window.open(wa, "_blank", "noopener");
+  });
+}
+document.addEventListener('DOMContentLoaded', ()=>{ try{ initWhatsAppShare(); }catch(e){} });

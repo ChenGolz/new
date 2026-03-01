@@ -6,6 +6,7 @@
 <meta content="width=device-width, initial-scale=1" name="viewport"/>
 <meta content="אתר הנצחה לאלו שנלקחו מאיתנו בשביעי באוקטובר 2023" name="description"/>
 <title>אתר הנצחה | אודות</title>
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml"/>
 <link href="assets/styles.css?v=skylite3" rel="stylesheet"/>
 <script defer="" src="assets/app.js?v=skylite3"></script>
 <script defer="" src="assets/premium.js?v=skylite3"></script>
@@ -25,6 +26,7 @@
 <span class="sr">פתח תפריט</span>
 <span aria-hidden="true" class="menu-lines"></span>
 </button>
+<button class="silent-toggle" id="silentToggle" type="button" aria-pressed="false">תצוגה שקטה</button>
 <nav aria-label="ניווט" class="site-nav" id="site-nav">
 <a class="pill" href="index.html">דף הבית</a>
 <a class="pill" href="people.html">כל האנשים</a>
@@ -35,72 +37,82 @@
 </div>
 </header>
 <main id="main">
-<section class="page-hero">
-<div class="wrap">
-<div class="card">
-<div class="breadcrumbs">דף הבית / אודות</div>
-<h1 class="page-title">אודות</h1>
-<p class="page-sub">אתר הנצחה (תבנית): שדה אורות, דפי יישובים, ודפים אישיים עם נר ומילים.</p>
-</div>
-</div>
-</section>
+
 <section class="section">
-<div class="wrap grid cols-2">
-<div class="card list">
-<h3>מה מיוחד כאן</h3>
-<ul>
-<li><strong>שדה אורות:</strong> כולם יחד, בקיבוץ עדין לפי יישוב.</li>
-<li><strong>דפי יישוב:</strong> למשל “כפר עזה” — ריכוז כל הדפים באותו הבית.</li>
-<li><strong>דף אישי:</strong> נר יפה + מקום לכתבות + מקום לכתוב כמה מילים.</li>
-</ul>
-<div class="badges">
-<span class="badge">שקט</span>
-<span class="badge">מכבד</span>
-<span class="badge">RTL</span>
-</div>
-</div>
-<div class="card list" id="how">
-<h3>איך מפעילים “שיתוף לכולם” (נרות + מילים)</h3>
-<ul>
-<li>בתיקייה יש קובץ <strong>SETUP_SUPABASE.md</strong> עם כל השלבים.</li>
-<li>הדביקו את פרטי הפרויקט בקובץ <strong>assets/backend-config.js</strong>.</li>
-<li>לאחר חיבור: נרות נספרים סה״כ, והודעות נשלחות לאישור (Moderation).</li>
-</ul>
-<p class="muted">אם לא מחברים — האתר עובד במצב מקומי (localStorage).</p>
-</div>
-</div>
+  <div class="wrap">
+    <div class="card longform fade-in">
+      <h1 class="page-title">אודות</h1>
+      <p class="page-sub">אתר זה נבנה בהתנדבות כספר זיכרון דיגיטלי — מקום שקט, נקי מפרסומות, שמכבד את הזיכרון.</p>
+    </div>
+  </div>
 </section>
+
 <section class="section">
-<div class="wrap">
-<div class="card list">
-<h3>איך מוסיפים כתבות לכל אדם</h3>
-<p class="muted">בקובץ <strong>data/people.json</strong> הוסיפו לכל אדם שדה <strong>articles</strong> כך:</p>
-<pre style="margin:0; white-space:pre-wrap; color:rgba(255,255,255,.86);">
-"articles": [
-  { "title": "כותרת כתבה", "source": "שם מקור", "url": "https://...", "date": "2024-01-01" }
-]
-</pre>
-</div>
-</div>
+  <div class="wrap">
+    <div class="card longform fade-in">
+      <h2 class="section-title">הצהרת כוונות</h2>
+      <p>המטרה היא ליצור מקום מרוכז, מכובד ונגיש לשמות, לקישורים ולסיפורים — כדי שנוכל לזכור יחד, בעדינות ובאחריות.</p>
+
+      <h2 class="section-title">מקורות מידע</h2>
+      <p>המידע נאסף ממקורות ציבוריים ורשמיים (למשל: אתרי מועצות/יישובים, אתרי ממשלה, ביטוח לאומי ואתרי חדשות). אם יש טעות או חוסר — נשמח לעדכן.</p>
+
+      <h2 class="section-title">איך מוסיפים או מעדכנים דף</h2>
+      <ul>
+        <li>תמונה באיכות גבוהה (רצוי מקורית/באישור משפחתי).</li>
+        <li>תאריך לידה ותאריך נפילה/רצח (אם יש).</li>
+        <li>סיפור קצר או כמה שורות על החיים והאדם.</li>
+        <li>קישורים למקורות/כתבות/עמודי זיכרון.</li>
+        <li>אישור מהמשפחה או מקור ציבורי ברור.</li>
+      </ul>
+
+      <h2 class="section-title">פנייה להוספה/עדכון</h2>
+      <p class="muted">GitHub Pages לא כולל שרת, לכן הטופס שלהלן משתמש בשירות חיצוני (Formspree). החליפו את הכתובת ל-ID שלכם.</p>
+
+      <form class="styled-form" action="https://formspree.io/f/YOUR_UNIQUE_ID" method="POST">
+        <input type="text" name="full_name" placeholder="שם מלא שלכם" required>
+        <input type="email" name="email" placeholder="אימייל לחזרה" required>
+        <input type="text" name="subject_name" placeholder="שם הנפטר/ת" required>
+        <textarea name="message" rows="6" placeholder="פרטים נוספים, קישורים, סיפור קצר או בקשת תיקון..."></textarea>
+        <button type="submit" class="btn">שליחת פנייה</button>
+      </form>
+    </div>
+  </div>
 </section>
-<section class="section"><div class="wrap"><div class="card longform" id="contactForm"><h2 class="section-title">הוספת שמות או עדכון פרטים</h2><p>אם ברצונכם להוסיף שם, להוסיף קישורים, או לעדכן פרטים בעמוד קיים – אפשר לשלוח פנייה.</p><p class="muted">אפשרות מומלצת ללא שרת: Formspree. החליפו את YOUR_UNIQUE_ID בקישור שתקבלו.</p>
-<form action="https://formspree.io/f/YOUR_UNIQUE_ID" class="styled-form" method="POST">
-<label class="sr" for="full_name">שם מלא</label>
-<input id="full_name" name="full_name" placeholder="שם מלא" required=""/>
-<label class="sr" for="email">אימייל</label>
-<input id="email" name="email" placeholder="אימייל לחזרה" required="" type="email"/>
-<label class="sr" for="subject_name">שם הנפטר/ת</label>
-<input id="subject_name" name="subject_name" placeholder="שם הנפטר/ת" required=""/>
-<label class="sr" for="message">פרטים</label>
-<textarea id="message" name="message" placeholder="פרטים נוספים, קישורים או סיפורים שתרצו להוסיף…" rows="5"></textarea>
-<button class="btn primary" type="submit">שליחת פנייה</button>
-</form>
-</div></div></section></main>
+
+</main>
 <footer class="site-footer">
-<div class="wrap footer-bottom">
-<span>© <span id="y"></span> אתר הנצחה</span>
-<span class="muted">תצוגה שקטה לזיכרון ולהתבוננות</span>
-</div>
+  <div class="wrap footer-grid">
+    <div>
+      <strong>קישורים מהירים</strong>
+      <nav class="footer-nav" aria-label="קישורים מהירים">
+        <a href="index.html">דף הבית</a>
+        <a href="people.html">כל האנשים</a>
+        <a href="places.html">יישובים</a>
+        <a href="about.html">אודות / הוספה</a>
+      </nav>
+    </div>
+
+    <div>
+      <strong>שתפו כדי שנזכור</strong>
+      <div class="footer-actions">
+        <button class="btn small" id="shareSiteBtn" type="button">שיתוף</button>
+        <button class="btn small" id="whatsAppBtn" type="button">וואטסאפ</button>
+      </div>
+      <p class="muted small" style="margin-top:10px;">השיתוף לא מפעיל מוזיקה ולא מציג פרסומות — רק קישור לזיכרון.</p>
+    </div>
+
+    <div>
+      <strong>תמיכה</strong>
+      <p class="muted small" style="margin:0 0 6px;">ער״ן: <a href="tel:1201">1201</a></p>
+      <p class="muted small" style="margin:0;">נט״ל: <a href="tel:*3362">*3362</a></p>
+    </div>
+  </div>
+
+  <div class="wrap footer-bottom">
+    <span>© <span id="y"></span> אתר הנצחה</span>
+    <span class="muted">תצוגה שקטה לזיכרון ולהתבוננות</span>
+    <span class="muted small">עודכן לאחרונה: 02.03.2026</span>
+  </div>
 </footer>
 </body>
 </html>

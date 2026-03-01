@@ -5,7 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="אתר הנצחה לאלו שנלקחו מאיתנו בשביעי באוקטובר 2023" />
   <title>אתר הנצחה | ספר זיכרון</title>
-  <link rel="stylesheet" href="assets/styles.css?v=skylite3" />
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml"/>
+<link rel="stylesheet" href="assets/styles.css?v=skylite3" />
 
   <!-- Supabase (אופציונלי) -->
   <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -126,10 +127,38 @@
   </main>
 
   <footer class="site-footer">
-    <div class="wrap footer-bottom">
-      <span>© <span id="y"></span> אתר הנצחה</span>
-      <span class="muted">תצוגה שקטה לזיכרון ולהתבוננות</span>
+  <div class="wrap footer-grid">
+    <div>
+      <strong>קישורים מהירים</strong>
+      <nav class="footer-nav" aria-label="קישורים מהירים">
+        <a href="index.html">דף הבית</a>
+        <a href="people.html">כל האנשים</a>
+        <a href="places.html">יישובים</a>
+        <a href="about.html">אודות / הוספה</a>
+      </nav>
     </div>
-  </footer>
+
+    <div>
+      <strong>שתפו כדי שנזכור</strong>
+      <div class="footer-actions">
+        <button class="btn small" id="shareSiteBtn" type="button">שיתוף</button>
+        <button class="btn small" id="whatsAppBtn" type="button">וואטסאפ</button>
+      </div>
+      <p class="muted small" style="margin-top:10px;">השיתוף לא מפעיל מוזיקה ולא מציג פרסומות — רק קישור לזיכרון.</p>
+    </div>
+
+    <div>
+      <strong>תמיכה</strong>
+      <p class="muted small" style="margin:0 0 6px;">ער״ן: <a href="tel:1201">1201</a></p>
+      <p class="muted small" style="margin:0;">נט״ל: <a href="tel:*3362">*3362</a></p>
+    </div>
+  </div>
+
+  <div class="wrap footer-bottom">
+    <span>© <span id="y"></span> אתר הנצחה</span>
+    <span class="muted">תצוגה שקטה לזיכרון ולהתבוננות</span>
+    <span class="muted small">עודכן לאחרונה: 02.03.2026</span>
+  </div>
+</footer>
 </body>
 </html>

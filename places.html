@@ -5,7 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="אתר הנצחה לאלו שנלקחו מאיתנו בשביעי באוקטובר 2023" />
   <title>אתר הנצחה | יישובים</title>
-  <link rel="stylesheet" href="assets/styles.css?v=skylite3" />
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml"/>
+<link rel="stylesheet" href="assets/styles.css?v=skylite3" />
 
   <script defer src="assets/app.js?v=skylite3"></script>
   <script defer src="assets/premium.js?v=skylite3"></script>
@@ -50,9 +51,74 @@
     </section>
 
     <section class="section">
-      <div class="wrap grid people-grid" id="placesRoot">
-<article class="card place-card">
-        <div class="person-meta"><span>יישוב</span><span>2 אנשים</span></div>
+      <section class="places-gallery" dir="rtl">
+
+  <div class="place-card">
+    <a href="place/arez.html">
+      <div class="place-image"><img alt="ארז" src="assets/places/arez.svg"/></div>
+      <div class="place-info">
+        <h3>ארז</h3>
+        <p class="place-desc">קיבוץ השוכן על קו הגבול, שחברי כיתת הכוננות שלו נלחמו בגבורה עילאית והגנו על הבית בבוקר השבעה באוקטובר.</p>
+        <span class="place-count">2 שמות</span>
+      </div>
+    </a>
+  </div>
+
+  <div class="place-card">
+    <a href="place/gavim.html">
+      <div class="place-image"><img alt="גבים" src="assets/places/gavim.svg"/></div>
+      <div class="place-info">
+        <h3>גבים</h3>
+        <p class="place-desc">קהילה שורשית ומרכז חינוכי ותרבותי בשער הנגב, שחוותה ימים של חרדה ואובדן כואב של בניה.</p>
+        <span class="place-count">2 שמות</span>
+      </div>
+    </a>
+  </div>
+
+  <div class="place-card">
+    <a href="place/yakhini.html">
+      <div class="place-image"><img alt="יכיני" src="assets/places/yakhini.svg"/></div>
+      <div class="place-info">
+        <h3>יכיני</h3>
+        <p class="place-desc">מושב של מסורת וקהילה מגובשת, שבו היכו השכול והכאב בליבם של משפחות רבות בבוקר השבת השחורה.</p>
+        <span class="place-count">4 שמות</span>
+      </div>
+    </a>
+  </div>
+
+  <div class="place-card">
+    <a href="place/kfar-aza.html">
+      <div class="place-image"><img alt="כפר עזה" src="assets/places/kfar-aza.svg"/></div>
+      <div class="place-info">
+        <h3>כפר עזה</h3>
+        <p class="place-desc">קיבוץ שהפך לסמל של גבורה שוברת לב; קהילה פורחת של יצירה ואהבת אדם שאיבדה עשרות מבניה ומבנותיה בקרב על הבית.</p>
+        <span class="place-count">61 שמות</span>
+      </div>
+    </a>
+  </div>
+
+  <div class="place-card">
+    <a href="place/nahal-oz.html">
+      <div class="place-image"><img alt="נחל עוז" src="assets/places/nahal-oz.svg"/></div>
+      <div class="place-info">
+        <h3>נחל עוז</h3>
+        <p class="place-desc">נקודת התיישבות חלוצית על הגבול, שעמדה בקו הראשון של הלחימה ואיבדה חברים ומשפחות שלמות בקרב על הבית.</p>
+        <span class="place-count">16 שמות</span>
+      </div>
+    </a>
+  </div>
+
+  <div class="place-card">
+    <a href="place/nir-am.html">
+      <div class="place-image"><img alt="ניר עם" src="assets/places/nir-am.svg"/></div>
+      <div class="place-info">
+        <h3>ניר עם</h3>
+        <p class="place-desc">קיבוץ של פלדה ורוח, שסיפור גבורתו והדיפת המחבלים בשעריו הפכו לאות ומופת של נחישות ותושייה.</p>
+        <span class="place-count">1 שמות</span>
+      </div>
+    </a>
+  </div>
+</section>
         <h3>ארז</h3>
         <p class="muted">עמוד שמרכז את כולם יחד תחת היישוב.</p>
         <a class="readmore" href="place/arez.html">לדף היישוב →</a>
@@ -93,10 +159,38 @@
   </main>
 
   <footer class="site-footer">
-    <div class="wrap footer-bottom">
-      <span>© <span id="y"></span> אתר הנצחה</span>
-      <span class="muted">תצוגה שקטה לזיכרון ולהתבוננות</span>
+  <div class="wrap footer-grid">
+    <div>
+      <strong>קישורים מהירים</strong>
+      <nav class="footer-nav" aria-label="קישורים מהירים">
+        <a href="index.html">דף הבית</a>
+        <a href="people.html">כל האנשים</a>
+        <a href="places.html">יישובים</a>
+        <a href="about.html">אודות / הוספה</a>
+      </nav>
     </div>
-  </footer>
+
+    <div>
+      <strong>שתפו כדי שנזכור</strong>
+      <div class="footer-actions">
+        <button class="btn small" id="shareSiteBtn" type="button">שיתוף</button>
+        <button class="btn small" id="whatsAppBtn" type="button">וואטסאפ</button>
+      </div>
+      <p class="muted small" style="margin-top:10px;">השיתוף לא מפעיל מוזיקה ולא מציג פרסומות — רק קישור לזיכרון.</p>
+    </div>
+
+    <div>
+      <strong>תמיכה</strong>
+      <p class="muted small" style="margin:0 0 6px;">ער״ן: <a href="tel:1201">1201</a></p>
+      <p class="muted small" style="margin:0;">נט״ל: <a href="tel:*3362">*3362</a></p>
+    </div>
+  </div>
+
+  <div class="wrap footer-bottom">
+    <span>© <span id="y"></span> אתר הנצחה</span>
+    <span class="muted">תצוגה שקטה לזיכרון ולהתבוננות</span>
+    <span class="muted small">עודכן לאחרונה: 02.03.2026</span>
+  </div>
+</footer>
 </body>
 </html>

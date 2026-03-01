@@ -6,6 +6,7 @@
 <meta content="width=device-width, initial-scale=1" name="viewport"/>
 <meta content="אתר הנצחה לאלו שנלקחו מאיתנו בשביעי באוקטובר 2023" name="description"/>
 <title>אתר הנצחה | כל האנשים</title>
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml"/>
 <link href="assets/styles.css?v=skylite3" rel="stylesheet"/>
 <script defer="" src="assets/app.js?v=skylite3"></script>
 <script defer="" src="assets/premium.js?v=skylite3"></script>
@@ -25,6 +26,7 @@
 <span class="sr">פתח תפריט</span>
 <span aria-hidden="true" class="menu-lines"></span>
 </button>
+<button class="silent-toggle" id="silentToggle" type="button" aria-pressed="false">תצוגה שקטה</button>
 <nav aria-label="ניווט" class="site-nav" id="site-nav">
 <a class="pill" href="index.html">דף הבית</a>
 <a class="pill is-active" href="people.html">כל האנשים</a>
@@ -1086,10 +1088,38 @@
 </section>
 </main>
 <footer class="site-footer">
-<div class="wrap footer-bottom">
-<span>© <span id="y"></span> אתר הנצחה</span>
-<span class="muted">תצוגה שקטה לזיכרון ולהתבוננות</span>
-</div>
+  <div class="wrap footer-grid">
+    <div>
+      <strong>קישורים מהירים</strong>
+      <nav class="footer-nav" aria-label="קישורים מהירים">
+        <a href="index.html">דף הבית</a>
+        <a href="people.html">כל האנשים</a>
+        <a href="places.html">יישובים</a>
+        <a href="about.html">אודות / הוספה</a>
+      </nav>
+    </div>
+
+    <div>
+      <strong>שתפו כדי שנזכור</strong>
+      <div class="footer-actions">
+        <button class="btn small" id="shareSiteBtn" type="button">שיתוף</button>
+        <button class="btn small" id="whatsAppBtn" type="button">וואטסאפ</button>
+      </div>
+      <p class="muted small" style="margin-top:10px;">השיתוף לא מפעיל מוזיקה ולא מציג פרסומות — רק קישור לזיכרון.</p>
+    </div>
+
+    <div>
+      <strong>תמיכה</strong>
+      <p class="muted small" style="margin:0 0 6px;">ער״ן: <a href="tel:1201">1201</a></p>
+      <p class="muted small" style="margin:0;">נט״ל: <a href="tel:*3362">*3362</a></p>
+    </div>
+  </div>
+
+  <div class="wrap footer-bottom">
+    <span>© <span id="y"></span> אתר הנצחה</span>
+    <span class="muted">תצוגה שקטה לזיכרון ולהתבוננות</span>
+    <span class="muted small">עודכן לאחרונה: 02.03.2026</span>
+  </div>
 </footer>
 </body>
 </html>

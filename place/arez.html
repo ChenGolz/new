@@ -9,8 +9,10 @@
     window.PLACE_NAME = "ארז";
   </script>
 
-  <link rel="stylesheet" href="../assets/styles.css?v=skylite3" />
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml"/>
+<link rel="stylesheet" href="../assets/styles.css?v=skylite3" />
   <script defer src="../assets/app.js?v=skylite3"></script>
+<script defer src="../assets/premium.js?v=formal1"></script>
 </head>
 <body>
   <a class="skip" href="#main">דלג לתוכן</a>
@@ -41,54 +43,66 @@
   </header>
 
   <main id="main">
-    <section class="page-hero">
-      <div class="wrap">
-        <div class="card">
-          <div class="breadcrumbs"><a href="../places.html" style="text-decoration:underline;">יישובים</a> / דף יישוב</div>
-          <h1 class="page-title" id="placeTitle">ארז</h1>
-          <p class="page-sub" id="placeSub">2 אנשים</p>
-          <p class="muted" id="placeIntro" style="margin-top:10px; line-height:1.85;"></p>
-        </div>
-      </div>
-    </section>
 
-    <section class="section">
-      <div class="wrap grid people-grid" id="placePeople">
-<article class="card person-card">
-        <div class="person-main">
-          <div class="person-avatar" aria-hidden="true">ג</div>
-          <div class="person-info">
-            <div class="person-meta"><span>ארז</span><span>דף אישי</span></div>
-            <h3 class="person-name">גלסקי יבגני ז&quot;ל</h3>
-            <p class="muted">ספר זיכרון דיגיטלי.</p>
-          </div>
-        </div>
-        <div class="person-cta">
-          <a class="btn primary" href="../p/p001.html">לפתיחה</a>
-        </div>
-      </article>
-<article class="card person-card">
-        <div class="person-main">
-          <div class="person-avatar" aria-hidden="true">נ</div>
-          <div class="person-info">
-            <div class="person-meta"><span>ארז</span><span>דף אישי</span></div>
-            <h3 class="person-name">נעים אמיר ז&quot;ל</h3>
-            <p class="muted">ספר זיכרון דיגיטלי.</p>
-          </div>
-        </div>
-        <div class="person-cta">
-          <a class="btn primary" href="../p/p002.html">לפתיחה</a>
-        </div>
-      </article>
-
-    </section>
-  </main>
+<section class="section">
+  <div class="wrap">
+    <div class="card fade-in">
+      <div class="place-image" style="height:220px;border-radius:18px;overflow:hidden;margin-bottom:14px;">
+        <img class="hero-img" alt="ארז" src="../assets/places/arez.svg"/>
+      </div>
+      <h1 class="page-title">ארז</h1>
+      <p class="page-sub">קיבוץ השוכן על קו הגבול, שחברי כיתת הכוננות שלו נלחמו בגבורה עילאית והגנו על הבית בבוקר השבעה באוקטובר.</p>
+      <div class="stats-bar" aria-label="סטטיסטיקה">
+        <span><strong>2</strong> שמות</span>
+        <span aria-hidden="true">•</span>
+        <span>עמוד קהילה</span>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="section">
+  <div class="wrap">
+    <h2 class="section-title">לזכרם של בני ובנות ארז</h2>
+    <div class="names-grid"><a class="person-card" href="../p/p001.html"><span class="person-name">גלסקי יבגני ז"ל</span><span class="person-place">ארז</span></a>
+<a class="person-card" href="../p/p002.html"><span class="person-name">נעים אמיר ז"ל</span><span class="person-place">ארז</span></a></div>
+  </div>
+</section>
+
+</main>
 
   <footer class="site-footer">
-    <div class="wrap footer-bottom">
-      <span>© <span id="y"></span> אתר הנצחה</span>
-      <span class="muted">דף יישוב</span>
+  <div class="wrap footer-grid">
+    <div>
+      <strong>קישורים מהירים</strong>
+      <nav class="footer-nav" aria-label="קישורים מהירים">
+        <a href="../index.html">דף הבית</a>
+        <a href="../people.html">כל האנשים</a>
+        <a href="../places.html">יישובים</a>
+        <a href="../about.html">אודות / הוספה</a>
+      </nav>
     </div>
-  </footer>
+
+    <div>
+      <strong>שתפו כדי שנזכור</strong>
+      <div class="footer-actions">
+        <button class="btn small" id="shareSiteBtn" type="button">שיתוף</button>
+        <button class="btn small" id="whatsAppBtn" type="button">וואטסאפ</button>
+      </div>
+      <p class="muted small" style="margin-top:10px;">השיתוף לא מפעיל מוזיקה ולא מציג פרסומות — רק קישור לזיכרון.</p>
+    </div>
+
+    <div>
+      <strong>תמיכה</strong>
+      <p class="muted small" style="margin:0 0 6px;">ער״ן: <a href="tel:1201">1201</a></p>
+      <p class="muted small" style="margin:0;">נט״ל: <a href="tel:*3362">*3362</a></p>
+    </div>
+  </div>
+
+  <div class="wrap footer-bottom">
+    <span>© <span id="y"></span> אתר הנצחה</span>
+    <span class="muted">תצוגה שקטה לזיכרון ולהתבוננות</span>
+    <span class="muted small">עודכן לאחרונה: 02.03.2026</span>
+  </div>
+</footer>
 </body>
 </html>

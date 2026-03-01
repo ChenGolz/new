@@ -6,6 +6,7 @@
 <meta content="width=device-width, initial-scale=1" name="viewport"/>
 <meta content="מנציחים את זכרם של הנופלים והנרצחים." name="description"/>
 <title>אתר הנצחה | ספר זיכרון</title>
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml"/>
 <link href="assets/styles.css?v=skylite3" rel="stylesheet"/>
 <script defer="" src="assets/app.js?v=skylite3"></script>
 <meta content="אתר הנצחה | ספר זיכרון" property="og:title"/><meta content="מנציחים את זכרם של הנופלים והנרצחים." property="og:description"/><meta content="website" property="og:type"/><meta content="assets/og-share-image.jpg" property="og:image"/></head>
@@ -24,6 +25,7 @@
 <span class="sr">פתח תפריט</span>
 <span aria-hidden="true" class="menu-lines"></span>
 </button>
+<button class="silent-toggle" id="silentToggle" type="button" aria-pressed="false">תצוגה שקטה</button>
 <nav aria-label="ניווט" class="site-nav" id="site-nav">
 <a class="pill is-active" href="index.html">דף הבית</a>
 <a class="pill" href="people.html">כל האנשים</a>
@@ -34,246 +36,129 @@
 </div>
 </header>
 <main id="main">
-<section class="page-hero">
-<div class="wrap">
-<div class="card hero-card"><div class="hero-layout"><div class="hero-copy">
-<div class="kicker">ספר זיכרון • קישורים ומקורות</div>
-<h1 class="page-title" style="margin-top:6px;">ספר זיכרון</h1>
-<p class="page-sub">
-            כאן תמצאו רשימת שמות וקישורים לעמודי זיכרון. לחצו על שם כדי לפתוח את הדף האישי.
-          </p>
-<div class="controls" style="margin-top:12px;">
-<label class="sr" for="homeSearch">חיפוש לפי שם</label>
-<input autocomplete="off" id="homeSearch" placeholder="חיפוש לפי שם או יישוב…" type="search"/>
-<a class="btn primary" href="people.html">מסך חיפוש מתקדם</a>
-<a class="btn" href="places.html">לפי יישוב</a>
-</div>
-<div aria-label="יישובים" class="chips" style="margin-top:12px;">
-<a class="chip-link" href="place/arez.html">ארז</a>
-<a class="chip-link" href="place/gavim.html">גבים</a>
-<a class="chip-link" href="place/yakhini.html">יכיני</a>
-<a class="chip-link" href="place/kfar-aza.html">כפר עזה</a>
-<a class="chip-link" href="place/nahal-oz.html">נחל עוז</a>
-<a class="chip-link" href="place/nir-am.html">ניר עם</a>
-</div>
-<p class="tiny muted" style="margin-top:10px;">סה״כ ברשימה: <strong>86</strong></p>
-</div><div aria-hidden="true" class="hero-media"><img alt="" class="hero-img" loading="lazy" src="assets/hero.svg"/></div></div></div>
-</div>
-</section>
-<section class="section"><div class="wrap"><div class="card"><h2 class="section-title">במבט מהיר</h2><p class="muted">בחרו שם לפתיחת דף אישי. ניתן גם לחפש למעלה.</p><div class="grid people-grid" id="featuredRoot">
-<article class="card person-card compact">
-<div class="person-main">
-<div aria-hidden="true" class="person-avatar">ג</div>
-<div class="person-info">
-<div class="person-meta">יישוב: ארז</div>
-<h3 class="person-name">גלסקי יבגני ז"ל</h3>
-</div>
-</div>
-<div class="person-cta">
-<a class="btn primary" href="p/p001.html">לפתיחה</a>
-</div>
-</article>
+  <section class="page-hero">
+    <div class="wrap">
+      <div class="card hero-card fade-in">
+        <div class="hero-layout">
+          <div class="hero-copy">
+            <div class="kicker">ספר זיכרון • קישורים ומקורות</div>
+            <h1 class="page-title" style="margin-top:6px;">ספר זיכרון</h1>
+            <p class="page-sub">כאן תמצאו רשימת שמות וקישורים לעמודי זיכרון. לחצו על שם כדי לפתוח את הדף האישי.</p>
 
-<article class="card person-card compact">
-<div class="person-main">
-<div aria-hidden="true" class="person-avatar">נ</div>
-<div class="person-info">
-<div class="person-meta">יישוב: ארז</div>
-<h3 class="person-name">נעים אמיר ז"ל</h3>
-</div>
-</div>
-<div class="person-cta">
-<a class="btn primary" href="p/p002.html">לפתיחה</a>
-</div>
-</article>
+            <div class="controls" style="margin-top:12px;">
+              <label class="sr" for="homeSearch">חיפוש לפי שם</label>
+              <input autocomplete="off" id="homeSearch" placeholder="חיפוש לפי שם או יישוב…" type="search"/>
+              <a class="btn primary" href="people.html">מסך חיפוש מתקדם</a>
+              <a class="btn" href="places.html">לפי יישוב</a>
+            </div>
 
-<article class="card person-card compact">
-<div class="person-main">
-<div aria-hidden="true" class="person-avatar">ד</div>
-<div class="person-info">
-<div class="person-meta">יישוב: גבים</div>
-<h3 class="person-name">דוידוביץ שלומי ז"ל</h3>
-</div>
-</div>
-<div class="person-cta">
-<a class="btn primary" href="p/p003.html">לפתיחה</a>
-</div>
-</article>
+            <div aria-label="יישובים" class="chips" style="margin-top:12px;">
+              <a class="chip-link" href="place/arez.html">ארז</a><a class="chip-link" href="place/gavim.html">גבים</a><a class="chip-link" href="place/yakhini.html">יכיני</a><a class="chip-link" href="place/kfar-aza.html">כפר עזה</a><a class="chip-link" href="place/nahal-oz.html">נחל עוז</a><a class="chip-link" href="place/nir-am.html">ניר עם</a>
+            </div>
 
-<article class="card person-card compact">
-<div class="person-main">
-<div aria-hidden="true" class="person-avatar">ח</div>
-<div class="person-info">
-<div class="person-meta">יישוב: גבים</div>
-<h3 class="person-name">חג'בי זיו ז"ל</h3>
-</div>
-</div>
-<div class="person-cta">
-<a class="btn primary" href="p/p004.html">לפתיחה</a>
-</div>
-</article>
+            <div class="stats-bar fade-in"><span><strong>שער הנגב זוכרת:</strong> 86 שמות</span><span aria-hidden="true">•</span><span>6 יישובים</span><span aria-hidden="true">•</span><span>לב אחד</span></div>
+          </div>
 
-<article class="card person-card compact">
-<div class="person-main">
-<div aria-hidden="true" class="person-avatar">ח</div>
-<div class="person-info">
-<div class="person-meta">יישוב: יכיני</div>
-<h3 class="person-name">חג'בי אליצור צוריאל ז"ל</h3>
-</div>
-</div>
-<div class="person-cta">
-<a class="btn primary" href="p/p005.html">לפתיחה</a>
-</div>
-</article>
+          <div class="hero-media" aria-hidden="true">
+            <img class="hero-img" src="assets/hero.svg" alt=""/>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-<article class="card person-card compact">
-<div class="person-main">
-<div aria-hidden="true" class="person-avatar">ח</div>
-<div class="person-info">
-<div class="person-meta">יישוב: יכיני</div>
-<h3 class="person-name">חג'בי יהונתן ז"ל</h3>
-</div>
-</div>
-<div class="person-cta">
-<a class="btn primary" href="p/p006.html">לפתיחה</a>
-</div>
-</article>
+  <section class="section">
+    <div class="wrap">
+      <div class="card longform fade-in">
+        <h2 class="section-title">פתח דבר</h2>
+        <p>בבוקר השבעה באוקטובר, השבת השחורה של חג שמחת תורה תשפ״ד, השתנו פניה של המדינה ופניה של מועצה אזורית שער הנגב לעד. אתר זה הוקם כספר זיכרון דיגיטלי — מקום של שקט והתבוננות, המוקדש לזכרם של אלו שנלקחו מאיתנו. נזכור את כולם, ונשמור את הסיפורים בלב פתוח ובכבוד.</p>
+      </div>
+    </div>
+  </section>
 
-<article class="card person-card compact">
-<div class="person-main">
-<div aria-hidden="true" class="person-avatar">ח</div>
-<div class="person-info">
-<div class="person-meta">יישוב: יכיני</div>
-<h3 class="person-name">חג'בי יזהר ז"ל</h3>
-</div>
-</div>
-<div class="person-cta">
-<a class="btn primary" href="p/p007.html">לפתיחה</a>
-</div>
-</article>
+  <section class="section">
+    <div class="wrap">
+      <div class="card fade-in">
+        <h2 class="section-title">במבט מהיר</h2>
+        <p class="muted">כניסה מהירה למספר שמות — או חיפוש למעלה.</p>
+        <div class="grid people-grid" id="featuredRoot"><a class="card person-tile" href="p/p001.html"><span class="person-name">גלסקי יבגני ז"ל</span><span class="muted small">ארז</span></a><a class="card person-tile" href="p/p002.html"><span class="person-name">נעים אמיר ז"ל</span><span class="muted small">ארז</span></a><a class="card person-tile" href="p/p003.html"><span class="person-name">דוידוביץ שלומי ז"ל</span><span class="muted small">גבים</span></a><a class="card person-tile" href="p/p004.html"><span class="person-name">חג'בי זיו ז"ל</span><span class="muted small">גבים</span></a><a class="card person-tile" href="p/p005.html"><span class="person-name">חג'בי אליצור צוריאל ז"ל</span><span class="muted small">יכיני</span></a><a class="card person-tile" href="p/p006.html"><span class="person-name">חג'בי יהונתן ז"ל</span><span class="muted small">יכיני</span></a></div>
+      </div>
+    </div>
+  </section>
 
-<article class="card person-card compact">
-<div class="person-main">
-<div aria-hidden="true" class="person-avatar">ס</div>
-<div class="person-info">
-<div class="person-meta">יישוב: יכיני</div>
-<h3 class="person-name">סלאם פלג ז"ל</h3>
-</div>
-</div>
-<div class="person-cta">
-<a class="btn primary" href="p/p008.html">לפתיחה</a>
-</div>
-</article>
-
-<article class="card person-card compact">
-<div class="person-main">
-<div aria-hidden="true" class="person-avatar">א</div>
-<div class="person-info">
-<div class="person-meta">יישוב: כפר עזה</div>
-<h3 class="person-name">אביאני שחר ז"ל</h3>
-</div>
-</div>
-<div class="person-cta">
-<a class="btn primary" href="p/p009.html">לפתיחה</a>
-</div>
-</article>
-
-<article class="card person-card compact">
-<div class="person-main">
-<div aria-hidden="true" class="person-avatar">א</div>
-<div class="person-info">
-<div class="person-meta">יישוב: כפר עזה</div>
-<h3 class="person-name">אדמוני גיא ז"ל</h3>
-</div>
-</div>
-<div class="person-cta">
-<a class="btn primary" href="p/p010.html">לפתיחה</a>
-</div>
-</article>
-
-<article class="card person-card compact">
-<div class="person-main">
-<div aria-hidden="true" class="person-avatar">א</div>
-<div class="person-info">
-<div class="person-meta">יישוב: כפר עזה</div>
-<h3 class="person-name">אדמוני מיכל ז"ל</h3>
-</div>
-</div>
-<div class="person-cta">
-<a class="btn primary" href="p/p011.html">לפתיחה</a>
-</div>
-</article>
-
-<article class="card person-card compact">
-<div class="person-main">
-<div aria-hidden="true" class="person-avatar">א</div>
-<div class="person-info">
-<div class="person-meta">יישוב: כפר עזה</div>
-<h3 class="person-name">אדרי אביעד ז"ל</h3>
-</div>
-</div>
-<div class="person-cta">
-<a class="btn primary" href="p/p012.html">לפתיחה</a>
-</div>
-</article>
-</div></div></div></section><section class="section">
-<div class="wrap">
-<div class="card">
-<h2 class="section-title">כל השמות</h2>
-<ul class="directory" id="homeDirectory">
-<li><a href="p/p001.html">גלסקי יבגני ז"ל</a> <span class="muted">• ארז</span></li>
-<li><a href="p/p002.html">נעים אמיר ז"ל</a> <span class="muted">• ארז</span></li>
-<li><a href="p/p003.html">דוידוביץ שלומי ז"ל</a> <span class="muted">• גבים</span></li>
-<li><a href="p/p004.html">חג'בי זיו ז"ל</a> <span class="muted">• גבים</span></li>
-<li><a href="p/p005.html">חג'בי אליצור צוריאל ז"ל</a> <span class="muted">• יכיני</span></li>
-<li><a href="p/p006.html">חג'בי יהונתן ז"ל</a> <span class="muted">• יכיני</span></li>
-<li><a href="p/p007.html">חג'בי יזהר ז"ל</a> <span class="muted">• יכיני</span></li>
-<li><a href="p/p008.html">סלאם פלג ז"ל</a> <span class="muted">• יכיני</span></li>
-<li><a href="p/p009.html">אביאני שחר ז"ל</a> <span class="muted">• כפר עזה</span></li>
+  <section class="section">
+    <div class="wrap">
+      <div class="card fade-in">
+        <h2 class="section-title">כל השמות</h2>
+        <ul class="directory" id="homeDirectory">
+          <li><a href="p/p009.html">אביאני שחר ז"ל</a> <span class="muted">• כפר עזה</span></li>
 <li><a href="p/p010.html">אדמוני גיא ז"ל</a> <span class="muted">• כפר עזה</span></li>
 <li><a href="p/p011.html">אדמוני מיכל ז"ל</a> <span class="muted">• כפר עזה</span></li>
 <li><a href="p/p012.html">אדרי אביעד ז"ל</a> <span class="muted">• כפר עזה</span></li>
 <li><a href="p/p013.html">אורגד אליהו ז"ל</a> <span class="muted">• כפר עזה</span></li>
 <li><a href="p/p014.html">אילון טל ז"ל</a> <span class="muted">• כפר עזה</span></li>
-<li><a href="p/p015.html">איתמרי רם ז"ל</a> <span class="muted">• כפר עזה</span></li>
 <li><a href="p/p016.html">איתמרי לילי ז"ל</a> <span class="muted">• כפר עזה</span></li>
+<li><a href="p/p015.html">איתמרי רם ז"ל</a> <span class="muted">• כפר עזה</span></li>
+<li><a href="p/p070.html">אליקים נעם ז"ל</a> <span class="muted">• נחל עוז</span></li>
 <li><a href="p/p017.html">אלקבץ סיון ז"ל</a> <span class="muted">• כפר עזה</span></li>
 <li><a href="p/p018.html">אמיר מרדכי (מודי) ז"ל</a> <span class="muted">• כפר עזה</span></li>
 <li><a href="p/p019.html">אפשטין בלהה ז"ל</a> <span class="muted">• כפר עזה</span></li>
 <li><a href="p/p020.html">אפשטין נטע ז"ל</a> <span class="muted">• כפר עזה</span></li>
-<li><a href="p/p021.html">ברדיצ'סקי איתי ז"ל</a> <span class="muted">• כפר עזה</span></li>
 <li><a href="p/p022.html">בדיצ'סקי הדר ז"ל</a> <span class="muted">• כפר עזה</span></li>
 <li><a href="p/p023.html">בויום יובל ז"ל</a> <span class="muted">• כפר עזה</span></li>
 <li><a href="p/p024.html">בן דוד מאיה ז"ל</a> <span class="muted">• כפר עזה</span></li>
 <li><a href="p/p025.html">ברגשטיין שחף ז"ל</a> <span class="muted">• כפר עזה</span></li>
+<li><a href="p/p021.html">ברדיצ'סקי איתי ז"ל</a> <span class="muted">• כפר עזה</span></li>
+<li><a href="p/p071.html">ברוש שושנה ז"ל</a> <span class="muted">• נחל עוז</span></li>
 <li><a href="p/p026.html">ברעם אביב ז"ל</a> <span class="muted">• כפר עזה</span></li>
-<li><a href="p/p027.html">גולדשטיין נדב ז"ל</a> <span class="muted">• כפר עזה</span></li>
 <li><a href="p/p028.html">גולדשטיין ים ז"ל</a> <span class="muted">• כפר עזה</span></li>
+<li><a href="p/p027.html">גולדשטיין נדב ז"ל</a> <span class="muted">• כפר עזה</span></li>
 <li><a href="p/p029.html">גורן ארן ז"ל</a> <span class="muted">• כפר עזה</span></li>
 <li><a href="p/p030.html">גורן טובה ז"ל</a> <span class="muted">• כפר עזה</span></li>
+<li><a href="p/p001.html">גלסקי יבגני ז"ל</a> <span class="muted">• ארז</span></li>
 <li><a href="p/p031.html">דגני נעמי ז"ל</a> <span class="muted">• כפר עזה</span></li>
+<li><a href="p/p003.html">דוידוביץ שלומי ז"ל</a> <span class="muted">• גבים</span></li>
 <li><a href="p/p032.html">הנדי אבי ז"ל</a> <span class="muted">• כפר עזה</span></li>
 <li><a href="p/p033.html">וינר יהב ז"ל</a> <span class="muted">• כפר עזה</span></li>
-<li><a href="p/p034.html">ורטהיים דורית ז"ל</a> <span class="muted">• כפר עזה</span></li>
 <li><a href="p/p035.html">ורטהיים אביב ז"ל</a> <span class="muted">• כפר עזה</span></li>
-<li><a href="p/p036.html">זיני ניראל ז"ל</a> <span class="muted">• כפר עזה</span></li>
+<li><a href="p/p034.html">ורטהיים דורית ז"ל</a> <span class="muted">• כפר עזה</span></li>
+<li><a href="p/p072.html">זוהר יניב ז"ל</a> <span class="muted">• נחל עוז</span></li>
+<li><a href="p/p073.html">זוהר יסמין ז"ל</a> <span class="muted">• נחל עוז</span></li>
+<li><a href="p/p074.html">זוהר קשת ז"ל</a> <span class="muted">• נחל עוז</span></li>
+<li><a href="p/p075.html">זוהר תכלת ז"ל</a> <span class="muted">• נחל עוז</span></li>
 <li><a href="p/p037.html">זיו איתן ז"ל</a> <span class="muted">• כפר עזה</span></li>
 <li><a href="p/p038.html">זיו פלג תמי ז"ל</a> <span class="muted">• כפר עזה</span></li>
+<li><a href="p/p036.html">זיני ניראל ז"ל</a> <span class="muted">• כפר עזה</span></li>
+<li><a href="p/p005.html">חג'בי אליצור צוריאל ז"ל</a> <span class="muted">• יכיני</span></li>
+<li><a href="p/p004.html">חג'בי זיו ז"ל</a> <span class="muted">• גבים</span></li>
+<li><a href="p/p006.html">חג'בי יהונתן ז"ל</a> <span class="muted">• יכיני</span></li>
+<li><a href="p/p007.html">חג'בי יזהר ז"ל</a> <span class="muted">• יכיני</span></li>
 <li><a href="p/p039.html">חיים יותם ז"ל</a> <span class="muted">• כפר עזה</span></li>
-<li><a href="p/p040.html">חרמש עומר ז"ל</a> <span class="muted">• כפר עזה</span></li>
 <li><a href="p/p041.html">חסידים נאור ז"ל</a> <span class="muted">• כפר עזה</span></li>
+<li><a href="p/p040.html">חרמש עומר ז"ל</a> <span class="muted">• כפר עזה</span></li>
 <li><a href="p/p042.html">טומטו ויצ'יאן ז"ל</a> <span class="muted">• כפר עזה</span></li>
+<li><a href="p/p076.html">ליבנה חיים ז"ל</a> <span class="muted">• נחל עוז</span></li>
 <li><a href="p/p043.html">ליבשטיין אופיר ז"ל</a> <span class="muted">• כפר עזה</span></li>
 <li><a href="p/p044.html">ליבשטיין ניצן ז"ל</a> <span class="muted">• כפר עזה</span></li>
+<li><a href="p/p077.html">מולל ג'ושוע לואיטו ז"ל</a> <span class="muted">• נחל עוז</span></li>
+<li><a href="p/p002.html">נעים אמיר ז"ל</a> <span class="muted">• ארז</span></li>
+<li><a href="p/p008.html">סלאם פלג ז"ל</a> <span class="muted">• יכיני</span></li>
+<li><a href="p/p048.html">סלומון יובל ז"ל</a> <span class="muted">• כפר עזה</span></li>
+<li><a href="p/p079.html">עידן מעיין ז"ל</a> <span class="muted">• נחל עוז</span></li>
 <li><a href="p/p045.html">עידן סמדר ז"ל</a> <span class="muted">• כפר עזה</span></li>
+<li><a href="p/p078.html">עידן צחי ז"ל</a> <span class="muted">• נחל עוז</span></li>
 <li><a href="p/p046.html">עידן רועי ז"ל</a> <span class="muted">• כפר עזה</span></li>
 <li><a href="p/p047.html">עמיקם נדב ז"ל</a> <span class="muted">• כפר עזה</span></li>
-<li><a href="p/p048.html">סלומון יובל ז"ל</a> <span class="muted">• כפר עזה</span></li>
-<li><a href="p/p049.html">פלד דניאל ז"ל</a> <span class="muted">• כפר עזה</span></li>
+<li><a href="p/p080.html">ערבה אליעז תומר ז"ל</a> <span class="muted">• נחל עוז</span></li>
+<li><a href="p/p081.html">ערבה דקלה ז"ל</a> <span class="muted">• נחל עוז</span></li>
+<li><a href="p/p082.html">פוסלושני רן ז"ל</a> <span class="muted">• נחל עוז</span></li>
+<li><a href="p/p083.html">פיורנטינו אילן ז"ל</a> <span class="muted">• נחל עוז</span></li>
 <li><a href="p/p050.html">פלד גילה ז"ל</a> <span class="muted">• כפר עזה</span></li>
+<li><a href="p/p049.html">פלד דניאל ז"ל</a> <span class="muted">• כפר עזה</span></li>
 <li><a href="p/p051.html">פלד יזהר ז"ל</a> <span class="muted">• כפר עזה</span></li>
 <li><a href="p/p052.html">פלש יגאל ז"ל</a> <span class="muted">• כפר עזה</span></li>
 <li><a href="p/p053.html">פלש סינתיה תמר ז"ל</a> <span class="muted">• כפר עזה</span></li>
+<li><a href="p/p084.html">פנסה ארד סומקואן ז"ל</a> <span class="muted">• נחל עוז</span></li>
 <li><a href="p/p054.html">צדיקביץ' עומר ז"ל</a> <span class="muted">• כפר עזה</span></li>
 <li><a href="p/p055.html">קוץ אביב ז"ל</a> <span class="muted">• כפר עזה</span></li>
 <li><a href="p/p056.html">קוץ יונתן ז"ל</a> <span class="muted">• כפר עזה</span></li>
@@ -282,61 +167,54 @@
 <li><a href="p/p059.html">קוץ רותם ז"ל</a> <span class="muted">• כפר עזה</span></li>
 <li><a href="p/p060.html">קציר דוד ז"ל</a> <span class="muted">• כפר עזה</span></li>
 <li><a href="p/p061.html">רביב ניב ז"ל</a> <span class="muted">• כפר עזה</span></li>
+<li><a href="p/p085.html">רון שלמה צבי ז"ל</a> <span class="muted">• נחל עוז</span></li>
 <li><a href="p/p062.html">רונן נירה ז"ל</a> <span class="muted">• כפר עזה</span></li>
 <li><a href="p/p063.html">רוסו אורי שמעון ז"ל</a> <span class="muted">• כפר עזה</span></li>
 <li><a href="p/p064.html">רייכנשטיין אליהו ז"ל</a> <span class="muted">• כפר עזה</span></li>
-<li><a href="p/p065.html">שוורצמן פינקו אורלי ז"ל</a> <span class="muted">• כפר עזה</span></li>
 <li><a href="p/p066.html">שוורצמן אלברטו דוד ז"ל</a> <span class="muted">• כפר עזה</span></li>
+<li><a href="p/p065.html">שוורצמן פינקו אורלי ז"ל</a> <span class="muted">• כפר עזה</span></li>
 <li><a href="p/p067.html">שושני אופיר ז"ל</a> <span class="muted">• כפר עזה</span></li>
 <li><a href="p/p068.html">שטהל מירה ז"ל</a> <span class="muted">• כפר עזה</span></li>
 <li><a href="p/p069.html">שמריז אלון ז"ל</a> <span class="muted">• כפר עזה</span></li>
-<li><a href="p/p070.html">אליקים נעם ז"ל</a> <span class="muted">• נחל עוז</span></li>
-<li><a href="p/p071.html">ברוש שושנה ז"ל</a> <span class="muted">• נחל עוז</span></li>
-<li><a href="p/p072.html">זוהר יניב ז"ל</a> <span class="muted">• נחל עוז</span></li>
-<li><a href="p/p073.html">זוהר יסמין ז"ל</a> <span class="muted">• נחל עוז</span></li>
-<li><a href="p/p074.html">זוהר קשת ז"ל</a> <span class="muted">• נחל עוז</span></li>
-<li><a href="p/p075.html">זוהר תכלת ז"ל</a> <span class="muted">• נחל עוז</span></li>
-<li><a href="p/p076.html">ליבנה חיים ז"ל</a> <span class="muted">• נחל עוז</span></li>
-<li><a href="p/p077.html">מולל ג'ושוע לואיטו ז"ל</a> <span class="muted">• נחל עוז</span></li>
-<li><a href="p/p078.html">עידן צחי ז"ל</a> <span class="muted">• נחל עוז</span></li>
-<li><a href="p/p079.html">עידן מעיין ז"ל</a> <span class="muted">• נחל עוז</span></li>
-<li><a href="p/p080.html">ערבה אליעז תומר ז"ל</a> <span class="muted">• נחל עוז</span></li>
-<li><a href="p/p081.html">ערבה דקלה ז"ל</a> <span class="muted">• נחל עוז</span></li>
-<li><a href="p/p082.html">פוסלושני רן ז"ל</a> <span class="muted">• נחל עוז</span></li>
-<li><a href="p/p083.html">פיורנטינו אילן ז"ל</a> <span class="muted">• נחל עוז</span></li>
-<li><a href="p/p084.html">פנסה ארד סומקואן ז"ל</a> <span class="muted">• נחל עוז</span></li>
-<li><a href="p/p085.html">רון שלמה צבי ז"ל</a> <span class="muted">• נחל עוז</span></li>
 <li><a href="p/p086.html">שפירא זיו פפה ז"ל</a> <span class="muted">• ניר עם</span></li>
-</ul><div class="card empty-state" id="homeEmpty" style="display:none;margin-top:12px;"><h3>לא נמצאו תוצאות</h3><p class="muted">אולי נסו איות אחר או חפשו בלי ניקוד.</p></div>
-<p class="tiny muted" style="margin-top:12px;">
-            לא מוצאים שם? נסו לחפש גם ב־<a href="people.html" style="text-decoration:underline;">כל האנשים</a>.
-          </p>
-</div>
-</div>
-</section>
-<script>
-      // tiny client-side filter (works on GitHub Pages, no backend)
-      (function(){
-        const input = document.getElementById('homeSearch');
-        const list = document.getElementById('homeDirectory');
-        if(!input || !list) return;
-        const items = Array.from(list.querySelectorAll('li'));
-        input.addEventListener('input', () => {
-          const q = input.value.trim();
-          const nq = q.toLowerCase();
-          items.forEach(li => {
-            const t = (li.textContent || '').toLowerCase();
-            li.style.display = !nq || t.includes(nq) ? '' : 'none';
-          });
-        });
-      })();
-    </script>
+        </ul>
+      </div>
+    </div>
+  </section>
 </main>
 <footer class="site-footer">
-<div class="wrap footer-bottom">
-<span>© <span id="y"></span> אתר הנצחה</span>
-<span class="muted">תצוגה שקטה לזיכרון ולהתבוננות</span>
-</div>
+  <div class="wrap footer-grid">
+    <div>
+      <strong>קישורים מהירים</strong>
+      <nav class="footer-nav" aria-label="קישורים מהירים">
+        <a href="index.html">דף הבית</a>
+        <a href="people.html">כל האנשים</a>
+        <a href="places.html">יישובים</a>
+        <a href="about.html">אודות / הוספה</a>
+      </nav>
+    </div>
+
+    <div>
+      <strong>שתפו כדי שנזכור</strong>
+      <div class="footer-actions">
+        <button class="btn small" id="shareSiteBtn" type="button">שיתוף</button>
+        <button class="btn small" id="whatsAppBtn" type="button">וואטסאפ</button>
+      </div>
+      <p class="muted small" style="margin-top:10px;">השיתוף לא מפעיל מוזיקה ולא מציג פרסומות — רק קישור לזיכרון.</p>
+    </div>
+
+    <div>
+      <strong>תמיכה</strong>
+      <p class="muted small" style="margin:0 0 6px;">ער״ן: <a href="tel:1201">1201</a></p>
+      <p class="muted small" style="margin:0;">נט״ל: <a href="tel:*3362">*3362</a></p>
+    </div>
+  </div>
+
+  <div class="wrap footer-bottom">
+    <span>© <span id="y"></span> אתר הנצחה</span>
+    <span class="muted">תצוגה שקטה לזיכרון ולהתבוננות</span>
+    <span class="muted small">עודכן לאחרונה: 02.03.2026</span>
+  </div>
 </footer>
 </body>
 </html>
