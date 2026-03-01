@@ -5,13 +5,15 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1" name="viewport"/>
 <meta content='דף זיכרון וקישורים לזכר גולדשטיין נדב ז"ל.' name="description"/>
-<title>אתר הנצחה | גולדשטיין נדב ז"ל</title>
+<title>לזכר גולדשטיין נדב ז</title>
 <meta content='אתר הנצחה | גולדשטיין נדב ז"ל' property="og:title"/>
 <meta content="מנציחים את זכרם של הנופלים והנרצחים." property="og:description"/>
 <meta content="website" property="og:type"/>
 <meta content="../assets/og-share-image.jpg" property="og:image"/>
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml"/>
 <link href="../assets/styles.css?v=skylite3" rel="stylesheet"/>
 <script defer="" src="../assets/app.js?v=skylite3"></script>
+<script defer src="../assets/premium.js?v=formal1"></script>
 </head>
 <body data-person-id="p027" data-person-name='גולדשטיין נדב ז"ל'>
 <a class="skip" href="#main">דלג לתוכן</a>
@@ -28,6 +30,7 @@
 <span class="sr">פתח תפריט</span>
 <span aria-hidden="true" class="menu-lines"></span>
 </button>
+<button class="silent-toggle" id="silentToggle" type="button" aria-pressed="false">תצוגה שקטה</button>
 <nav aria-label="ניווט" class="site-nav" id="site-nav">
 <a class="pill" href="../index.html">דף הבית</a>
 <a class="pill" href="../people.html">כל האנשים</a>
@@ -37,54 +40,102 @@
 </nav>
 </div>
 </header>
-<main id="main">
-<section class="page-hero">
-<div class="wrap">
-<div class="card">
-<div class="breadcrumbs">
-<a href="../people.html" style="text-decoration:underline;">כל האנשים</a> /
-            <span>גולדשטיין נדב ז"ל</span>
-</div>
-<h1 class="page-title">גולדשטיין נדב ז"ל</h1>
-<p class="page-sub">יישוב: <a href="../place/kfar-aza.html">כפר עזה</a></p>
-<div class="person-actions">
-<button class="btn" id="candleBtnLite" type="button">
-<span aria-hidden="true" class="candle-icon">🕯️</span>
-<span class="candle-text">הדלקת נר</span>
-</button>
-<div aria-live="polite" class="muted small" id="candleStatusLite"></div>
-<button class="btn" id="shareBtnLite" type="button">שיתוף</button>
-</div>
+<main id="main" class="fade-in">
+  <div class="memorial-container">
+    <div class="memorial-shell">
+      <header class="memorial-header">
+        <h1>גולדשטיין נדב ז"ל</h1>
+        <p>כפר עזה | שבעה באוקטובר 2023</p>
+      </header>
 
-</div>
-</div>
-</section>
-<section class="section">
-<div class="wrap">
-<h2 class="section-title">קישורים ומקורות</h2>
-<div class="grid article-grid">
-<article class="card article">
-<h3>חללי שער הנגב 'חרבות ברזל' – רשימה לפי יישוב</h3>
-<p class="muted">מועצה אזורית שער הנגב</p>
-<p style="margin-top:10px;"><a class="btn primary" href="https://www.sng.org.il/7277" rel="noopener" target="_blank">פתח קישור</a></p>
+      <div class="memorial-grid">
+        <section aria-label="תמונה" class="memorial-photo">
+          <img class="profile-img" src="../assets/person-placeholder.svg" alt="גולדשטיין נדב ז"ל"/>
+          <div class="photo-note">אם יש ברשותכם תמונה מכובדת להוספה – נשמח לקבל.</div>
+        </section>
+
+        <aside class="id-card" aria-label="פרטים אישיים">
+          <h2>תעודת זהות</h2>
+          <dl class="id-dl">
+            <div><dt>יישוב</dt><dd><a href="../place/kfar-aza.html">כפר עזה</a></dd></div>
+            <div><dt>תאריך</dt><dd>7.10.2023</dd></div>
+            <div><dt>עודכן</dt><dd>02.03.2026</dd></div>
+          </dl>
+
+          <div class="person-actions" style="margin-top:14px;">
+            <button class="btn" id="candleBtnLite" type="button">
+              <span aria-hidden="true" class="candle-icon">🕯️</span>
+              <span class="candle-text">הדלקת נר</span>
+            </button>
+            <div aria-live="polite" class="muted small" id="candleStatusLite"></div>
+            <button class="btn" id="shareBtnLite" type="button">שתפו את הדף</button>
+          </div>
+        </aside>
+      </div>
+
+      <section class="story-section">
+        <h2>סיפור חייו</h2>
+        <p class="muted">טרם הוזן סיפור אישי. אם תרצו להוסיף טקסט קצר, ציטוט או תמונות – תוכלו לפנות דרך עמוד “אודות / הוספה”.</p>
+        <blockquote class="quote">“במותם ציוו לנו את החיים”<cite>— ספר הזיכרון</cite></blockquote>
+      </section>
+
+      <section class="section">
+        <h2 class="section-title">קישורים ומקורות</h2>
+        <div class="grid article-grid">
+          <article class="card article">
+  <h3>חללי שער הנגב 'חרבות ברזל' – רשימה לפי יישוב</h3>
+  <p class="muted">מועצה אזורית שער הנגב</p>
+  <p style="margin-top:10px;"><a class="btn small" href="https://www.sng.org.il/7277" rel="noopener" target="_blank">פתיחה</a></p>
 </article>
 <article class="card article">
-<h3>נרצחי וחללי המלחמה: טבלת שמות (כולל מקום מגורים)</h3>
-<p class="muted">ynet</p>
-<p style="margin-top:10px;"><a class="btn primary" href="https://names2023war.ynet.co.il/tableview" rel="noopener" target="_blank">פתח קישור</a></p>
+  <h3>נרצחי וחללי המלחמה: טבלת שמות (כולל מקום מגורים)</h3>
+  <p class="muted">ynet</p>
+  <p style="margin-top:10px;"><a class="btn small" href="https://names2023war.ynet.co.il/tableview" rel="noopener" target="_blank">פתיחה</a></p>
 </article>
-</div>
-<p class="tiny muted" style="margin-top:14px;">
-          אם מצאתם טעות או יש לכם קישור רשמי שכדאי להוסיף — אפשר לכתוב לנו דרך <a href="../about.html#how" style="text-decoration:underline;">אודות</a>.
-        </p>
-</div>
-</section>
-<section class="section"><div class="wrap"><div class="card prev-next" id="prevNextNav"><div class="prev-next-inner"><a class="btn" href="p026.html">← הקודם</a><a class="btn" href="../people.html">חזרה לכל השמות</a><a class="btn" href="p028.html">הבא →</a></div></div></div></section></main>
+        </div>
+      </section>
+
+      <nav class="navigation-links" aria-label="ניווט בין אנשים">
+        <a href="p026.html">→ הקודם</a>
+        <a href="../index.html">חזרה לספר הזיכרון</a>
+        <a href="p028.html">הבא ←</a>
+      </nav>
+    </div>
+  </div>
+</main>
 <footer class="site-footer">
-<div class="wrap footer-bottom">
-<span>© <span id="y"></span> אתר הנצחה</span>
-<span class="muted">תצוגה שקטה לזיכרון ולהתבוננות</span>
-</div>
+  <div class="wrap footer-grid">
+    <div>
+      <strong>קישורים מהירים</strong>
+      <nav class="footer-nav" aria-label="קישורים מהירים">
+        <a href="../index.html">דף הבית</a>
+        <a href="../people.html">כל האנשים</a>
+        <a href="../places.html">יישובים</a>
+        <a href="../about.html">אודות / הוספה</a>
+      </nav>
+    </div>
+
+    <div>
+      <strong>שתפו כדי שנזכור</strong>
+      <div class="footer-actions">
+        <button class="btn small" id="shareSiteBtn" type="button">שיתוף</button>
+        <button class="btn small" id="whatsAppBtn" type="button">וואטסאפ</button>
+      </div>
+      <p class="muted small" style="margin-top:10px;">השיתוף לא מפעיל מוזיקה ולא מציג פרסומות — רק קישור לזיכרון.</p>
+    </div>
+
+    <div>
+      <strong>תמיכה</strong>
+      <p class="muted small" style="margin:0 0 6px;">ער״ן: <a href="tel:1201">1201</a></p>
+      <p class="muted small" style="margin:0;">נט״ל: <a href="tel:*3362">*3362</a></p>
+    </div>
+  </div>
+
+  <div class="wrap footer-bottom">
+    <span>© <span id="y"></span> אתר הנצחה</span>
+    <span class="muted">תצוגה שקטה לזיכרון ולהתבוננות</span>
+    <span class="muted small">עודכן לאחרונה: 02.03.2026</span>
+  </div>
 </footer>
 </body>
 </html>
