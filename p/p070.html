@@ -1,0 +1,162 @@
+<!doctype html>
+<!-- Generated file. Edit src/layout.html and run: npm run build -->
+<html lang="he" dir="rtl" data-theme="olive">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <base href="../">
+
+  <meta name="description" content="עמוד זיכרון והדלקת נר לזכר אליקים נעם ז"ל." />
+  <title>אתר הנצחה | אליקים נעם ז"ל</title>
+
+  <!-- Performance -->
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+
+  <!-- Open Graph / Social -->
+  <meta property="og:locale" content="he_IL" />
+  <meta property="og:site_name" content="אתר הנצחה" />
+  <meta property="og:title" content="אתר הנצחה | אליקים נעם ז"ל" />
+  <meta property="og:description" content="עמוד זיכרון והדלקת נר לזכר אליקים נעם ז"ל." />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="../assets/default-share-image.png" />
+  <meta property="og:url" content="p/p070.html" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="אתר הנצחה | אליקים נעם ז"ל" />
+  <meta name="twitter:description" content="עמוד זיכרון והדלקת נר לזכר אליקים נעם ז"ל." />
+  <meta name="twitter:image" content="../assets/default-share-image.png" />
+
+  <link rel="canonical" href="p/p070.html" />
+
+  <link rel="stylesheet" href="assets/styles.css?v=20260301" />
+
+  <script>
+    window.PERSON_ID = "p070";
+  </script>
+
+  <!-- Supabase (אופציונלי) -->
+  <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script defer src="assets/backend-config.js?v=20260301"></script>
+  <script defer src="assets/app.js?v=20260301"></script>
+  <script defer src="assets/premium.js?v=20260301"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">דלג לתוכן</a>
+
+  <header class="site-header">
+    <div class="wrap nav">
+      <a class="brand" href="index.html" aria-label="דף הבית">
+        <span class="logo" aria-hidden="true"></span>
+        <span class="brand-title">
+          <strong>אתר הנצחה</strong>
+          <span>לאלו שנלקחו מאיתנו • 7.10.2023</span>
+        </span>
+      </a>
+
+      <button class="menu-btn" type="button" aria-expanded="false" aria-controls="site-nav">
+        <span class="sr">פתח תפריט</span>
+        <span class="menu-lines" aria-hidden="true"></span>
+      </button>
+
+      <nav id="site-nav" class="site-nav" aria-label="ניווט">
+        <a class="pill" href="index.html">שדה האורות</a>
+        <a class="pill is-active" href="people.html">כל האנשים</a>
+        <a class="pill" href="places.html">יישובים</a>
+        <a class="pill" href="about.html">אודות</a>
+        <a class="cta" href="about.html#how">איך מוסיפים תכנים</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="page-hero">
+      <div class="wrap">
+        <div class="card">
+          <div class="breadcrumbs">
+            <a href="people.html" style="text-decoration:underline;">כל האנשים</a> /
+            <span>ספר זיכרון</span>
+          </div>
+          <h1 class="page-title" id="personName">טוען…</h1>
+          <p class="page-sub">יישוב: <a id="placeLink" href="#" style="text-decoration:underline;"></a></p>
+          <p class="tiny muted" id="backendNote" style="margin-top:10px;"></p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap grid cols-2">
+        <article class="card list">
+          <h3>פרטים (תבנית)</h3>
+          <ul>
+            <li>כאן ניתן להוסיף תיאור קצר ומכבד — בשיתוף המשפחה והקהילה.</li>
+            <li>אפשר להוסיף תחומי אהבה/תפקיד/ציטוט קצר, לפי אישור.</li>
+            <li>המיקוד הוא בחיים ובאדם.</li>
+          </ul>
+        </article>
+
+        <aside class="card list">
+          <h3>להדליק נר</h3>
+          <div class="candle-wrap" style="margin-top:12px;">
+            <div id="candle" class="candle" aria-label="נר">
+              <div class="glow" aria-hidden="true"></div>
+              <div class="flame" aria-hidden="true"></div>
+            </div>
+
+            <div>
+              <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                <button id="candleBtn" class="btn primary" type="button">הדלק/י נר</button>
+                <button id="shareBtn" class="btn" type="button">העתקת קישור</button>
+              </div>
+              <p class="tiny" id="candleCount" style="margin-top:10px;"></p>
+              <p class="tiny muted" style="margin-top:8px;">
+                במצב “משותף”, הספירה היא סה״כ. במצב מקומי — רק במכשיר שלך.
+              </p>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap">
+        <div id="articlesRoot"></div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap grid cols-2">
+        <form id="guestForm" class="card list" aria-label="כתבו כמה מילים">
+          <h3>כתבו כמה מילים</h3>
+          <p class="muted">אפשר להשאיר משפט קצר של זיכרון/געגוע/תודה.</p>
+
+          <label class="sr" for="by">שם (אופציונלי)</label>
+          <input id="by" name="by" placeholder="שם (אופציונלי)" />
+
+          <label class="sr" for="text">הודעה</label>
+          <textarea id="text" name="text" placeholder="מה תרצו לכתוב?" required></textarea>
+
+          <div style="margin-top:10px;">
+            <button class="btn primary" type="submit">שליחה</button>
+            <p class="tiny muted" style="margin-top:8px;">
+              במצב “משותף”: ההודעות נשלחות לאישור ויופיעו לאחר בדיקה.
+            </p>
+          </div>
+        </form>
+
+        <aside class="card list">
+          <h3>מילים שנכתבו</h3>
+          <div id="guestList"></div>
+        </aside>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap footer-bottom">
+      <span>© <span id="y"></span> אתר הנצחה</span>
+      <span class="muted">תצוגה שקטה לזיכרון ולהתבוננות</span>
+    </div>
+  </footer>
+</body>
+</html>
