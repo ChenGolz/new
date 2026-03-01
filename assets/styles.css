@@ -6,44 +6,38 @@
 */
 
 :root{
-  /* Default theme: Olive Grove (clear + calm) */
-  --bg0:#2E3326;
-  --bg1:#1F2419;
+  /* Default theme: Jerusalem Dusk (warm candlelight on deep navy) */
+  --bg0:#1A1B26;
+  --bg1:#0F111A;
 
-  --card:rgba(24,28,20,.72);
-  --card2:rgba(24,28,20,.86);
+  --card:rgba(30,41,59,.72);
+  --card2:rgba(30,41,59,.88);
 
-  --ink:#ECE9E0;
-  --muted:rgba(236,233,224,.78);
-  --muted2:rgba(236,233,224,.62);
+  --ink:#F8FAFC;
+  --muted:rgba(248,250,252,.78);
+  --muted2:rgba(248,250,252,.62);
 
-  --stroke:rgba(236,233,224,.14);
-  --stroke2:rgba(236,233,224,.10);
+  --stroke:rgba(248,250,252,.14);
+  --stroke2:rgba(248,250,252,.10);
 
-  --accent:#D4AF37;      /* muted gold */
-  --accent2:#9BBF8A;     /* soft olive highlight */
-  --chip:rgba(212,175,55,.16);
+  --accent:#E9C46A;      /* candle amber */
+  --accent2:#F4A261;     /* warm orange */
+  --chip:rgba(233,196,106,.16);
 
   /* warm candle (keep memory warm) */
   --candle:#E9C46A;
   --candle2:#F4A261;
 
-  --shadow:0 26px 70px rgba(0,0,0,.35);
-  --shadow-sm:0 14px 34px rgba(0,0,0,.28);
+  --shadow:0 26px 70px rgba(0,0,0,.45);
+  --shadow-sm:0 14px 34px rgba(0,0,0,.34);
 
   --radius:26px;
   --radius-sm:18px;
 
   --serif:'Frank Ruhl Libre','Noto Serif Hebrew','Noto Sans Hebrew',serif;
   --sans:'Noto Sans Hebrew','Assistant',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
 
-  /* visualization panel */
-  --panel0:#14160f;
-  --panel1:#1a1f16;
-  --panelStroke:rgba(236,233,224,.16);
-
-  /* focus ring */
-  --focus: 0 0 0 3px rgba(212,175,55,.55);
 }
 
 
@@ -54,16 +48,16 @@ body{
   margin:0;
   font-family:var(--sans);
   font-weight:400;
-  font-size:16.5px;
-  line-height:1.65;
+  font-size:17px;
+  line-height:1.7;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color:var(--ink);
   background:
-    radial-gradient(1100px 650px at 82% -10%, rgba(212,175,55,.12), transparent 62%),
-    radial-gradient(900px 700px at 12% 18%, rgba(155,191,138,.10), transparent 62%),
-    radial-gradient(820px 620px at 55% 115%, rgba(233,196,106,.07), transparent 62%),
+    radial-gradient(1100px 650px at 78% -10%, rgba(233,196,106,.14), transparent 62%),
+    radial-gradient(980px 760px at 18% 22%, rgba(244,162,97,.10), transparent 64%),
+    radial-gradient(820px 620px at 55% 115%, rgba(233,196,106,.08), transparent 62%),
     linear-gradient(180deg,var(--bg0),var(--bg1));
 }
 

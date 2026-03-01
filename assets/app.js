@@ -22,7 +22,7 @@ const SITE_BASE = getSiteBaseUrl();
 const DATA_URL = new URL("data/people.json", SITE_BASE).toString();
 
 function setTheme(theme){
-  const t = theme || localStorage.getItem("theme") || "olive";
+  const t = theme || localStorage.getItem("theme") || "dusk";
   document.documentElement.setAttribute("data-theme", t);
 }
 
@@ -1343,8 +1343,11 @@ async function initPersonPage() {
   let guestSending = false;
   guestForm?.addEventListener("submit", async (ev) => {
     ev.preventDefault();
-    const submitBtn = guestForm.querySelector('button[type="submit"]');
-    const originalBtnText = submitBtn ? submitBtn.textContent : "";
+    if (guestSending) return;
+
+    const by = (guestForm.by?.value || "").trim();
+    const text = (guestForm.text?.value || "").trim();
+
     let status = document.getElementById("formStatus");
     if (!status){
       status = document.createElement("p");
@@ -1354,16 +1357,12 @@ async function initPersonPage() {
       status.tabIndex = -1;
       guestForm.appendChild(status);
     }
-    if (submitBtn){
-      submitBtn.disabled = true;
-      submitBtn.textContent = "שולח…";
+
+    if (!text){
+      status.textContent = "אנא כתבו כמה מילים לפני שליחה.";
+      status.focus();
+      return;
     }
-
-    if (guestSending) return;
-
-    const by = (guestForm.by?.value || "").trim();
-    const text = (guestForm.text?.value || "").trim();
-    if (!text) return;
 
     const submitBtn = guestForm.querySelector('button[type="submit"]');
     const prevText = submitBtn?.textContent || "שליחה";
@@ -1377,6 +1376,7 @@ async function initPersonPage() {
 
     guestSending = true;
     setUi(true);
+    status.textContent = "שולח…";
 
     try {
       if (!usingShared) {
@@ -1386,6 +1386,8 @@ async function initPersonPage() {
         saveLocal(gbKey, entriesLocal);
         guestForm.reset();
         renderLocalGuestbook();
+        status.textContent = "תודה. המילים נשמרו במכשיר שלך.";
+        status.focus();
         return;
       }
 
@@ -1402,11 +1404,13 @@ async function initPersonPage() {
 
       guestForm.reset();
       if (guestList) guestList.innerHTML = `<p class="muted">תודה. המילים נשלחו לאישור ויופיעו לאחר בדיקה.</p>`;
-    if (status) { status.textContent = "תודה. המילים נשלחו לאישור."; status.focus(); }
-    if (submitBtn){ submitBtn.disabled = false; submitBtn.textContent = originalBtnText || "שליחה"; }
+      status.textContent = "תודה. המילים נשלחו לאישור.";
+      status.focus();
     } catch (error) {
       console.error(error);
       if (guestList) guestList.innerHTML = `<p class="muted">לא הצלחנו לשלוח כרגע. נסו שוב מאוחר יותר.</p>`;
+      status.textContent = "לא הצלחנו לשלוח כרגע. נסו שוב מאוחר יותר.";
+      status.focus();
     } finally {
       guestSending = false;
       setUi(false);
