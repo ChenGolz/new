@@ -1,0 +1,6 @@
+{
+  "contactEmail": "",
+  "contactFormEndpoint": "",
+  "siteName": "אתר הנצחה",
+  "notes": "מלאו contactEmail כדי לאפשר שליחת זיכרון דרך מייל. אפשר גם להגדיר contactFormEndpoint לטופס חיצוני (Formspree/Netlify וכו')."
+}
