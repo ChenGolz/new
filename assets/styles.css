@@ -863,7 +863,13 @@ a{color:inherit;}
   border:1px solid var(--stroke2);
   box-shadow:var(--shadow);
 }
-.card::before{display:none !important;}
+/*
+  NOTE:
+  We hide the decorative ::before layer on most cards (it can look noisy),
+  but we MUST keep it available for special cards that intentionally use
+  ::before as a hero background (e.g., .hero-card).
+*/
+.card:not(.hero-card)::before{display:none !important;}
 .card.paper{background:var(--card2) !important;}
 
 /* headings */
@@ -1892,19 +1898,37 @@ body{
   overflow:hidden;
   border-radius: 18px; /* keep a touch of premium roundness */
   padding: 0; /* the inner layout holds padding */
-  border: 1px solid rgba(255,255,255,.18);
+
+  /* local “tokens” so the hero stays readable in both themes */
+  --hero-ol-a: rgba(11,18,38,.62);
+  --hero-ol-b: rgba(11,18,38,.48);
+  --hero-ui-bg: rgba(255,255,255,.14);
+  --hero-ui-br: rgba(255,255,255,.22);
+  --hero-br: rgba(255,255,255,.18);
+  border: 1px solid var(--hero-br);
+}
+html[data-theme="dark"] .hero-card{
+  /* in dark mode, keep the overlay slightly lighter so it doesn't feel “black” */
+  --hero-ol-a: rgba(11,18,38,.52);
+  --hero-ol-b: rgba(11,18,38,.36);
+  --hero-ui-bg: rgba(255,255,255,.12);
+  --hero-ui-br: rgba(255,255,255,.18);
+  --hero-br: rgba(255,255,255,.14);
 }
 .hero-card::before{
   content:"";
   position:absolute;
   inset:-10px;
+  display:block; /* protect against other .card::before rules */
+  z-index:0;
   background:
-    linear-gradient(180deg, rgba(11,18,38,.68), rgba(11,18,38,.54)),
+    linear-gradient(180deg, var(--hero-ol-a), var(--hero-ol-b)),
     url("hero-bg.jpg");
   background-size: cover;
   background-position: center;
   transform: scale(1.03);
   filter: blur(.6px);
+  pointer-events:none;
 }
 .hero-card .hero-layout{
   position: relative;
@@ -1916,18 +1940,30 @@ body{
 .hero-card .muted{ color: rgba(255,255,255,.86) !important; }
 .hero-card .page-title{ color: #fff !important; text-shadow: 0 10px 30px rgba(0,0,0,.35); }
 .hero-card input[type="search"]{
-  background: rgba(255,255,255,.14);
-  border-color: rgba(255,255,255,.22);
-  color: #fff;
+  background: var(--hero-ui-bg) !important;
+  border-color: var(--hero-ui-br) !important;
+  color: #fff !important;
 }
 .hero-card input[type="search"]::placeholder{ color: rgba(255,255,255,.72); }
-.hero-card .btn{ border-color: rgba(255,255,255,.24); background: rgba(255,255,255,.12); color:#fff; }
+.hero-card .btn{ border-color: var(--hero-ui-br) !important; background: var(--hero-ui-bg) !important; color:#fff !important; }
 .hero-card .btn:hover{ background: rgba(255,255,255,.18); }
 .hero-card .btn.primary{ background: rgba(37,99,235,.95); border-color: rgba(255,255,255,.12); }
 .hero-card .btn.primary:hover{ background: rgba(37,99,235,1); }
 
+/* stats bar inside hero should also match the overlay */
+.hero-card .stats-bar{
+  background: rgba(255,255,255,.10);
+  border-color: rgba(255,255,255,.18);
+  color: rgba(255,255,255,.86);
+}
+
 /* keep the illustration, but make it subtle */
-.hero-card .hero-img{ opacity:.18; mix-blend-mode: screen; }
+.hero-card .hero-img{
+  opacity:.55;
+  mix-blend-mode: normal;
+  filter: drop-shadow(0 22px 70px rgba(0,0,0,.35));
+}
+html[data-theme="dark"] .hero-card .hero-img{ opacity:.42; }
 
 @media (max-width: 520px){
   .settlement-sticky{ top: 70px; }
