@@ -18,6 +18,7 @@ function siteUrl(path) {
   return SITE_BASE + String(path || "").replace(/^\/+/,"");
 }
 const DATA_URL = siteUrl("data/people.json");
+const META_URL = siteUrl("data/people_meta.json");
 /**
  * Backend (אופציונלי)
  * כדי להפוך נרות + מילים ל”משותפים לכולם”, מומלץ לחבר Supabase.
@@ -1013,11 +1014,68 @@ function initSilentMode(){
   });
 }
 
+function formatHebrewDate(iso){
+  if(!iso) return "";
+  let d;
+  if(iso instanceof Date) d = iso;
+  else{
+    const m = String(iso).match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if(!m) return String(iso);
+    d = new Date(Date.UTC(+m[1], +m[2]-1, +m[3]));
+  }
+  const months = ["ינואר","פברואר","מרץ","אפריל","מאי","יוני","יולי","אוגוסט","ספטמבר","אוקטובר","נובמבר","דצמבר"];
+  const day = d.getUTCDate();
+  const month = months[d.getUTCMonth()];
+  const year = d.getUTCFullYear();
+  return `${day} ב${month} ${year}`;
+}
+
+async function loadPeopleMeta(){
+  try{
+    const r = await fetch(META_URL, { cache: "no-store" });
+    if(!r.ok) return {};
+    return await r.json();
+  }catch(e){
+    return {};
+  }
+}
+
 function initLitePersonPage(){
   const body = document.body;
   const pid = body?.dataset?.personId || body?.getAttribute("data-person-id");
   const pname = body?.dataset?.personName || body?.getAttribute("data-person-name") || "";
   if(!pid) return;
+
+
+// Update memorial verb/date line (some people have a different date).
+(async ()=>{
+  const metaAll = await loadPeopleMeta();
+  const meta = metaAll && metaAll[pid] ? metaAll[pid] : null;
+
+  // Default (editable): most pages are 7.10.2023. Override per id in data/people_meta.json
+  const verb = (meta && meta.verb) ? String(meta.verb) : "נהרג/ה";
+  const dateIso = (meta && meta.date) ? String(meta.date) : "2023-10-07";
+  const details = (meta && meta.details) ? String(meta.details) : "";
+
+  const prettyDate = formatHebrewDate(dateIso);
+
+  // Header subtitle: "<place> | <verb> ב-<date> (details)"
+  const headerP = document.querySelector('.memorial-header p');
+  if(headerP){
+    const placeText = headerP.textContent.split('|')[0].trim();
+    const tail = `${verb} ב-${prettyDate}${details ? ' ('+details+')' : ''}`;
+    headerP.textContent = `${placeText} | ${tail}`;
+  }
+
+  // ID card row
+  const dl = document.querySelector('.id-dl');
+  if(dl){
+    const labelEl = dl.querySelector('.death-label') || dl.querySelector('dt[data-role="death-label"]');
+    const valueEl = dl.querySelector('.death-date') || dl.querySelector('dd[data-role="death-date"]');
+    if(labelEl) labelEl.textContent = `${verb} בתאריך`;
+    if(valueEl) valueEl.textContent = `${prettyDate}${details ? ' ('+details+')' : ''}`;
+  }
+})();
 
   const candleBtn = document.getElementById("candleBtnLite") || document.getElementById("candleBtn");
   const status = document.getElementById("candleStatusLite") || document.getElementById("candleStatus");

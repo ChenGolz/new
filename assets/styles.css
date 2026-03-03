@@ -1421,3 +1421,49 @@ html.silent .place-image img, html.silent .hero-img{ filter: grayscale(1) satura
 .footer-nav a:hover{ text-decoration: underline; text-underline-offset: 3px; }
 .footer-actions{ display:flex; gap: 10px; flex-wrap: wrap; align-items:center; }
 .footer-bottom{ display:flex; gap: 10px; flex-wrap:wrap; justify-content:space-between; align-items:center; padding: 12px 0 18px; border-top: 1px solid var(--stroke2); }
+
+/* =========================
+   2026-03 — Soft Navy / Light Blue refresh (no orange)
+   - keep the airy “light sky” feel
+   - Assistant everywhere
+   ========================= */
+:root{
+  --bg0:#f7fbff;
+  --bg1:#eaf2ff;
+  --ink:#0b1226;
+  --muted:#334155;
+  --muted2:#64748b;
+
+  --accent:#1e40af;   /* navy */
+  --accent2:#93c5fd;  /* light blue */
+  --chip:rgba(30,64,175,.12);
+
+  /* remove warm/orange tones */
+  --warm:#1e40af;
+  --warm2:#60a5fa;
+
+  /* use Assistant for headings too */
+  --serif:'Assistant',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+}
+
+.hero-illust{
+  margin-top:14px;
+  display:flex;
+  justify-content:center;
+}
+.hero-illust img{
+  width:min(560px, 100%);
+  height:auto;
+  border-radius:18px;
+  border:1px solid rgba(30,64,175,.10);
+  background: rgba(255,255,255,.55);
+}
+
+/* person page photo: keep it respectful + airy */
+.memorial-photo .profile-img{
+  background: rgba(255,255,255,.7);
+}
+
+/* ID card heading: no “תעודת זהות” vibe */
+.id-card h2{ letter-spacing:0; }
+
