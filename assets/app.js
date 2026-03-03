@@ -19,6 +19,81 @@ function siteUrl(path) {
 }
 const DATA_URL = siteUrl("data/people.json");
 const META_URL = siteUrl("data/people_meta.json");
+
+/* =======================
+   Search helpers (Hebrew-friendly)
+   - normalize final letters
+   - remove niqqud
+   - tolerant matching (tokens + bigram similarity)
+======================= */
+const HEB_FINALS = {
+  "ך": "כ",
+  "ם": "מ",
+  "ן": "נ",
+  "ף": "פ",
+  "ץ": "צ",
+};
+
+function normalizeHe(str) {
+  return String(str ?? "")
+    .toLowerCase()
+    // quotes
+    .replace(/["'`״׳]/g, "")
+    // niqqud + cantillation
+    .replace(/[\u0591-\u05C7]/g, "")
+    // finals
+    .replace(/[ךםןףץ]/g, (ch) => HEB_FINALS[ch] || ch)
+    // punctuation
+    .replace(/[\[\]{}()<>.,:;!?/\\|_+=~^$#@]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function tokenize(str) {
+  const s = normalizeHe(str);
+  return s ? s.split(" ") : [];
+}
+
+function bigrams(str) {
+  const s = normalizeHe(str).replace(/\s+/g, "");
+  const out = [];
+  for (let i = 0; i < Math.max(0, s.length - 1); i++) out.push(s.slice(i, i + 2));
+  return out;
+}
+
+function bigramSimilarity(a, b) {
+  const A = bigrams(a);
+  const B = bigrams(b);
+  if (!A.length || !B.length) return 0;
+  const setA = new Map();
+  for (const x of A) setA.set(x, (setA.get(x) || 0) + 1);
+  let inter = 0;
+  for (const y of B) {
+    const c = setA.get(y) || 0;
+    if (c > 0) {
+      inter += 1;
+      setA.set(y, c - 1);
+    }
+  }
+  return (2 * inter) / (A.length + B.length);
+}
+
+function matchesQuery(person, query) {
+  const q = normalizeHe(query);
+  if (!q) return true;
+  const tokens = q.split(" ").filter(Boolean);
+  const name = normalizeHe(person?.name);
+  const place = normalizeHe(person?.place);
+  const hay = (name + " " + place).trim();
+
+  // all tokens must appear somewhere
+  const tokenOk = tokens.every((t) => hay.includes(t));
+  if (tokenOk) return true;
+
+  // tolerate typos: fuzzy against name
+  const sim = bigramSimilarity(q, name);
+  return sim >= 0.56;
+}
 /**
  * Backend (אופציונלי)
  * כדי להפוך נרות + מילים ל”משותפים לכולם”, מומלץ לחבר Supabase.
@@ -552,6 +627,8 @@ async function initPeopleList() {
   const root = document.getElementById("peopleRoot");
   const search = document.getElementById("peopleSearch");
   const placeSelect = document.getElementById("peoplePlace");
+  const tagsRoot = document.getElementById("peopleTags");
+  const azBar = document.getElementById("azBar");
   if (!root) return;
 
   const people = await loadPeople();
@@ -565,13 +642,33 @@ async function initPeopleList() {
       places.map(pl => `<option value="${escapeHtml(pl)}">${escapeHtml(pl)} (${counts2.get(pl) || 0})</option>`).join("");
   }
 
+  const HEB_LETTERS = "אבגדהוזחטיכלמנסעפצקרשת".split("");
+
+  function updateTags(activePlace) {
+    if (!tagsRoot) return;
+    const btns = places.map((pl) => {
+      const n = counts2.get(pl) || 0;
+      return `<button type="button" class="${pl === activePlace ? "is-active" : ""}" data-place="${escapeAttr(pl)}">${escapeHtml(pl)} <span class="muted">(${n})</span></button>`;
+    });
+    tagsRoot.innerHTML = `<button type="button" class="${!activePlace ? "is-active" : ""}" data-place="">כל היישובים</button>` + btns.join("");
+  }
+
+  function updateAz(list) {
+    if (!azBar) return;
+    const available = new Set(list.map(p => initialOfName(p.name)));
+    azBar.innerHTML = HEB_LETTERS.map((ch) => {
+      const dis = !available.has(ch);
+      return `<button type="button" class="az-btn" data-letter="${escapeAttr(ch)}" ${dis ? "disabled aria-disabled=\"true\"" : ""}>${escapeHtml(ch)}</button>`;
+    }).join("");
+  }
+
   function render() {
     const q = (search?.value || "").trim();
     const pl = (placeSelect?.value || "");
     const list = people.filter(p => {
       const okPlace = !pl || p.place === pl;
-      const okName = !q || p.name.includes(q);
-      return okPlace && okName;
+      const okQuery = matchesQuery(p, q);
+      return okPlace && okQuery;
     });
 
     if (!list.length) {
@@ -586,8 +683,9 @@ async function initPeopleList() {
     const place = p.place ? `יישוב: ${escapeHtml(p.place)}` : "";
     const initial = initialOfName(p.name);
     const context = p.context ? escapeHtml(p.context) : "";
+    const letter = escapeAttr(initial);
     return `
-    <article class="card person-card">
+    <article class="card person-card" data-letter="${letter}" data-place="${escapeAttr(p.place || "")}" id="person-${escapeAttr(p.id)}">
       <div class="person-main">
         <div class="person-avatar" aria-hidden="true">${escapeHtml(initial)}</div>
         <div class="person-info">
@@ -596,9 +694,8 @@ async function initPeopleList() {
           ${context ? `<div class="small">${context}</div>` : ``}
         </div>
       </div>
-      <div class="person-art" title="כאן אפשר להוסיף איור/ציור קווי בהמשך">
+      <div class="person-art" aria-hidden="true">
         <div class="art-initials">${escapeHtml(initial)}</div>
-        <div class="art-hint">איור</div>
       </div>
       <div class="person-cta">
         <a class="btn primary" href="${siteUrl("p/" + escapeHtml(p.id) + ".html")}">לפתיחה</a>
@@ -607,13 +704,227 @@ async function initPeopleList() {
   }).join("");
 }
 
+    updateTags(pl);
+    updateAz(list);
+
     const count = document.getElementById("peopleCount");
     if (count) count.textContent = `${list.length} מתוך ${people.length}`;
   }
 
   search?.addEventListener("input", render);
   placeSelect?.addEventListener("change", render);
+
+  tagsRoot?.addEventListener("click", (ev) => {
+    const btn = ev.target?.closest?.("button[data-place]");
+    if (!btn || !placeSelect) return;
+    placeSelect.value = btn.dataset.place || "";
+    render();
+  });
+
+  azBar?.addEventListener("click", (ev) => {
+    const btn = ev.target?.closest?.("button.az-btn");
+    if (!btn || btn.hasAttribute("disabled")) return;
+    const ch = btn.dataset.letter;
+    const esc = (window.CSS && CSS.escape) ? CSS.escape(ch) : ch;
+    const first = root.querySelector(`.person-card[data-letter="${esc}"]`);
+    if (first) first.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+
   render();
+}
+
+/* =======================
+   index.html — quick live search
+======================= */
+function initHomeSearch(){
+  const input = document.getElementById("homeSearch");
+  const list = document.getElementById("homeDirectory");
+  if(!input || !list) return;
+  const items = Array.from(list.querySelectorAll("li"));
+  function apply(){
+    const q = input.value.trim();
+    let shown = 0;
+    for(const li of items){
+      const text = li.textContent || "";
+      const ok = matchesQuery({ name: text, place: text }, q);
+      li.style.display = ok ? "" : "none";
+      if(ok) shown++;
+    }
+    // gentle hint if nothing
+    let empty = document.getElementById("homeEmpty");
+    if(!empty){
+      empty = document.createElement("p");
+      empty.id = "homeEmpty";
+      empty.className = "muted";
+      empty.style.marginTop = "14px";
+      list.insertAdjacentElement("afterend", empty);
+    }
+    empty.textContent = shown ? "" : "לא נמצאו תוצאות. נסו איות אחר או חיפוש בלי ניקוד.";
+  }
+  input.addEventListener("input", apply);
+  apply();
+}
+
+/* =======================
+   places.html — mini map shortcuts
+======================= */
+async function initPlacesMap(){
+  const box = document.getElementById("placeMapBox");
+  if(!box) return;
+  const people = await loadPeople();
+  const map = new Map();
+  for(const p of people) map.set(p.place, (map.get(p.place) || 0) + 1);
+  const places = Array.from(map.entries()).sort((a,b)=>a[0].localeCompare(b[0],"he"));
+  box.innerHTML = `
+    <div class="map-head">
+      <h2 class="section-title" style="margin:0;">מפה מהירה</h2>
+      <p class="muted" style="margin:6px 0 0;">לחצו על יישוב כדי לפתוח את דף הקהילה.</p>
+    </div>
+    <div class="map-dots" role="list">
+      ${places.map(([pl,n])=>`
+        <a role="listitem" class="dot" href="${siteUrl("place/"+encodeURIComponent(placeSlug(pl))+".html")}">
+          <span class="dot-name">${escapeHtml(pl)}</span>
+          <span class="dot-count">${n}</span>
+        </a>
+      `).join("")}
+    </div>
+  `;
+}
+
+/* =======================
+   Theme / Dark mode + optional ambient audio
+======================= */
+function initTheme(){
+  const key = "theme-mode";
+  const html = document.documentElement;
+  const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+  const saved = localStorage.getItem(key);
+  const mode = saved || (prefersDark ? "dark" : "light");
+  html.dataset.theme = mode;
+}
+
+function toggleTheme(){
+  const key = "theme-mode";
+  const html = document.documentElement;
+  const next = (html.dataset.theme === "dark") ? "light" : "dark";
+  html.dataset.theme = next;
+  localStorage.setItem(key, next);
+  const btn = document.getElementById("themeToggle");
+  if(btn){
+    btn.setAttribute("aria-pressed", next === "dark" ? "true" : "false");
+    btn.textContent = next === "dark" ? "מצב בהיר" : "מצב כהה";
+  }
+}
+
+let ambientCtx = null;
+let ambientSrc = null;
+let ambientGain = null;
+
+function startAmbient(){
+  if(ambientCtx) return;
+  const Ctx = window.AudioContext || window.webkitAudioContext;
+  if(!Ctx) return;
+  const ctx = new Ctx();
+  const buffer = ctx.createBuffer(1, ctx.sampleRate * 2, ctx.sampleRate);
+  const data = buffer.getChannelData(0);
+  for(let i=0;i<data.length;i++) data[i] = (Math.random()*2-1) * 0.12;
+  const src = ctx.createBufferSource();
+  src.buffer = buffer;
+  src.loop = true;
+
+  const filter = ctx.createBiquadFilter();
+  filter.type = "lowpass";
+  filter.frequency.value = 650;
+
+  const gain = ctx.createGain();
+  gain.gain.value = 0.0;
+
+  src.connect(filter);
+  filter.connect(gain);
+  gain.connect(ctx.destination);
+  src.start();
+
+  // gentle fade in
+  gain.gain.setTargetAtTime(0.035, ctx.currentTime, 0.6);
+
+  ambientCtx = ctx;
+  ambientSrc = src;
+  ambientGain = gain;
+}
+
+function stopAmbient(){
+  if(!ambientCtx) return;
+  try{
+    ambientGain.gain.setTargetAtTime(0.0, ambientCtx.currentTime, 0.2);
+    setTimeout(()=>{
+      try{ ambientSrc.stop(); }catch{}
+      try{ ambientCtx.close(); }catch{}
+      ambientCtx = null; ambientSrc = null; ambientGain = null;
+    }, 500);
+  }catch{
+    try{ ambientSrc.stop(); }catch{}
+    try{ ambientCtx.close(); }catch{}
+    ambientCtx = null; ambientSrc = null; ambientGain = null;
+  }
+}
+
+function initHeaderExtras(){
+  const bar = document.querySelector(".wrap.nav");
+  if(!bar) return;
+
+  // ensure silent button exists everywhere
+  if(!document.getElementById("silentToggle")){
+    const silent = document.createElement("button");
+    silent.className = "silent-toggle";
+    silent.id = "silentToggle";
+    silent.type = "button";
+    silent.setAttribute("aria-pressed","false");
+    silent.textContent = "תצוגה שקטה";
+    const menu = bar.querySelector(".menu-btn") || bar.querySelector("button");
+    if(menu) menu.insertAdjacentElement("afterend", silent);
+    else bar.appendChild(silent);
+  }
+
+  // theme toggle
+  if(!document.getElementById("themeToggle")){
+    const btn = document.createElement("button");
+    btn.className = "theme-toggle";
+    btn.id = "themeToggle";
+    btn.type = "button";
+    const isDark = document.documentElement.dataset.theme === "dark";
+    btn.setAttribute("aria-pressed", isDark ? "true" : "false");
+    btn.textContent = isDark ? "מצב בהיר" : "מצב כהה";
+    const silent = document.getElementById("silentToggle");
+    silent?.insertAdjacentElement("afterend", btn);
+  }
+
+  // optional ambient
+  if(!document.getElementById("audioToggle")){
+    const btn = document.createElement("button");
+    btn.className = "audio-toggle";
+    btn.id = "audioToggle";
+    btn.type = "button";
+    btn.setAttribute("aria-pressed","false");
+    btn.innerHTML = `<span aria-hidden="true">🔇</span><span class="sr">סאונד</span>`;
+    const theme = document.getElementById("themeToggle");
+    theme?.insertAdjacentElement("afterend", btn);
+  }
+
+  document.getElementById("themeToggle")?.addEventListener("click", toggleTheme);
+
+  document.getElementById("audioToggle")?.addEventListener("click", (ev)=>{
+    const btn = ev.currentTarget;
+    const on = btn.getAttribute("aria-pressed") === "true";
+    if(on){
+      stopAmbient();
+      btn.setAttribute("aria-pressed","false");
+      btn.firstElementChild.textContent = "🔇";
+      return;
+    }
+    startAmbient();
+    btn.setAttribute("aria-pressed","true");
+    btn.firstElementChild.textContent = "🔈";
+  });
 }
 
 /* =======================
@@ -980,12 +1291,17 @@ async function initPersonPage() {
    Init
 ======================= */
 document.addEventListener("DOMContentLoaded", async () => {
+  try{ initTheme(); }catch{}
+  try{ initHeaderExtras(); }catch{}
+  try{ initSilentMode(); }catch{}
   try{ document.body.classList.add("is-loaded"); }catch{}
   setYear();
   bindMenu();
   setActiveNav();
 
   try {
+    try{ initHomeSearch(); }catch{}
+    try{ await initPlacesMap(); }catch{}
     await initField();
     await initPeopleList();
     await initPlaces();
@@ -997,8 +1313,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     console.error(e);
   }
 });
-
-
 
 function initSilentMode(){
   const btn = document.getElementById("silentToggle");
@@ -1121,7 +1435,7 @@ function initLitePersonPage(){
 
 
 
-document.addEventListener('DOMContentLoaded', ()=>{ try{ initSilentMode(); }catch(e){} try{ initLitePersonPage(); }catch(e){} });
+document.addEventListener('DOMContentLoaded', ()=>{ try{ initLitePersonPage(); }catch(e){} });
 
 function initShareSite(){
   const btn = document.getElementById("shareSiteBtn");
