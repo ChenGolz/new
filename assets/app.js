@@ -135,6 +135,21 @@ function escapeHtml(s) {
 function escapeAttr(s) {
   return escapeHtml(s).replaceAll("`", "&#96;");
 }
+
+function setMeta(nameOrProp, content, kind="name"){
+  try{
+    if(!document || !document.head) return;
+    const attr = (kind === "property") ? "property" : "name";
+    const sel = `meta[${attr}="${CSS && CSS.escape ? CSS.escape(nameOrProp) : nameOrProp}"]`;
+    let el = document.head.querySelector(sel);
+    if(!el){
+      el = document.createElement("meta");
+      el.setAttribute(attr, nameOrProp);
+      document.head.appendChild(el);
+    }
+    el.setAttribute("content", String(content ?? ""));
+  }catch{}
+}
 function initialOfName(name) {
   const s = String(name ?? "")
     .replace(/["'״׳`]/g, "")
@@ -642,6 +657,57 @@ async function initPeopleList() {
       places.map(pl => `<option value="${escapeHtml(pl)}">${escapeHtml(pl)} (${counts2.get(pl) || 0})</option>`).join("");
   }
 
+  // Optional: classification/date filters (based on data/people_meta.json)
+  const metaAll = await loadPeopleMeta();
+  const controls = document.querySelector(".controls");
+  let kindSelect = document.getElementById("peopleKind");
+  let dateSelect = document.getElementById("peopleDate");
+
+  if(controls && !kindSelect){
+    kindSelect = document.createElement("select");
+    kindSelect.id = "peopleKind";
+    kindSelect.innerHTML = `
+      <option value="">כל הסוגים</option>
+      <option value="combat">נפלו בקרב</option>
+      <option value="civilian">אזרחים</option>
+      <option value="other">אחר</option>
+    `;
+    controls.appendChild(kindSelect);
+
+    dateSelect = document.createElement("select");
+    dateSelect.id = "peopleDate";
+    dateSelect.innerHTML = `
+      <option value="">כל התאריכים</option>
+      <option value="2023-10-07">7 באוקטובר 2023</option>
+      <option value="2023-10">אוקטובר 2023</option>
+      <option value="2023">שנת 2023</option>
+    `;
+    controls.appendChild(dateSelect);
+  }
+
+  // Move filters into a sticky bar above the list (mobile-friendly)
+  (function(){
+    const rootWrap = root.closest(".wrap");
+    if(!rootWrap) return;
+    if(document.getElementById("peopleStickyBar")) return;
+
+    const heroCard = document.querySelector(".page-hero .card");
+    const ctrls = heroCard?.querySelector(".controls");
+    const tags = document.getElementById("peopleTags");
+    const az = document.getElementById("azBar");
+    if(!ctrls && !tags && !az) return;
+
+    const bar = document.createElement("div");
+    bar.id = "peopleStickyBar";
+    bar.className = "people-sticky-bar";
+    rootWrap.insertBefore(bar, root);
+
+    if(ctrls) bar.appendChild(ctrls);
+    if(tags) bar.appendChild(tags);
+    if(az) bar.appendChild(az);
+  })();
+
+
   const HEB_LETTERS = "אבגדהוזחטיכלמנסעפצקרשת".split("");
 
   function updateTags(activePlace) {
@@ -667,8 +733,19 @@ async function initPeopleList() {
     const pl = (placeSelect?.value || "");
     const list = people.filter(p => {
       const okPlace = !pl || p.place === pl;
+
+      const meta = metaAll && metaAll[p.id] ? metaAll[p.id] : null;
+      const kind = (kindSelect && kindSelect.value) ? kindSelect.value : "";
+      const dateF = (dateSelect && dateSelect.value) ? dateSelect.value : "";
+
+      const pKind = meta && meta.kind ? String(meta.kind) : "";
+      const pDate = meta && meta.date ? String(meta.date) : "2023-10-07";
+
+      const okKind = !kind || (pKind && pKind === kind);
+      const okDate = !dateF || (dateF.length === 10 ? pDate === dateF : pDate.startsWith(dateF));
+
       const okQuery = matchesQuery(p, q);
-      return okPlace && okQuery;
+      return okPlace && okKind && okDate && okQuery;
     });
 
     if (!list.length) {
@@ -713,6 +790,8 @@ async function initPeopleList() {
 
   search?.addEventListener("input", render);
   placeSelect?.addEventListener("change", render);
+  kindSelect?.addEventListener("change", render);
+  dateSelect?.addEventListener("change", render);
 
   tagsRoot?.addEventListener("click", (ev) => {
     const btn = ev.target?.closest?.("button[data-place]");
@@ -1020,6 +1099,14 @@ async function initPersonPage() {
   if (!person) { nameEl.textContent = "לא נמצא אדם"; return; }
 
   nameEl.textContent = person.name;
+  // עדכון מטא (לתצוגה יפה בדפדפן; לשיתוף בוואטסאפ עדיין מומלץ p/*.html)
+  document.title = `לזכר ${person.name} ז״ל`;
+  setMeta("description", `דף זיכרון וקישורים לזכר ${person.name} ז״ל.`, "name");
+  setMeta("og:title", `לזכר ${person.name} ז״ל`, "property");
+  setMeta("og:description", "מנציחים את זכרם של הנופלים והנרצחים.", "property");
+  // תמונת OG אישית (נוצרת אוטומטית בתיקיית assets/og-person)
+  setMeta("og:image", new URL(siteUrl(`assets/og-person/${id}.png`), location.href).href, "property");
+  setMeta("twitter:card", "summary_large_image", "name");
   if (placeLink) {
     placeLink.href = siteUrl(`place/${encodeURIComponent(placeSlug(person.place))}.html`);
     placeLink.textContent = person.place;
@@ -1031,15 +1118,23 @@ async function initPersonPage() {
       ? "מצב משותף פעיל: נרות ומילים נשמרים לכל המבקרים (בכפוף לאישור)."
       : "מצב מקומי: נרות ומילים נשמרים רק במכשיר שלך. כדי לשתף לכולם – חבר/י Supabase (ראה אודות).";
 
-  // העתקת קישור (נוח לשיתוף)
+  // העתקת קישור (שיתוף נכון: דף סטטי עם OG)
   shareBtn?.addEventListener("click", async () => {
+    const url = new URL(siteUrl("p/" + encodeURIComponent(id) + ".html"), location.href).href;
+    const title = person?.name ? ("לזכר " + person.name) : document.title;
     try{
-      await navigator.clipboard.writeText(location.href);
+      if(navigator.share){
+        await navigator.share({ title, url });
+        return;
+      }
+    }catch(e){}
+    try{
+      await navigator.clipboard.writeText(url);
       shareBtn.textContent = "הועתק!";
       setTimeout(()=> shareBtn.textContent = "העתקת קישור", 1200);
     }catch{
       // fallback
-      prompt("העתיקו את הקישור:", location.href);
+      prompt("העתיקו את הקישור:", url);
     }
   });
   }
@@ -1391,27 +1486,94 @@ function initLitePersonPage(){
   }
 })();
 
+  const usingShared = isSupabaseReady();
+
   const candleBtn = document.getElementById("candleBtnLite") || document.getElementById("candleBtn");
   const status = document.getElementById("candleStatusLite") || document.getElementById("candleStatus");
   const shareBtn = document.getElementById("shareBtnLite") || document.getElementById("shareBtn");
 
-  const key = "candle-lit:" + pid;
+  // status area: add counter line if missing
+  let countEl = document.getElementById("candleCountLite");
+  if(!countEl && status){
+    countEl = document.createElement("div");
+    countEl.id = "candleCountLite";
+    countEl.className = "muted small";
+    countEl.style.marginTop = "8px";
+    status.insertAdjacentElement("afterend", countEl);
+  }
+
+  const litKey = "candle-lit:" + pid;
+  const localCountKey = "candles_" + pid;
+  const throttleKey = "candle_throttle_" + pid;
+
   function setLit(lit){
     if(!candleBtn) return;
-    candleBtn.classList.toggle("lit", lit);
+    candleBtn.classList.toggle("lit", !!lit);
     const txt = candleBtn.querySelector(".candle-text");
     if(txt) txt.textContent = lit ? "נר דולק" : "הדלקת נר";
     if(status) status.textContent = lit ? "נר דולק לזכרם. יהי זכרם ברוך." : "";
   }
 
-  if(candleBtn){
-    setLit(localStorage.getItem(key) === "1");
-    candleBtn.addEventListener("click", ()=>{
-      const lit = localStorage.getItem(key) !== "1";
-      localStorage.setItem(key, lit ? "1" : "0");
-      setLit(lit);
-    });
+  async function renderSharedCount(){
+    try{
+      const client = supa();
+      const { data } = await client.from("candles").select("count").eq("person_id", pid).maybeSingle();
+      const c = data?.count ?? 0;
+      if(countEl) countEl.textContent = `${c} נרות הודלקו (סה״כ)`;
+    }catch(e){
+      if(countEl) countEl.textContent = "";
+    }
   }
+  function renderLocalCount(){
+    const c = loadLocal(localCountKey, 0);
+    if(countEl) countEl.textContent = `${c} נרות הודלקו במכשיר זה`;
+  }
+
+  async function onCandle(){
+    if(!candleBtn) return;
+    if(!usingShared){
+      // local toggle + counter (תחושה של פעולה)
+      let lit = localStorage.getItem(litKey) === "1";
+      let c = loadLocal(localCountKey, 0);
+      if(!lit){ c += 1; lit = true; }
+      else { lit = false; }
+      localStorage.setItem(litKey, lit ? "1" : "0");
+      saveLocal(localCountKey, c);
+      setLit(lit);
+      renderLocalCount();
+      return;
+    }
+
+    // shared (Supabase): פעם ביום למכשיר
+    const today = ymdNow();
+    const last = loadLocal(throttleKey, "");
+    if(last === today){
+      setLit(true);
+      if(status) status.textContent = "כבר הודלק נר היום במכשיר זה. תודה.";
+      await renderSharedCount();
+      return;
+    }
+    try{
+      const client = supa();
+      const { data, error } = await client.rpc("increment_candle", { pid });
+      if(error) throw error;
+      saveLocal(throttleKey, today);
+      setLit(true);
+      if(countEl) countEl.textContent = `${data ?? "—"} נרות הודלקו (סה״כ)`;
+    }catch(e){
+      console.error(e);
+      if(status) status.textContent = "לא הצלחנו להדליק נר כרגע.";
+    }
+  }
+
+  if(candleBtn){
+    setLit(localStorage.getItem(litKey) === "1");
+    candleBtn.addEventListener("click", onCandle);
+  }
+
+  // initial counter
+  if(usingShared) { renderSharedCount(); }
+  else { renderLocalCount(); }
 
   if(shareBtn){
     shareBtn.addEventListener("click", async ()=>{
@@ -1431,11 +1593,448 @@ function initLitePersonPage(){
       }
     });
   }
+
+  // ========= ספר אורחים (בדפים הסטטיים p/*.html) =========
+  try{ initLiteGuestbook(pid, pname, usingShared); }catch(e){}
+
+  // ========= הקראת טקסט (נגישות) =========
+  try{ initMemorialTTS(); }catch(e){}
 }
 
 
 
 document.addEventListener('DOMContentLoaded', ()=>{ try{ initLitePersonPage(); }catch(e){} });
+
+
+
+/* =======================
+   Accessibility (נגישות)
+   - הגדלת טקסט (כפתור צף)
+   - הקראת טקסט בדפי זיכרון
+======================= */
+function initA11yWidget(){
+  const key = "font-scale";
+  const html = document.documentElement;
+  const saved = localStorage.getItem(key) || "1";
+  html.classList.toggle("font-lg", saved === "2");
+
+  if(document.getElementById("a11yFontBtn")) return;
+
+  const btn = document.createElement("button");
+  btn.id = "a11yFontBtn";
+  btn.type = "button";
+  btn.className = "a11y-fab";
+  btn.setAttribute("aria-label", "הגדלת טקסט");
+  btn.setAttribute("aria-pressed", saved === "2" ? "true" : "false");
+  btn.innerHTML = `<span aria-hidden="true">Aa</span><span class="sr">הגדלת טקסט</span>`;
+  document.body.appendChild(btn);
+
+  btn.addEventListener("click", ()=>{
+    const on = html.classList.toggle("font-lg");
+    localStorage.setItem(key, on ? "2" : "1");
+    btn.setAttribute("aria-pressed", on ? "true" : "false");
+    btn.title = on ? "טקסט מוגדל פעיל" : "טקסט רגיל";
+  });
+}
+
+let __ttsSpeaking = false;
+function initMemorialTTS(){
+  const story = document.querySelector(".story-section");
+  if(!story) return;
+  if(!("speechSynthesis" in window)) return;
+
+  // add button once
+  if(story.querySelector("#speakBtn")) return;
+
+  const btn = document.createElement("button");
+  btn.id = "speakBtn";
+  btn.type = "button";
+  btn.className = "btn small tts-btn";
+  btn.setAttribute("aria-pressed","false");
+  btn.innerHTML = `<span aria-hidden="true">🔊</span> <span class="tts-label">השמע</span>`;
+
+  const h2 = story.querySelector("h2");
+  if(h2){
+    const row = document.createElement("div");
+    row.className = "tts-row";
+    row.appendChild(btn);
+    h2.insertAdjacentElement("afterend", row);
+  }else{
+    story.insertAdjacentElement("afterbegin", btn);
+  }
+
+  function collectText(){
+    // clone to avoid reading UI labels
+    const clone = story.cloneNode(true);
+    clone.querySelectorAll("button, .tts-row").forEach(n=>n.remove());
+    return (clone.innerText || "").replace(/\s+/g," ").trim();
+  }
+
+  function stop(){
+    try{ window.speechSynthesis.cancel(); }catch(e){}
+    __ttsSpeaking = false;
+    btn.setAttribute("aria-pressed","false");
+    btn.querySelector(".tts-label").textContent = "השמע";
+    btn.firstElementChild.textContent = "🔊";
+  }
+
+  btn.addEventListener("click", ()=>{
+    if(__ttsSpeaking){ stop(); return; }
+    const text = collectText();
+    if(!text) return;
+
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = "he-IL";
+    u.rate = 0.95;
+    u.onend = stop;
+    u.onerror = stop;
+
+    __ttsSpeaking = true;
+    btn.setAttribute("aria-pressed","true");
+    btn.querySelector(".tts-label").textContent = "עצור";
+    btn.firstElementChild.textContent = "⏹️";
+
+    try{ window.speechSynthesis.cancel(); }catch(e){}
+    window.speechSynthesis.speak(u);
+  });
+
+  // stop reading when leaving page
+  window.addEventListener("beforeunload", stop);
+}
+
+/* =======================
+   Lite memorial pages (p/*.html) – Guestbook + moderation
+======================= */
+function initLiteGuestbook(pid, pname, usingShared){
+  // only on p/*.html: detect by data-person-id + the absence of existing guestbook blocks
+  const shell = document.querySelector(".memorial-shell") || document.querySelector(".memorial-container") || document.querySelector("main");
+  if(!shell) return;
+  if(document.getElementById("guestFormLite") || document.getElementById("guestListLite")) return;
+
+  // Build UI
+  const sec = document.createElement("section");
+  sec.className = "section";
+  sec.innerHTML = `
+    <h2 class="section-title">ספר אורחים</h2>
+    <div class="wrap grid cols-2">
+      <form id="guestFormLite" class="card list" aria-label="כתבו כמה מילים">
+        <h3>כתבו כמה מילים</h3>
+        <p class="muted">אפשר להשאיר משפט קצר של זיכרון/געגוע/תודה.</p>
+        <label class="sr" for="byLite">שם (אופציונלי)</label>
+        <input id="byLite" name="by" placeholder="שם (אופציונלי)" />
+        <label class="sr" for="textLite">הודעה</label>
+        <textarea id="textLite" name="text" placeholder="מה תרצו לכתוב?" required></textarea>
+        <div style="margin-top:10px;">
+          <button class="btn primary" type="submit">שליחה</button>
+          <p class="tiny muted" style="margin-top:8px;">
+            ${usingShared ? "במצב “משותף”: ההודעות נשלחות לאישור ויופיעו לאחר בדיקה." : "במצב מקומי: ההודעות נשמרות רק במכשיר שלך."}
+          </p>
+        </div>
+      </form>
+
+      <aside class="card list">
+        <h3>מילים שנכתבו</h3>
+        <div id="guestListLite"></div>
+      </aside>
+    </div>
+  `;
+
+  // append near end, but before footer if possible
+  const main = document.getElementById("main") || document.querySelector("main");
+  if(main) main.appendChild(sec);
+  else shell.appendChild(sec);
+
+  const guestList = document.getElementById("guestListLite");
+  const guestForm = document.getElementById("guestFormLite");
+
+  const gbKey = `guestbook_${pid}`;
+  let entriesLocal = loadLocal(gbKey, []);
+
+  async function renderShared(){
+    const client = supa();
+    const { data, error } = await client
+      .from("guestbook_entries")
+      .select("by,text,created_at")
+      .eq("person_id", pid)
+      .eq("approved", true)
+      .order("created_at", { ascending: false })
+      .limit(50);
+
+    if(error){
+      console.error(error);
+      if(guestList) guestList.innerHTML = `<p class="muted">לא ניתן לטעון הודעות כרגע.</p>`;
+      return;
+    }
+    if(!data?.length){
+      if(guestList) guestList.innerHTML = `<p class="muted">עדיין אין כאן מילים. אפשר להיות הראשונים.</p>`;
+      return;
+    }
+    if(guestList){
+      guestList.innerHTML = data.map(e=>{
+        const d = new Date(e.created_at);
+        const date = d.toLocaleDateString("he-IL", { year:"numeric", month:"2-digit", day:"2-digit" });
+        return `
+          <article class="card list" style="padding:14px;">
+            <div class="person-meta">
+              <span>${escapeHtml(e.by || "אנונימי")}</span>
+              <span>${escapeHtml(date)}</span>
+            </div>
+            <p style="margin:10px 0 0; line-height:1.85; color: rgba(255,255,255,.84);">${escapeHtml(e.text)}</p>
+          </article>
+        `;
+      }).join("");
+    }
+  }
+
+  function renderLocal(){
+    if(!guestList) return;
+    if(!entriesLocal.length){
+      guestList.innerHTML = `<p class="muted">עדיין אין כאן מילים. אפשר להיות הראשונים.</p>`;
+      return;
+    }
+    guestList.innerHTML = entriesLocal.slice().reverse().map(e => `
+      <article class="card list" style="padding:14px;">
+        <div class="person-meta">
+          <span>${escapeHtml(e.by || "אנונימי")}</span>
+          <span>${escapeHtml(e.date)}</span>
+        </div>
+        <p style="margin:10px 0 0; line-height:1.85; color: rgba(255,255,255,.84);">${escapeHtml(e.text)}</p>
+      </article>
+    `).join("");
+  }
+
+  guestForm?.addEventListener("submit", async (ev)=>{
+    ev.preventDefault();
+    const by = (guestForm.by?.value || "").trim();
+    const text = (guestForm.text?.value || "").trim();
+    if(!text) return;
+
+    if(!usingShared){
+      const d = new Date();
+      const date = d.toLocaleDateString("he-IL", { year:"numeric", month:"2-digit", day:"2-digit" });
+      entriesLocal.push({ by: by || "אנונימי", text, date });
+      saveLocal(gbKey, entriesLocal);
+      guestForm.reset();
+      renderLocal();
+      return;
+    }
+
+    try{
+      const client = supa();
+      const { error } = await client.from("guestbook_entries").insert([{
+        person_id: pid,
+        by: by || "אנונימי",
+        text,
+        approved: false
+      }]);
+      guestForm.reset();
+      if(error) throw error;
+      if(guestList) guestList.innerHTML = `<p class="muted">תודה. המילים נשלחו לאישור ויופיעו לאחר בדיקה.</p>`;
+    }catch(e){
+      console.error(e);
+      if(guestList) guestList.innerHTML = `<p class="muted">לא הצלחנו לשלוח כרגע. נסו שוב מאוחר יותר.</p>`;
+    }
+  });
+
+  if(usingShared) renderShared();
+  else renderLocal();
+}
+
+/* =======================
+   “שלחו לנו זיכרון” – טופס/מייל מה-Footer
+======================= */
+let __siteCfg = null;
+async function loadSiteConfig(){
+  if(__siteCfg) return __siteCfg;
+  try{
+    const r = await fetch(siteUrl("data/site_config.json"), { cache: "no-store" });
+    if(!r.ok) throw new Error("no cfg");
+    __siteCfg = await r.json();
+  }catch(e){
+    __siteCfg = { contactEmail:"", contactFormEndpoint:"" };
+  }
+  return __siteCfg;
+}
+
+function initFooterMemoryModal(){
+  const footer = document.querySelector(".site-footer");
+  if(!footer) return;
+
+  // add button once
+  if(document.getElementById("memoryBtn")) return;
+
+  // create a small block in footer grid
+  const grid = footer.querySelector(".footer-grid");
+  if(grid){
+    const box = document.createElement("div");
+    box.innerHTML = `
+      <strong>שלחו לנו זיכרון</strong>
+      <p class="muted small" style="margin:6px 0 10px;">תמונה, סיפור קצר או תיקון — נשמח לקבל.</p>
+      <button class="btn small" id="memoryBtn" type="button">שליחת זיכרון</button>
+    `;
+    grid.appendChild(box);
+  }
+
+  const modal = document.createElement("div");
+  modal.id = "memoryModal";
+  modal.className = "modal";
+  modal.setAttribute("role","dialog");
+  modal.setAttribute("aria-modal","true");
+  modal.setAttribute("aria-labelledby","memoryTitle");
+  modal.hidden = true;
+
+  const personName = document.body?.dataset?.personName || document.getElementById("personName")?.textContent || "";
+
+  modal.innerHTML = `
+    <div class="modal-backdrop" data-close="1"></div>
+    <div class="modal-card">
+      <button class="modal-close" type="button" data-close="1" aria-label="סגירה">×</button>
+      <h2 id="memoryTitle">שלחו לנו זיכרון</h2>
+      <p class="muted" style="margin-top:6px;">אפשר לשלוח תמונה, סיפור קצר, או תיקון מידע. הכל עולה לאתר רק לאחר בדיקה.</p>
+
+      <form id="memoryForm" class="modal-form">
+        <label class="sr" for="memPerson">שם</label>
+        <input id="memPerson" name="person" placeholder="שם האדם (אופציונלי)" value="${escapeAttr(personName)}" />
+
+        <label class="sr" for="memFrom">מייל / טלפון (אופציונלי)</label>
+        <input id="memFrom" name="from" placeholder="מייל / טלפון (אופציונלי)" />
+
+        <label class="sr" for="memText">מה תרצו לשלוח?</label>
+        <textarea id="memText" name="text" placeholder="מה תרצו לשלוח?" required></textarea>
+
+        <div class="modal-actions">
+          <button class="btn primary" type="submit">שליחה</button>
+          <button class="btn" type="button" data-close="1">ביטול</button>
+        </div>
+
+        <p class="tiny muted" style="margin-top:10px;">
+          אם תבחרו לשלוח דרך מייל – תוכלו לצרף קבצים (תמונה) ידנית בחלון המייל.
+        </p>
+      </form>
+    </div>
+  `;
+
+  document.body.appendChild(modal);
+
+  function open(){
+    modal.hidden = false;
+    document.body.classList.add("modal-open");
+    setTimeout(()=> modal.querySelector("#memText")?.focus(), 10);
+  }
+  function close(){
+    modal.hidden = true;
+    document.body.classList.remove("modal-open");
+  }
+
+  document.getElementById("memoryBtn")?.addEventListener("click", open);
+  modal.addEventListener("click", (ev)=>{
+    if(ev.target?.dataset?.close) close();
+  });
+  document.addEventListener("keydown", (ev)=>{
+    if(!modal.hidden && ev.key === "Escape") close();
+  });
+
+  modal.querySelector("#memoryForm")?.addEventListener("submit", async (ev)=>{
+    ev.preventDefault();
+    const form = ev.currentTarget;
+    const person = (form.person?.value || "").trim();
+    const from = (form.from?.value || "").trim();
+    const text = (form.text?.value || "").trim();
+    if(!text) return;
+
+    const cfg = await loadSiteConfig();
+
+    // If endpoint configured – post JSON (simple)
+    if(cfg && cfg.contactFormEndpoint){
+      try{
+        const res = await fetch(cfg.contactFormEndpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ person, from, text, page: location.href })
+        });
+        if(!res.ok) throw new Error("bad");
+        form.reset();
+        close();
+        alert("תודה. הזיכרון נשלח לבדיקה.");
+        return;
+      }catch(e){
+        console.error(e);
+        alert("לא הצלחנו לשלוח כרגע. נסו שוב או שלחו במייל.");
+      }
+    }
+
+    // Fallback: mailto if email exists
+    if(cfg && cfg.contactEmail){
+      const subject = encodeURIComponent(`זיכרון / תיקון – ${person || "אתר הנצחה"}`);
+      const body = encodeURIComponent(
+        `עמוד: ${location.href}\n` +
+        (person ? `אדם: ${person}\n` : "") +
+        (from ? `פרטי קשר: ${from}\n` : "") +
+        `\n${text}\n\n(אפשר לצרף תמונה למייל)`
+      );
+      location.href = `mailto:${encodeURIComponent(cfg.contactEmail)}?subject=${subject}&body=${body}`;
+      close();
+      return;
+    }
+
+    // Final fallback: עמוד אודות / הוספה
+    close();
+    location.href = siteUrl("about.html#how");
+  });
+}
+
+/* =======================
+   Upgrade: places.html "מפת הזיכרון" – נקודות על מפה (ויזואלית)
+======================= */
+async function initPlacesMap(){
+  const box = document.getElementById("placeMapBox");
+  if(!box) return;
+
+  const people = await loadPeople();
+  const map = new Map();
+  for(const p of people) map.set(p.place, (map.get(p.place) || 0) + 1);
+  const places = Array.from(map.entries()).sort((a,b)=>a[0].localeCompare(b[0],"he"));
+
+  // Rough relative positions (percent) for a small “memory map”
+  const POS = {
+    "ארז": { x: 38, y: 18 },
+    "גבים": { x: 55, y: 22 },
+    "יכיני": { x: 70, y: 32 },
+    "ניר עם": { x: 30, y: 40 },
+    "נחל עוז": { x: 56, y: 55 },
+    "כפר עזה": { x: 48, y: 66 }
+  };
+
+  box.innerHTML = `
+    <div class="map-head">
+      <h2 class="section-title" style="margin:0;">מפת הזיכרון</h2>
+      <p class="muted" style="margin:6px 0 0;">לחצו על יישוב כדי לפתוח את דף הקהילה.</p>
+    </div>
+
+    <div class="sng-map" role="img" aria-label="מפה אינטראקטיבית של יישובי שער הנגב">
+      <div class="sng-map-bg" aria-hidden="true"></div>
+      ${places.map(([pl,n])=>{
+        const pos = POS[pl] || { x: 50, y: 50 };
+        return `
+          <a class="sng-pin" style="--x:${pos.x}%;--y:${pos.y}%;" href="${siteUrl("place/"+encodeURIComponent(placeSlug(pl))+".html")}" aria-label="${escapeAttr(pl)} (${n})">
+            <span class="pin-dot" aria-hidden="true"></span>
+            <span class="pin-label">${escapeHtml(pl)}</span>
+            <span class="pin-count">${n}</span>
+          </a>
+        `;
+      }).join("")}
+    </div>
+
+    <div class="map-list" aria-label="רשימה (נגישות)" style="margin-top:12px;">
+      ${places.map(([pl,n])=>`
+        <a class="dot" href="${siteUrl("place/"+encodeURIComponent(placeSlug(pl))+".html")}">
+          <span class="dot-name">${escapeHtml(pl)}</span>
+          <span class="dot-count">${n}</span>
+        </a>
+      `).join("")}
+    </div>
+  `;
+}
 
 function initShareSite(){
   const btn = document.getElementById("shareSiteBtn");
@@ -1471,3 +2070,11 @@ function initWhatsAppShare(){
   });
 }
 document.addEventListener('DOMContentLoaded', ()=>{ try{ initWhatsAppShare(); }catch(e){} });
+
+
+// Extra inits (safe, independent)
+document.addEventListener("DOMContentLoaded", ()=>{
+  try{ initA11yWidget(); }catch(e){}
+  try{ initFooterMemoryModal(); }catch(e){}
+  try{ initMemorialTTS(); }catch(e){}
+});

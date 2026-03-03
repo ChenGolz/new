@@ -1598,3 +1598,192 @@ html[data-theme="dark"] .map-dots .dot{ background: rgba(13,27,42,.72); }
 /* ID card heading: no “תעודת זהות” vibe */
 .id-card h2{ letter-spacing:0; }
 
+
+
+/* =======================
+   Accessibility extras
+======================= */
+html.font-lg body{ font-size: 19px; }
+html.font-lg .tiny{ font-size: 13px; }
+html.font-lg .page-sub{ font-size: 16px; }
+html.font-lg .muted.small{ font-size: 14px; }
+
+.a11y-fab{
+  position: fixed;
+  inset-inline-end: 16px;
+  inset-block-end: 16px;
+  z-index: 120;
+  border: 1px solid var(--stroke);
+  background: rgba(255,255,255,.92);
+  backdrop-filter: blur(10px);
+  box-shadow: var(--shadow-sm);
+  border-radius: 999px;
+  width: 52px;
+  height: 52px;
+  display: grid;
+  place-items: center;
+  font-weight: 900;
+  cursor: pointer;
+}
+.a11y-fab:hover{ transform: translateY(-1px); }
+.a11y-fab:focus{ outline: 3px solid rgba(37,99,235,.35); outline-offset: 2px; }
+
+/* TTS button row */
+.tts-row{ margin-top: 10px; display:flex; justify-content:flex-start; }
+.tts-btn{ display:inline-flex; align-items:center; gap:8px; }
+
+/* =======================
+   Footer memory modal
+======================= */
+body.modal-open{ overflow:hidden; }
+.modal{ position: fixed; inset: 0; z-index: 140; display:grid; place-items:center; }
+.modal-backdrop{ position:absolute; inset:0; background: rgba(2,6,23,.55); }
+.modal-card{
+  position: relative;
+  width: min(680px, calc(100vw - 28px));
+  max-height: calc(100vh - 28px);
+  overflow:auto;
+  border-radius: var(--radius);
+  background: rgba(255,255,255,.96);
+  border: 1px solid var(--stroke);
+  box-shadow: var(--shadow);
+  padding: 18px;
+}
+.modal-close{
+  position:absolute;
+  inset-inline-end: 12px;
+  inset-block-start: 10px;
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  border: 1px solid var(--stroke2);
+  background: rgba(255,255,255,.92);
+  font-size: 22px;
+  cursor:pointer;
+}
+.modal-form input, .modal-form textarea{
+  width:100%;
+  margin-top: 10px;
+}
+.modal-actions{ margin-top: 12px; display:flex; gap:10px; flex-wrap:wrap; }
+
+/* =======================
+   People filters – sticky (mobile-first)
+======================= */
+.people-sticky-bar{
+  position: sticky;
+  top: 76px;
+  z-index: 80;
+  margin-top: 14px;
+  margin-bottom: 14px;
+  padding: 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--stroke2);
+  background: rgba(251,253,255,.92);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 10px 24px rgba(15,23,42,.06);
+}
+.people-sticky-bar .controls{ margin:0 !important; }
+.people-sticky-bar .tagbar, .people-sticky-bar .az-bar{ margin-top: 10px !important; }
+
+/* =======================
+   Memory map (places.html)
+======================= */
+.sng-map{
+  position: relative;
+  height: 260px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--stroke2);
+  overflow: hidden;
+  background:
+    radial-gradient(380px 240px at 20% 10%, rgba(125,211,252,.22), transparent 60%),
+    radial-gradient(380px 240px at 80% 40%, rgba(37,99,235,.14), transparent 62%),
+    linear-gradient(180deg, rgba(255,255,255,.85), rgba(238,246,255,.95));
+}
+.sng-map-bg{
+  position:absolute;
+  inset:0;
+  opacity:.45;
+  background:
+    radial-gradient(120px 90px at 35% 25%, rgba(245,158,11,.18), transparent 60%),
+    radial-gradient(160px 120px at 55% 55%, rgba(37,99,235,.10), transparent 62%),
+    radial-gradient(160px 140px at 65% 70%, rgba(125,211,252,.12), transparent 62%);
+}
+.sng-pin{
+  position:absolute;
+  left: var(--x);
+  top: var(--y);
+  transform: translate(-50%,-50%);
+  display:flex;
+  align-items:center;
+  gap:8px;
+  text-decoration:none;
+  padding: 8px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(37,99,235,.20);
+  background: rgba(255,255,255,.92);
+  box-shadow: 0 10px 18px rgba(15,23,42,.08);
+}
+.sng-pin:hover{ transform: translate(-50%,-52%); }
+.pin-dot{
+  width: 10px; height: 10px; border-radius:999px;
+  background: rgba(37,99,235,.95);
+  box-shadow: 0 0 0 6px rgba(37,99,235,.12);
+}
+.pin-label{ font-weight: 900; font-size: 13px; }
+.pin-count{
+  display:inline-flex;
+  min-width: 24px;
+  height: 22px;
+  padding: 0 8px;
+  border-radius: 999px;
+  align-items:center;
+  justify-content:center;
+  background: rgba(37,99,235,.10);
+  border: 1px solid rgba(37,99,235,.12);
+  font-weight: 900;
+  font-size: 12px;
+  color: rgba(37,99,235,.95);
+}
+
+/* Make accessibility list look like dots list */
+.map-list{ display:flex; flex-wrap:wrap; gap:10px; }
+.map-list .dot{
+  display:inline-flex; align-items:center; gap:8px;
+  padding: 8px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(15,23,42,.12);
+  background: rgba(255,255,255,.8);
+  text-decoration:none;
+}
+.map-list .dot-count{
+  display:inline-flex; min-width:24px; height:22px; padding:0 8px; border-radius:999px;
+  background: rgba(15,23,42,.06); font-weight: 900; font-size:12px;
+}
+
+@media (max-width: 520px){
+  .people-sticky-bar{ top: 66px; }
+  .sng-map{ height: 300px; }
+  .sng-pin{ padding: 8px 10px; }
+  .pin-label{ font-size: 12px; }
+}
+
+
+/* =======================
+   Mobile gestures – swipeable galleries (optional)
+   Usage: wrap images/cards in .swipe-gallery and each child becomes a swipe “slide”.
+======================= */
+.swipe-gallery{
+  display:flex;
+  gap:12px;
+  overflow-x:auto;
+  padding: 6px 2px;
+  scroll-snap-type:x mandatory;
+  -webkit-overflow-scrolling:touch;
+}
+.swipe-gallery > *{
+  flex: 0 0 86%;
+  scroll-snap-align:center;
+}
+.swipe-gallery::-webkit-scrollbar{ height: 10px; }
+.swipe-gallery::-webkit-scrollbar-thumb{ background: rgba(15,23,42,.14); border-radius: 999px; }
