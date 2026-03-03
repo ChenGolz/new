@@ -1794,3 +1794,178 @@ body.modal-open{ overflow:hidden; }
 }
 .swipe-gallery::-webkit-scrollbar{ height: 10px; }
 .swipe-gallery::-webkit-scrollbar-thumb{ background: rgba(15,23,42,.14); border-radius: 999px; }
+
+
+/* =======================
+   Visual polish – Glass header, depth, pills, cards, hero overlay
+   (requested tweaks)
+======================= */
+
+/* 1) Header glassmorphism */
+.site-header{
+  background: rgba(255,255,255,.74);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
+  backdrop-filter: blur(12px) saturate(180%);
+  box-shadow: 0 10px 30px rgba(15,23,42,.06);
+}
+
+/* 2) Subtle depth background (paper + gentle gradient) */
+body{
+  background:
+    radial-gradient(1200px 700px at 80% -10%, rgba(125,211,252,.20), transparent 60%),
+    radial-gradient(900px 700px at 10% 18%, rgba(37,99,235,.10), transparent 62%),
+    radial-gradient(760px 520px at 50% 110%, rgba(125,211,252,.05), transparent 66%),
+    linear-gradient(180deg,#fdfbfb,#ebedee);
+}
+
+/* 3) Settlement navigation as modern pills */
+.chips{ gap:10px; }
+.chip-link{
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(148,163,184,.70); /* gray-sand */
+  background: rgba(255,255,255,.55);
+  color: var(--ink);
+  font-weight: 800;
+}
+.chip-link:hover{ background: rgba(255,255,255,.72); border-color: rgba(148,163,184,.85); }
+.chip-link.is-active,
+.chip-link[aria-current="page"]{
+  background: rgba(15,29,62,.92); /* “ממלכתי” כהה */
+  color: #fff;
+  border-color: rgba(255,255,255,.22);
+}
+
+/* Sticky settlements bar (used on /place/*.html) */
+.settlement-sticky{
+  position: sticky;
+  top: 78px;
+  z-index: 90;
+  padding-top: 12px;
+}
+.settlement-nav{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  align-items:center;
+}
+.settlement-pill{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(148,163,184,.70);
+  background: rgba(255,255,255,.60);
+  color: var(--ink);
+  text-decoration:none;
+  font-weight: 800;
+  font-size: 13px;
+}
+.settlement-pill:hover{ background: rgba(255,255,255,.78); border-color: rgba(148,163,184,.88); }
+.settlement-pill.is-active,
+.settlement-pill[aria-current="page"]{
+  background: rgba(15,29,62,.92);
+  color:#fff;
+  border-color: rgba(255,255,255,.22);
+}
+
+/* 4) Softer, modern card lift */
+.card.person-card,
+.place-card{
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,.05);
+  transition: transform .3s ease, box-shadow .3s ease;
+}
+@media (hover:hover){
+  .card.person-card:hover,
+  .place-card:hover{
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,.10);
+  }
+}
+
+/* 5) Hero section with photo + dark overlay (index only) */
+.hero-card{
+  position:relative;
+  overflow:hidden;
+  border-radius: 18px; /* keep a touch of premium roundness */
+  padding: 0; /* the inner layout holds padding */
+  border: 1px solid rgba(255,255,255,.18);
+}
+.hero-card::before{
+  content:"";
+  position:absolute;
+  inset:-10px;
+  background:
+    linear-gradient(180deg, rgba(11,18,38,.68), rgba(11,18,38,.54)),
+    url("hero-bg.jpg");
+  background-size: cover;
+  background-position: center;
+  transform: scale(1.03);
+  filter: blur(.6px);
+}
+.hero-card .hero-layout{
+  position: relative;
+  z-index: 1;
+  padding: 22px;
+}
+.hero-card .kicker,
+.hero-card .page-sub,
+.hero-card .muted{ color: rgba(255,255,255,.86) !important; }
+.hero-card .page-title{ color: #fff !important; text-shadow: 0 10px 30px rgba(0,0,0,.35); }
+.hero-card input[type="search"]{
+  background: rgba(255,255,255,.14);
+  border-color: rgba(255,255,255,.22);
+  color: #fff;
+}
+.hero-card input[type="search"]::placeholder{ color: rgba(255,255,255,.72); }
+.hero-card .btn{ border-color: rgba(255,255,255,.24); background: rgba(255,255,255,.12); color:#fff; }
+.hero-card .btn:hover{ background: rgba(255,255,255,.18); }
+.hero-card .btn.primary{ background: rgba(37,99,235,.95); border-color: rgba(255,255,255,.12); }
+.hero-card .btn.primary:hover{ background: rgba(37,99,235,1); }
+
+/* keep the illustration, but make it subtle */
+.hero-card .hero-img{ opacity:.18; mix-blend-mode: screen; }
+
+@media (max-width: 520px){
+  .settlement-sticky{ top: 70px; }
+  .hero-card .hero-layout{ padding: 18px; }
+}
+
+/* Place pages list (names-grid) as proper cards */
+.names-grid{
+  display:grid;
+  gap:12px;
+  grid-template-columns: repeat(2, minmax(0,1fr));
+}
+.names-grid .person-card{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background:#fff;
+  border: 1px solid rgba(15,23,42,.08);
+  box-shadow: 0 4px 15px rgba(0,0,0,.05);
+  text-decoration:none;
+  color: var(--ink);
+  transition: transform .3s ease, box-shadow .3s ease;
+}
+.names-grid .person-name{ font-weight: 900; }
+.names-grid .person-place{ color: var(--muted2); font-weight: 700; font-size: 13px; }
+@media (hover:hover){
+  .names-grid .person-card:hover{
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(0,0,0,.10);
+  }
+}
+@media (max-width: 700px){
+  .names-grid{ grid-template-columns: 1fr; }
+}
+
+/* Avoid decorative pseudo-elements on place pages person links */
+.names-grid .person-card::before,
+.names-grid .person-card::after{ content:none !important; }
