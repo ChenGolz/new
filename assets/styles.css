@@ -1637,6 +1637,13 @@ html.font-lg .muted.small{ font-size: 14px; }
 ======================= */
 body.modal-open{ overflow:hidden; }
 .modal{ position: fixed; inset: 0; z-index: 140; display:grid; place-items:center; }
+/*
+  IMPORTANT: the modal visibility is controlled via the native `hidden` attribute.
+  Some `.modal { display: ... }` rules override the browser's default `[hidden]`
+  styling (which is normally `display:none`). Force-hide when hidden so the
+  close/open logic works reliably.
+*/
+.modal[hidden]{ display:none !important; }
 .modal-backdrop{ position:absolute; inset:0; background: rgba(2,6,23,.55); }
 .modal-card{
   position: relative;
