@@ -756,29 +756,35 @@ async function initPeopleList() {
     </div>
   `;
 } else {
-  root.innerHTML = list.map(p => {
-    const place = p.place ? `יישוב: ${escapeHtml(p.place)}` : "";
-    const initial = initialOfName(p.name);
-    const context = p.context ? escapeHtml(p.context) : "";
-    const letter = escapeAttr(initial);
-    return `
-    <article class="card person-card" data-letter="${letter}" data-place="${escapeAttr(p.place || "")}" id="person-${escapeAttr(p.id)}">
-      <div class="person-main">
-        <div class="person-avatar" aria-hidden="true">${escapeHtml(initial)}</div>
-        <div class="person-info">
-          <div class="person-meta">${place}</div>
-          <h3 class="person-name">${escapeHtml(p.name)}</h3>
-          ${context ? `<div class="small">${context}</div>` : ``}
-        </div>
-      </div>
-      <div class="person-art" aria-hidden="true">
-        <div class="art-initials">${escapeHtml(initial)}</div>
-      </div>
-      <div class="person-cta">
-        <a class="btn primary" href="${siteUrl("p/" + escapeHtml(p.id) + ".html")}">לפתיחה</a>
-      </div>
-    </article>`;
-  }).join("");
+      root.innerHTML = list.map(p => {
+      const initial = initialOfName(p.name);
+      const letter = escapeAttr(initial);
+      const place = p.place ? escapeHtml(p.place) : "";
+      const name = escapeHtml(p.name);
+      const href = siteUrl("p/" + escapeHtml(p.id) + ".html");
+      const imgPrimary = siteUrl("assets/people/" + escapeHtml(p.id) + ".jpg");
+      return `
+        <article class="person-card person-tile" data-letter="${letter}" data-place="${escapeAttr(p.place || "")}" id="person-${escapeAttr(p.id)}">
+          <a class="person-tile-link" href="${href}" aria-label="לפתיחה: ${name}">
+            <div class="person-tile-media">
+              <img class="person-tile-img" data-person-id="${escapeAttr(p.id)}" src="${imgPrimary}" alt="" loading="lazy" decoding="async"/>
+            </div>
+            <div class="person-tile-overlay" aria-hidden="true">
+              ${place ? `<div class="person-tile-place">${place}</div>` : ``}
+              <div class="person-tile-name">${name}</div>
+            </div>
+          </a>
+        </article>`;
+    }).join("");
+
+    // Fallback: if there is no photo in /assets/people, use the per-person OG image.
+    root.querySelectorAll("img.person-tile-img[data-person-id]").forEach(img => {
+      const pid = img.getAttribute("data-person-id");
+      img.addEventListener("error", () => {
+        img.src = siteUrl("assets/og-person/" + pid + ".png");
+        img.classList.add("is-og");
+      }, { once: true });
+    });
 }
 
     updateTags(pl);
@@ -878,7 +884,7 @@ function initTheme(){
   const html = document.documentElement;
   const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
   const saved = localStorage.getItem(key);
-  const mode = saved || (prefersDark ? "dark" : "light");
+  const mode = saved || "dark";
   html.dataset.theme = mode;
 }
 

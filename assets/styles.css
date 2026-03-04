@@ -2145,3 +2145,200 @@ html[data-theme="dark"] .tooltip{
   border-color: rgba(224,225,221,.18);
   color: var(--ink);
 }
+
+/* =========================================================
+   2026-03 — “המראה הממלכתי-מודרני” (skylite10)
+   Dark, respectful, modern: midnight background + smoky text + muted gold accent.
+   This block is LAST on purpose to win the cascade.
+   ========================================================= */
+
+html[data-theme="dark"]{
+  --bg0:#0F172A;            /* midnight */
+  --bg1:#0B1220;
+
+  --card:rgba(30,41,59,.70);
+  --card2:#1E293B;          /* slate */
+
+  --ink:#E0E0E0;            /* smoky white */
+  --muted:rgba(224,224,224,.78);
+  --muted2:rgba(224,224,224,.62);
+
+  --stroke:rgba(255,255,255,.14);
+  --stroke2:rgba(255,255,255,.09);
+
+  --accent:#D4AF37;         /* muted gold */
+  --accent2:#bfa04d;
+  --chip:rgba(212,175,55,.14);
+}
+
+/* Default to a compact, denser layout (less “empty” space) */
+.wrap{
+  max-width: 1400px !important;
+  padding: 12px 16px !important;
+}
+main{ padding: 6px 0 34px !important; }
+.page-hero{ padding: 12px 0 10px !important; }
+.section{ margin-top: 12px !important; }
+.grid{ gap: 12px !important; }
+
+/* Dark background with subtle depth + texture */
+html[data-theme="dark"] body{
+  background:
+    radial-gradient(900px 520px at 18% 0%, rgba(212,175,55,.06), transparent 60%),
+    radial-gradient(720px 520px at 88% 12%, rgba(148,163,184,.08), transparent 62%),
+    radial-gradient(800px 560px at 50% 120%, rgba(2,6,23,.55), transparent 60%),
+    linear-gradient(180deg,var(--bg0),var(--bg1)) !important;
+}
+html[data-theme="dark"] body::before{
+  opacity:.085;
+  mix-blend-mode: overlay;
+}
+
+/* Compact glass header + gold rule */
+html[data-theme="dark"] .site-header{
+  background: rgba(15,23,42,.72) !important;
+  -webkit-backdrop-filter: blur(12px) saturate(160%);
+  backdrop-filter: blur(12px) saturate(160%);
+  border-bottom: 1px solid rgba(212,175,55,.28) !important;
+  box-shadow: 0 10px 24px rgba(0,0,0,.25);
+}
+html[data-theme="dark"] .site-header::after{
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(212,175,55,.55), rgba(212,175,55,.25), transparent) !important;
+}
+
+/* Shrink header content height */
+.site-header .wrap.nav{
+  padding-top: 10px !important;
+  padding-bottom: 10px !important;
+}
+.logo{ width:34px !important; height:34px !important; border-radius: 12px !important; }
+.site-nav{ gap: 8px !important; }
+
+/* Pills in header: modern + subtle. Active uses gold border, not heavy fill. */
+html[data-theme="dark"] .pill{
+  padding: 8px 10px !important;
+  font-size: 12px !important;
+  border-color: rgba(255,255,255,.14) !important;
+  background: rgba(255,255,255,.04) !important;
+  color: var(--ink) !important;
+}
+html[data-theme="dark"] .pill:hover{
+  background: rgba(255,255,255,.06) !important;
+  border-color: rgba(255,255,255,.20) !important;
+}
+html[data-theme="dark"] .pill.is-active,
+html[data-theme="dark"] .pill[aria-current="page"]{
+  background: rgba(212,175,55,.10) !important;
+  border-color: rgba(212,175,55,.42) !important;
+}
+
+/* CTA: keep restrained (outline gold) */
+html[data-theme="dark"] .cta{
+  background: rgba(212,175,55,.12) !important;
+  border-color: rgba(212,175,55,.40) !important;
+  color: #fff !important;
+  box-shadow: none !important;
+}
+html[data-theme="dark"] .cta:hover{ background: rgba(212,175,55,.16) !important; }
+
+/* Cards: slate surfaces, softer shadow */
+html[data-theme="dark"] .card{
+  background: rgba(30,41,59,.70) !important;
+  border-color: var(--stroke2) !important;
+  box-shadow: 0 18px 44px rgba(0,0,0,.28) !important;
+}
+
+/* Typography: serif headings + tight spacing */
+h1,h2,h3,.page-title,.section-title{ font-family: var(--serif) !important; }
+h1,h2,h3,p{ margin: 6px 0; }
+
+/* =====================
+   Dense grids (Desktop)
+   ===================== */
+.people-grid{
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important;
+  gap: 12px !important;
+}
+.names-grid{
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)) !important;
+  gap: 12px !important;
+}
+
+/* =====================
+   Full-image person tiles
+   (people.html)
+   ===================== */
+.people-grid .person-card.person-tile{
+  padding: 0 !important;
+  border-radius: 14px !important;
+  overflow: hidden !important;
+  border: 1px solid rgba(255,255,255,.10) !important;
+  background: rgba(30,41,59,.55) !important;
+  box-shadow: 0 18px 44px rgba(0,0,0,.30) !important;
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+@media (hover:hover){
+  .people-grid .person-card.person-tile:hover{
+    transform: translateY(-3px);
+    border-color: rgba(212,175,55,.40) !important;
+    box-shadow: 0 26px 58px rgba(0,0,0,.38) !important;
+  }
+}
+
+.person-tile-link{ display:block; position:relative; text-decoration:none; color:inherit; }
+.person-tile-media{ aspect-ratio: 3 / 4; width:100%; background: rgba(2,6,23,.22); }
+.person-tile-img{ width:100%; height:100%; object-fit: cover; display:block; filter: saturate(.98) contrast(1.02); }
+.person-tile-img.is-og{ filter: saturate(.92) contrast(1.05); }
+
+.person-tile-overlay{
+  position:absolute;
+  inset-inline: 0;
+  inset-block-end: 0;
+  padding: 12px 12px 12px;
+  background: linear-gradient(to top, rgba(2,6,23,.92), rgba(2,6,23,.25), rgba(2,6,23,0));
+  display:flex;
+  flex-direction:column;
+  gap: 4px;
+}
+.person-tile-place{
+  font-size: 12px;
+  font-weight: 800;
+  color: rgba(224,224,224,.80);
+}
+.person-tile-name{
+  font-size: 18px;
+  line-height: 1.2;
+  font-weight: 900;
+  font-family: var(--serif);
+  color: var(--accent);
+  text-shadow: 0 10px 24px rgba(0,0,0,.45);
+}
+
+/* Sticky filter bar should match the compact header height */
+.people-sticky-bar{ top: 64px !important; }
+@media (max-width: 520px){
+  .people-sticky-bar{ top: 58px !important; }
+}
+
+/* Buttons in dark: keep minimal + gold hover */
+html[data-theme="dark"] .btn{
+  background: rgba(255,255,255,.04) !important;
+  border-color: rgba(255,255,255,.14) !important;
+  color: var(--ink) !important;
+}
+html[data-theme="dark"] .btn:hover{ border-color: rgba(212,175,55,.35) !important; background: rgba(255,255,255,.06) !important; }
+html[data-theme="dark"] .btn.primary{
+  background: rgba(212,175,55,.12) !important;
+  border-color: rgba(212,175,55,.42) !important;
+}
+html[data-theme="dark"] .btn.primary:hover{ background: rgba(212,175,55,.16) !important; }
+
+/* Ensure “ספר זיכרון” and other headings stay visible on dark surfaces */
+html[data-theme="dark"] .section-title,
+html[data-theme="dark"] .page-title,
+html[data-theme="dark"] h2,
+html[data-theme="dark"] h3{ color: var(--ink) !important; }
+
+/* Use gold only for names / thin separators */
+html[data-theme="dark"] .divider{ background: rgba(212,175,55,.18) !important; }
