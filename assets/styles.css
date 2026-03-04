@@ -1495,23 +1495,34 @@ html.silent .place-image img, html.silent .hero-img{ filter: grayscale(1) satura
 }
 
 html[data-theme="dark"]{
-  --bg0:#0b1220;
-  --bg1:#0d1b2a;
-  --card:rgba(13,27,42,.70);
-  --card2:rgba(13,27,42,.86);
-  --ink:#eef6ff;
-  --muted:#b8c6db;
-  --muted2:#93a7c1;
-  --stroke:rgba(224,225,221,.18);
-  --stroke2:rgba(224,225,221,.10);
-  --accent:#93c5fd;
-  --accent2:#7dd3fc;
-  --chip:rgba(125,211,252,.18);
-  --accentLine:rgba(147,197,253,.22);
-  --accentWash:rgba(147,197,253,.10);
-  --warmLine:rgba(233,196,106,.44);
-  --warmWash:rgba(233,196,106,.12);
+  /* “לילה ושנהב” – Museum-like, high-contrast but soft */
+  --bg0:#0A0A0B;
+  --bg1:#0A0A0B;
+
+  --card:rgba(22,22,24,.86);
+  --card2:#161618;
+
+  --ink:#E5E5E5;
+  --muted:#BFC0C2;
+  --muted2:#9B9BA0;
+
+  --stroke:#2A2A2C;
+  --stroke2:rgba(229,229,229,.08);
+
+  --accent:#C19A6B;        /* muted gold / copper */
+  --accent2:#D7B58A;
+  --chip:rgba(193,154,107,.14);
+  --accentLine:rgba(193,154,107,.32);
+  --accentWash:rgba(193,154,107,.10);
+
+  --warmLine:rgba(193,154,107,.44);
+  --warmWash:rgba(193,154,107,.12);
+
+  --panel0:#070708;
+  --panel1:#0A0A0B;
+  --panelStroke:rgba(229,229,229,.10);
 }
+
 
 html[data-theme="dark"] .site-header{
   background: rgba(11,18,32,.82);
@@ -2063,10 +2074,11 @@ html:not([data-theme="dark"]) body{
 html[data-theme="dark"] body{
   color:var(--ink) !important;
   background:
-    radial-gradient(900px 520px at 18% 0%, rgba(125,211,252,.10), transparent 60%),
-    radial-gradient(700px 520px at 85% 10%, rgba(147,197,253,.08), transparent 62%),
+    radial-gradient(1100px 640px at 22% -5%, rgba(193,154,107,.08), transparent 58%),
+    radial-gradient(900px 620px at 80% 10%, rgba(193,154,107,.05), transparent 62%),
     linear-gradient(180deg,var(--bg0),var(--bg1)) !important;
 }
+
 
 /* Header glass (light) + readable pills */
 html:not([data-theme="dark"]) .site-header{
@@ -2555,4 +2567,185 @@ body.memorial-page::after{
   }
   .story-section > h2{ column-span: all; }
   .story-section p, .story-section blockquote{ break-inside: avoid; }
+}
+
+
+/* ==========================================================
+   Night & Ivory – compact “museum” layout refinements
+   ========================================================== */
+
+:root{
+  --wrapMax: 1400px;
+  --headerH: 58px;
+}
+
+/* wider content, less “empty space” */
+.wrap{ max-width: var(--wrapMax); padding: 14px 16px; }
+
+/* compact fixed header */
+.site-header{
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 1000;
+  min-height: var(--headerH);
+}
+body{ padding-top: var(--headerH); }
+
+/* reduce hero top padding since header is fixed */
+.page-hero{ padding-top: 12px; }
+
+/* anchor offset matches new header height */
+.az-anchor{ top: -70px; }
+html[data-theme="dark"] .site-header{
+  background: rgba(10,10,11,.82);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(193,154,107,.38);
+}
+html[data-theme="dark"] .site-header::after{ display:none; }
+
+/* brand + header links feel lighter */
+html[data-theme="dark"] .brand-title strong{ color: var(--ink); }
+html[data-theme="dark"] .brand-title span{ color: var(--muted2); }
+
+/* top nav becomes elegant text links (not big pills) */
+html[data-theme="dark"] .site-nav .pill{
+  background: transparent !important;
+  border: none !important;
+  padding: 6px 8px !important;
+  border-radius: 0 !important;
+  color: var(--muted2) !important;
+  font-weight: 600;
+}
+html[data-theme="dark"] .site-nav .pill:hover{ color: var(--ink) !important; text-decoration: underline; text-underline-offset: 6px; }
+html[data-theme="dark"] .site-nav .pill.is-active{
+  color: var(--accent) !important;
+  text-decoration: underline;
+  text-underline-offset: 6px;
+  text-decoration-thickness: 2px;
+}
+html[data-theme="dark"] .site-nav .cta{
+  background: transparent !important;
+  border: 1px solid rgba(193,154,107,.35) !important;
+  color: var(--accent) !important;
+  box-shadow: none !important;
+}
+
+/* body texture tuned for dark */
+html[data-theme="dark"] body::before{
+  opacity: .09;
+  mix-blend-mode: overlay;
+}
+html[data-theme="dark"] body::after{
+  opacity: 1;
+  background:
+    radial-gradient(1100px 680px at 20% -10%, rgba(193,154,107,.06), transparent 60%),
+    radial-gradient(900px 640px at 85% 15%, rgba(193,154,107,.04), transparent 62%);
+}
+
+/* headings: serif + copper */
+html[data-theme="dark"] .page-title,
+html[data-theme="dark"] .section-title,
+html[data-theme="dark"] main h2,
+html[data-theme="dark"] main h3{
+  color: var(--accent);
+  font-weight: 400;
+  letter-spacing: .8px;
+}
+
+/* buttons */
+html[data-theme="dark"] .btn{
+  background: rgba(255,255,255,.04);
+  border-color: rgba(229,229,229,.10);
+  color: var(--ink);
+}
+html[data-theme="dark"] .btn.primary{
+  background: linear-gradient(135deg, rgba(193,154,107,1), rgba(193,154,107,.82));
+  border-color: rgba(193,154,107,.34);
+  color: #0A0A0B;
+  box-shadow: 0 14px 30px rgba(193,154,107,.14);
+}
+
+/* settlements “breadcrumbs” (chips/tagbar) */
+html[data-theme="dark"] .chips,
+html[data-theme="dark"] .tagbar{
+  gap: 10px;
+}
+html[data-theme="dark"] .chip-link,
+html[data-theme="dark"] .tagbar button{
+  background: transparent !important;
+  border: none !important;
+  padding: 4px 2px !important;
+  border-radius: 0 !important;
+  color: var(--muted2) !important;
+  font-weight: 600;
+  text-decoration: none;
+}
+html[data-theme="dark"] .chip-link:hover,
+html[data-theme="dark"] .tagbar button:hover{
+  color: var(--ink) !important;
+  text-decoration: underline;
+  text-underline-offset: 6px;
+}
+html[data-theme="dark"] .tagbar button.is-active{
+  color: var(--accent) !important;
+  text-decoration: underline;
+  text-underline-offset: 6px;
+  text-decoration-thickness: 2px;
+}
+
+/* compact grids: 4–5 across on desktop */
+.people-grid{ gap: 12px; }
+@media (min-width: 720px){
+  .people-grid{ grid-template-columns: repeat(3, minmax(0,1fr)); }
+}
+@media (min-width: 980px){
+  .people-grid{ grid-template-columns: repeat(4, minmax(0,1fr)); }
+}
+@media (min-width: 1240px){
+  .people-grid{ grid-template-columns: repeat(5, minmax(0,1fr)); }
+}
+
+/* places gallery grid */
+.places-gallery{ display:grid; gap:12px; grid-template-columns: repeat(1, minmax(0,1fr)); }
+@media (min-width: 720px){
+  .places-gallery{ grid-template-columns: repeat(2, minmax(0,1fr)); }
+}
+@media (min-width: 980px){
+  .places-gallery{ grid-template-columns: repeat(3, minmax(0,1fr)); }
+}
+@media (min-width: 1240px){
+  .places-gallery{ grid-template-columns: repeat(4, minmax(0,1fr)); }
+}
+
+/* memorial cards: name in copper over image */
+.card.person-card.memorial-card .person-name{
+  color: var(--accent);
+  text-shadow: 0 2px 10px rgba(0,0,0,.55);
+}
+
+/* card surfaces (dark) */
+html[data-theme="dark"] .card,
+html[data-theme="dark"] .place-card,
+html[data-theme="dark"] .memorial-shell,
+html[data-theme="dark"] .id-card,
+html[data-theme="dark"] .story-section,
+html[data-theme="dark"] .links-section{
+  background: var(--card2) !important;
+  border: 1px solid var(--stroke) !important;
+}
+
+
+/* progress bar stays visible above fixed header */
+#scrollProgress{ z-index: 2001; }
+html[data-theme="dark"] #scrollProgress{
+  background: linear-gradient(90deg, rgba(193,154,107,.92), rgba(193,154,107,.55));
+}
+
+/* hero overlay tuned for Night & Ivory */
+html[data-theme="dark"] .hero-card{
+  --hero-ol-a: rgba(10,10,11,.62);
+  --hero-ol-b: rgba(10,10,11,.42);
+  --hero-ui-bg: rgba(10,10,11,.32);
+  --hero-ui-br: rgba(193,154,107,.22);
+  --hero-br: rgba(229,229,229,.10);
 }
