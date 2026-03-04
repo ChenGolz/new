@@ -772,6 +772,12 @@ async function initPeopleList() {
             <div class="person-tile-overlay" aria-hidden="true">
               ${place ? `<div class="person-tile-place">${place}</div>` : ``}
               <div class="person-tile-name">${name}</div>
+              ${(() => {
+                const meta = (metaAll && metaAll[p.id]) ? metaAll[p.id] : null;
+                const dateIso = meta && meta.date ? String(meta.date) : "";
+                const dateText = dateIso ? formatHebrewDate(dateIso) : "";
+                return dateText ? `<div class="person-tile-date">${escapeHtml(dateText)}</div>` : ``;
+              })()}
             </div>
           </a>
         </article>`;
@@ -1053,19 +1059,48 @@ async function initPlacePage() {
 
   const people = await loadPeople();
   const list = people.filter(p => p.place === pl);
+  const metaAll = await loadPeopleMeta();
+
 
   title.textContent = pl;
   if (sub) sub.textContent = `${list.length} אנשים`;
   if (intro) intro.textContent = placeIntro(pl);
 
-  root.innerHTML = list.map(p => `
-    <article class="card person-card">
-      <div class="person-meta"><span>${escapeHtml(pl)}</span><span>דף אישי</span></div>
-      <h3>${escapeHtml(p.name)}</h3>
-      <p class="muted">ספר זיכרון דיגיטלי.</p>
-      <a class="readmore" href="${siteUrl("p/" + encodeURIComponent(p.id) + ".html")}">לספר הזיכרון →</a>
-    </article>
-  `).join("");
+  root.innerHTML = list.map(p => {
+    const initial = initialOfName(p.name);
+    const letter = escapeAttr(initial);
+    const place = pl ? escapeHtml(pl) : "";
+    const name = escapeHtml(p.name);
+    const href = siteUrl("p/" + encodeURIComponent(p.id) + ".html");
+    const imgPrimary = siteUrl("assets/people/" + escapeHtml(p.id) + ".jpg");
+
+    const meta = (metaAll && metaAll[p.id]) ? metaAll[p.id] : null;
+    const dateIso = meta && meta.date ? String(meta.date) : "";
+    const dateText = dateIso ? formatHebrewDate(dateIso) : "";
+
+    return `
+      <article class="person-card person-tile memorial-card" data-letter="${letter}" data-place="${escapeAttr(pl || "")}" id="person-${escapeAttr(p.id)}">
+        <a class="person-tile-link" href="${href}" aria-label="לפתיחה: ${name}">
+          <div class="person-tile-media">
+            <img class="person-tile-img" data-person-id="${escapeAttr(p.id)}" src="${imgPrimary}" alt="" loading="lazy" decoding="async"/>
+          </div>
+          <div class="person-tile-overlay" aria-hidden="true">
+            ${place ? `<div class="person-tile-place">${place}</div>` : ``}
+            <div class="person-tile-name">${name}</div>
+            ${dateText ? `<div class="person-tile-date">${escapeHtml(dateText)}</div>` : ``}
+          </div>
+        </a>
+      </article>`;
+  }).join("");
+
+  // Fallback: if there is no photo in /assets/people, use the per-person OG image.
+  root.querySelectorAll("img.person-tile-img[data-person-id]").forEach(img => {
+    const pid = img.getAttribute("data-person-id");
+    img.addEventListener("error", () => {
+      img.src = siteUrl("assets/og-person/" + pid + ".png");
+      img.classList.add("is-og");
+    }, { once: true });
+  });
 }
 
 /* =======================
@@ -1087,6 +1122,9 @@ function ymdNow(){
 
 async function initPersonPage() {
   const id = (window.PERSON_ID || qs("id"));
+
+  // Ambient background for individual pages
+  try{ if(id) document.body.style.setProperty("--person-bg", `url(\'${siteUrl("assets/og-person/" + id + ".png")}\')`); }catch(e){}
   const nameEl = document.getElementById("personName");
   const placeLink = document.getElementById("placeLink");
   const candle = document.getElementById("candle");
@@ -1460,6 +1498,28 @@ function initLitePersonPage(){
   const pid = body?.dataset?.personId || body?.getAttribute("data-person-id");
   const pname = body?.dataset?.personName || body?.getAttribute("data-person-name") || "";
   if(!pid) return;
+
+  // Set a blurred “ambient” background from the person's image (museum-style)
+  try{
+    const img = document.querySelector('.memorial-photo img.profile-img') || document.querySelector('.profile-img');
+    const hero = getComputedStyle(body).getPropertyValue('--hero-bg').trim();
+    const src = (img && img.src) ? String(img.src) : "";
+    const looksPlaceholder = src.includes("illust-person") || src.includes("person-placeholder") || src.includes("placeholder");
+    const bg = (!looksPlaceholder && src) ? `url('${src}')` : (hero || "");
+    if(bg) body.style.setProperty('--person-bg', bg);
+  }catch(e){}
+
+  // Move story section into the top grid to reduce “empty space”
+  try{
+    const grid = document.querySelector('.memorial-grid');
+    const story = document.querySelector('.story-section');
+    const idCard = document.querySelector('.memorial-grid .id-card');
+    if(grid && story && !grid.contains(story)){
+      if(idCard) grid.insertBefore(story, idCard);
+      else grid.appendChild(story);
+      story.classList.add('story-in-grid');
+    }
+  }catch(e){}
 
 
 // Update memorial verb/date line (some people have a different date).
