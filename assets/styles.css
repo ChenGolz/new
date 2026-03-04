@@ -2005,3 +2005,143 @@ html[data-theme="dark"] .hero-card .hero-img{ opacity:.42; }
 /* Avoid decorative pseudo-elements on place pages person links */
 .names-grid .person-card::before,
 .names-grid .person-card::after{ content:none !important; }
+
+/* =========================================================
+   FINAL CONTRAST + THEME FIX (skylite9)
+   Purpose: ensure everything stays readable in both Light/Dark.
+   This block intentionally comes LAST to win the cascade.
+   ========================================================= */
+
+:root{
+  /* Light defaults */
+  --bg0:#fdfbfb;
+  --bg1:#ebedee;
+
+  --card:rgba(255,255,255,.88);
+  --card2:rgba(255,255,255,.96);
+
+  --ink:#0d1b2a;
+  --muted:#334155;
+  --muted2:#64748b;
+
+  --stroke:rgba(15,23,42,.12);
+  --stroke2:rgba(15,23,42,.08);
+
+  /* “ממלכתי” deep navy */
+  --accent:#1B263B;
+  --accent2:#7BC9FF;
+}
+
+html[data-theme="dark"]{
+  --bg0:#0b1220;
+  --bg1:#0d1b2a;
+
+  --card:rgba(13,27,42,.70);
+  --card2:rgba(13,27,42,.86);
+
+  --ink:#eef6ff;
+  --muted:#b8c6db;
+  --muted2:#93a7c1;
+
+  --stroke:rgba(224,225,221,.18);
+  --stroke2:rgba(224,225,221,.10);
+
+  --accent:#93c5fd;
+  --accent2:#7dd3fc;
+}
+
+/* Theme-aware page background */
+html:not([data-theme="dark"]) body{
+  color:var(--ink) !important;
+  background:
+    radial-gradient(1200px 700px at 80% -10%, rgba(125,211,252,.20), transparent 60%),
+    radial-gradient(900px 700px at 10% 18%, rgba(37,99,235,.10), transparent 62%),
+    radial-gradient(760px 520px at 50% 110%, rgba(125,211,252,.05), transparent 66%),
+    linear-gradient(180deg,var(--bg0),var(--bg1)) !important;
+}
+
+html[data-theme="dark"] body{
+  color:var(--ink) !important;
+  background:
+    radial-gradient(900px 520px at 18% 0%, rgba(125,211,252,.10), transparent 60%),
+    radial-gradient(700px 520px at 85% 10%, rgba(147,197,253,.08), transparent 62%),
+    linear-gradient(180deg,var(--bg0),var(--bg1)) !important;
+}
+
+/* Header glass (light) + readable pills */
+html:not([data-theme="dark"]) .site-header{
+  background: rgba(255,255,255,.78) !important;
+  border-bottom:1px solid var(--stroke2) !important;
+}
+
+html:not([data-theme="dark"]) .pill{
+  background: rgba(255,255,255,.60);
+  border: 1px solid rgba(148,163,184,.70);
+  color: var(--ink);
+}
+html:not([data-theme="dark"]) .pill:hover{
+  background: rgba(255,255,255,.78);
+  border-color: rgba(148,163,184,.88);
+}
+html:not([data-theme="dark"]) .pill.is-active{
+  background: rgba(15,29,62,.92);
+  color:#fff;
+  border-color: rgba(15,29,62,.92);
+}
+
+/* Buttons readable across themes (hero buttons keep their own overrides) */
+html:not([data-theme="dark"]) .btn{
+  background: rgba(255,255,255,.80);
+  border-color: var(--stroke2);
+  color: var(--ink);
+}
+html:not([data-theme="dark"]) .btn:hover{ background: rgba(255,255,255,.98); }
+
+html[data-theme="dark"] .btn{
+  background: rgba(13,27,42,.72);
+  border-color: var(--stroke2);
+  color: var(--ink);
+}
+html[data-theme="dark"] .btn:hover{ background: rgba(13,27,42,.88); }
+
+/* Cards must not force white backgrounds in dark mode */
+.card{ color: var(--ink); }
+.card.person-card,
+.place-card,
+.names-grid .person-card{
+  background: var(--card2);
+  border: 1px solid var(--stroke2);
+  color: var(--ink);
+}
+
+/* Chips + settlement pills need dark-mode contrast */
+html[data-theme="dark"] .chip-link,
+html[data-theme="dark"] .settlement-pill{
+  background: rgba(13,27,42,.72);
+  border-color: var(--stroke2);
+  color: var(--ink);
+}
+html[data-theme="dark"] .chip-link:hover,
+html[data-theme="dark"] .settlement-pill:hover{ background: rgba(13,27,42,.88); }
+
+html[data-theme="dark"] .chip-link.is-active,
+html[data-theme="dark"] .chip-link[aria-current="page"],
+html[data-theme="dark"] .settlement-pill.is-active,
+html[data-theme="dark"] .settlement-pill[aria-current="page"]{
+  background: rgba(147,197,253,.18);
+  border-color: rgba(147,197,253,.30);
+}
+
+/* Modal / tooltip contrast */
+html:not([data-theme="dark"]) .modal,
+html:not([data-theme="dark"]) .tooltip{
+  background: rgba(255,255,255,.96);
+  border-color: var(--stroke);
+  color: var(--ink);
+}
+html[data-theme="dark"] .modal,
+html[data-theme="dark"] .tooltip{
+  background: rgba(13,27,42,.92);
+  border-color: rgba(224,225,221,.18);
+  color: var(--ink);
+}
