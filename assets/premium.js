@@ -66,4 +66,38 @@
     setTimeout(initReveal, 300);
     setTimeout(initReveal, 900);
   });
+
+  function upgradeMemorialCards(){
+    try{
+      document.querySelectorAll('.card.person-card').forEach(card=>{
+        if(card.classList.contains('memorial-card')) return;
+        const a = card.querySelector('a[href*="p/p"]');
+        if(!a) return;
+        const href = a.getAttribute('href') || '';
+        const m = href.match(/p\/(p\d+)\.html/);
+        if(!m) return;
+        const id = m[1];
+
+        // derive relative prefix from link (people.html vs /place/* etc.)
+        let prefix = '';
+        if(href.startsWith('../')) prefix = '../';
+        else if(href.startsWith('../../')) prefix = '../../';
+
+        card.classList.add('memorial-card');
+        card.style.setProperty('--card-bg', `url(${prefix}assets/people/${id}.jpg), url(${prefix}assets/og-person/${id}.png)`);
+
+        // make whole card clickable
+        card.addEventListener('click', (e)=>{
+          const t = e.target;
+          if(t && (t.tagName === 'A' || t.closest('a'))) return;
+          window.location.href = href;
+        });
+
+        // accessibility: keep focusable link
+        a.setAttribute('aria-label', `פתיחה: ${card.querySelector('.person-name')?.textContent?.trim() || ''}`);
+      });
+    }catch(e){}
+  }
+
+  upgradeMemorialCards();
 })();
