@@ -6,30 +6,34 @@
 */
 
 :root{
-  --bg0:#fbfdff;
-  --bg1:#eef6ff;
+  /* צבעי רקע - מעבר לנייר חם */
+  --bg0:#fcf9f2;
+  --bg1:#f3eee3;
 
-  --card:rgba(255,255,255,.88);
+  /* משטחים */
+  --card:rgba(255,255,255,.90);
   --card2:rgba(255,255,255,.96);
 
-  --ink:#0f172a;
-  --muted:#475569;
-  --muted2:#64748b;
+  /* טקסט */
+  --ink:#1a1c1e;
+  --muted:#5d635d;
+  --muted2:#7b8277;
 
-  --stroke:rgba(15,23,42,.12);
-  --stroke2:rgba(15,23,42,.08);
+  /* קווים */
+  --stroke:rgba(107,115,77,.10);
+  --stroke2:rgba(139,38,38,.10);
 
-  /* calm sky accents */
-  --accent:#2563eb;
-  --accent2:#7dd3fc;
-  --chip:rgba(37,99,235,.12);
+  /* צבעי שער הנגב */
+  --accent:#8b2626;
+  --accent2:#6b734d;
+  --chip:rgba(139,38,38,.08);
 
-  /* warm candle hint (used only where meaningful) */
+  /* חום עדין */
   --warm:#f59e0b;
   --warm2:#fdba74;
 
-  --shadow:0 26px 70px rgba(15,23,42,.10);
-  --shadow-sm:0 14px 34px rgba(15,23,42,.10);
+  --shadow:0 20px 50px rgba(26,28,30,.05);
+  --shadow-sm:0 12px 30px rgba(26,28,30,.06);
 
   --radius:26px;
   --radius-sm:18px;
@@ -37,29 +41,28 @@
   --serif:'Frank Ruhl Libre',serif;
   --sans:'Assistant',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
 
-  /* visualization panel */
-  --panel0:#0b1226;
-  --panel1:#0f1d3e;
-  --panelStroke:rgba(255,255,255,.12);
+  --panel0:#3e312a;
+  --panel1:#5c4a3f;
+  --panelStroke:rgba(255,255,255,.14);
 }
 
-*{box-sizing:border-box;}
-html,body{height:100%;}
 
-body{
+*{box-sizing:border-box;}
+html,body{
   margin:0;
   font-family:var(--sans);
   color:var(--ink);
-  font-size: 17px;
-  line-height: 1.75;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  background:
-    radial-gradient(1200px 700px at 80% -10%, rgba(125,211,252,.22), transparent 60%),
-    radial-gradient(900px 700px at 10% 18%, rgba(37,99,235,.12), transparent 62%),
-    radial-gradient(760px 520px at 50% 110%, rgba(125,211,252,.06), transparent 66%),
-    linear-gradient(180deg,var(--bg0),var(--bg1));
+  font-size:17px;
+  line-height:1.75;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  background-color:var(--bg0);
+  background-image:
+    linear-gradient(to bottom, rgba(252,249,242,.92), rgba(243,238,227,.86)),
+    url("https://www.transparenttextures.com/patterns/felt.png");
+  background-attachment:fixed,fixed;
 }
+
 
 /* subtle paper grain */
 body::before{
@@ -3314,4 +3317,193 @@ body.people-page{
   .people-page .person-tile-name{ font-size: 1.06rem !important; }
   .people-page .person-tile-overlay{ padding: 14px 12px 16px !important; }
   .people-page .anemone-placeholder{ width: 72px; height: 72px; font-size: 1.9rem; }
+}
+
+
+/* ===== Paper memorial refresh ===== */
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  background:radial-gradient(circle at 12% 18%, rgba(139,38,38,.045), transparent 28%), radial-gradient(circle at 86% 12%, rgba(107,115,77,.06), transparent 30%);
+  opacity:1;
+  mix-blend-mode:multiply;
+  z-index:-1;
+}
+body::after{ display:none; }
+
+.site-header{
+  background:rgba(252,249,242,.90);
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--stroke);
+}
+.site-header::after{
+  background:linear-gradient(90deg, transparent, rgba(139,38,38,.18), rgba(107,115,77,.22), transparent);
+}
+.logo{
+  background:
+    radial-gradient(circle at 50% 24%, rgba(245,222,179,.95), rgba(245,222,179,0) 58%),
+    radial-gradient(circle at 50% 75%, rgba(139,38,38,.35), rgba(139,38,38,0) 62%),
+    linear-gradient(135deg, #7a2b2b, #b76b53);
+  box-shadow:0 14px 28px rgba(139,38,38,.16);
+}
+.brand .meta strong,
+.brand-title strong{ font-family:var(--serif); }
+.pill{
+  border:1px solid rgba(139,38,38,.14);
+  background:rgba(255,255,255,.56);
+}
+.pill.is-active,
+.pill:hover{
+  border-color:rgba(139,38,38,.26);
+  background:rgba(139,38,38,.06);
+  color:var(--accent);
+}
+.cta,.btn.primary{
+  background:var(--accent)!important;
+  border-color:var(--accent)!important;
+  color:#fff!important;
+  box-shadow:0 10px 24px rgba(139,38,38,.14);
+}
+
+.people-page .page-hero .card{
+  background:
+    linear-gradient(to bottom, rgba(253,249,242,.45), rgba(252,249,242,.92)),
+    radial-gradient(circle at top right, rgba(139,38,38,.05), transparent),
+    linear-gradient(135deg, #eef2e6 0%, #f3eee3 100%)!important;
+  border:1px solid var(--stroke)!important;
+  box-shadow:var(--shadow)!important;
+}
+.people-page .page-title,
+.people-page .section-title,
+h1,h2,h3{
+  font-family:var(--serif)!important;
+}
+.people-page .page-title{
+  color:var(--accent)!important;
+  letter-spacing:-.02em;
+}
+.people-page .page-title::after{
+  content:"";
+  display:block;
+  width:64px;
+  height:3px;
+  margin-top:12px;
+  border-radius:999px;
+  background:linear-gradient(90deg, var(--accent), #c58b75);
+}
+.people-page .page-sub{ color:var(--muted); }
+.people-page .controls input,
+.people-page .controls select{
+  background:rgba(255,255,255,.88);
+  border:1px solid var(--stroke);
+}
+.people-page .tagbar .tag,
+.people-page .az-btn{
+  background:rgba(255,255,255,.85);
+  border:1px solid var(--stroke);
+}
+.people-page .tagbar .tag.is-active,
+.people-page .az-btn:hover{
+  color:var(--accent);
+  border-color:rgba(139,38,38,.22);
+  background:rgba(139,38,38,.06);
+}
+
+.people-page .people-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+  gap:30px;
+  padding:8px 0 30px;
+}
+.people-page .people-grid .person-card.person-tile.memorial-gallery-card{
+  background:var(--card2)!important;
+  border:1px solid var(--stroke)!important;
+  border-radius:6px!important;
+  box-shadow:2px 4px 12px rgba(0,0,0,.03)!important;
+  overflow:hidden;
+}
+.people-page .people-grid .person-card.person-tile.memorial-gallery-card:hover{
+  transform:translateY(-10px);
+  border-color:rgba(107,115,77,.35)!important;
+  box-shadow:0 30px 60px rgba(0,0,0,.08)!important;
+}
+.people-page .person-tile-link{
+  min-height:100%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:38px 22px 26px;
+  text-align:center;
+  text-decoration:none;
+}
+.people-page .avatar-container,
+.people-page .person-tile-media{
+  width:110px;
+  height:110px;
+  margin:0 auto 22px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:var(--bg1);
+  border:1px solid var(--stroke2);
+  transition:transform .45s ease;
+  overflow:hidden;
+}
+.people-page .person-card:hover .avatar-container,
+.people-page .person-card:hover .person-tile-media{
+  transform:scale(1.05);
+}
+.people-page .person-img,
+.people-page .person-tile-img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  filter:grayscale(100%) contrast(1.06);
+}
+.people-page .person-tile-img.is-missing{ display:none; }
+.people-page .anemone-placeholder{
+  width:55px;
+  height:55px;
+  background-color:var(--accent);
+  opacity:.8;
+  font-size:0!important;
+  color:transparent!important;
+  mask:url("data:image/svg+xml;charset=UTF-8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M12 22s5-4 5-9c0-2.76-2.24-5-5-5s-5 2.24-5 5c0 5 5 9 5 9zm0-20s3 3 3 5c0 1.66-1.34 3-3 3s-3-1.34-3-3c0-2 3-5 3-5z'/></svg>") no-repeat center;
+  -webkit-mask:url("data:image/svg+xml;charset=UTF-8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M12 22s5-4 5-9c0-2.76-2.24-5-5-5s-5 2.24-5 5c0 5 5 9 5 9zm0-20s3 3 3 5c0 1.66-1.34 3-3 3s-3-1.34-3-3c0-2 3-5 3-5z'/></svg>") no-repeat center;
+}
+.people-page .person-tile-overlay{
+  position:static;
+  background:none!important;
+  color:inherit;
+  padding:0;
+}
+.people-page .person-tile-name{
+  font-family:var(--serif)!important;
+  font-size:1.5rem;
+  font-weight:700;
+  color:var(--ink)!important;
+  line-height:1.25;
+  margin:0 0 8px;
+  letter-spacing:-.02em;
+}
+.people-page .person-tile-place,
+.people-page .person-tile-date{
+  font-size:1rem;
+  color:var(--accent)!important;
+  font-weight:600;
+  opacity:.82;
+}
+.people-page .person-tile-date{ color:var(--muted)!important; font-size:.92rem; margin-top:4px; }
+
+@media (max-width: 640px){
+  .people-page .people-grid{ grid-template-columns:1fr 1fr; gap:16px; }
+  .people-page .person-tile-link{ padding:26px 14px 20px; }
+  .people-page .avatar-container,
+  .people-page .person-tile-media{ width:88px; height:88px; margin-bottom:16px; }
+  .people-page .anemone-placeholder{ width:46px; height:46px; }
+  .people-page .person-tile-name{ font-size:1.16rem; }
 }
