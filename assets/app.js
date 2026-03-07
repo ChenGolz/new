@@ -1429,6 +1429,153 @@ async function initPersonPage() {
 /* =======================
    Init
 ======================= */
+
+
+function initAnimatedCounters(){
+  const heroStats = document.querySelector('.hero-card .stats-bar');
+  if(!heroStats || heroStats.dataset.enhanced === '1') return;
+  const peopleCount = document.querySelectorAll('#homeDirectory li').length || 86;
+  const placeCount = document.querySelectorAll('.chips .chip-link').length || 6;
+  heroStats.dataset.enhanced = '1';
+  heroStats.innerHTML = `
+    <div class="stat-counter"><span class="stat-number" data-target="${peopleCount}">0</span><span class="stat-label">שמות</span></div>
+    <div class="stat-divider" aria-hidden="true"></div>
+    <div class="stat-counter"><span class="stat-number" data-target="${placeCount}">0</span><span class="stat-label">יישובים</span></div>
+    <div class="stat-divider" aria-hidden="true"></div>
+    <div class="stat-counter stat-counter-text"><span class="stat-number stat-word">לב אחד</span><span class="stat-label">זוכרים יחד</span></div>
+  `;
+
+  const nums = Array.from(heroStats.querySelectorAll('.stat-number[data-target]'));
+  const animate = ()=>{
+    nums.forEach(el=>{
+      const target = Number(el.dataset.target || 0);
+      const start = performance.now();
+      const duration = 1400;
+      const step = (now)=>{
+        const p = Math.min(1, (now - start) / duration);
+        const eased = 1 - Math.pow(1-p, 3);
+        el.textContent = String(Math.round(target * eased));
+        if(p < 1) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    });
+  };
+  const io = new IntersectionObserver((entries)=>{
+    if(entries.some(e=>e.isIntersecting)){
+      animate();
+      io.disconnect();
+    }
+  }, { threshold: .35 });
+  io.observe(heroStats);
+}
+
+function initBottomNav(){
+  if(document.getElementById('bottomNav')) return;
+  const body = document.body;
+  if(!body) return;
+  const path = location.pathname.split('/').pop() || 'index.html';
+  const items = [
+    { href: siteUrl('index.html'), key: 'index.html', icon: '⌂', label: 'בית' },
+    { href: siteUrl('people.html'), key: 'people.html', icon: '⌕', label: 'חיפוש' },
+    { href: siteUrl('places.html'), key: 'places.html', icon: '◫', label: 'יישובים' },
+    { href: siteUrl('people.html'), key: 'people.html', icon: '☰', label: 'שמות' }
+  ];
+  const nav = document.createElement('nav');
+  nav.id = 'bottomNav';
+  nav.className = 'bottom-nav';
+  nav.setAttribute('aria-label', 'ניווט תחתון');
+  nav.innerHTML = items.map(item=>`
+    <a class="bottom-nav-link ${path === item.key ? 'is-active' : ''}" href="${item.href}" aria-current="${path === item.key ? 'page' : 'false'}">
+      <span class="bottom-nav-icon" aria-hidden="true">${item.icon}</span>
+      <span>${item.label}</span>
+    </a>`).join('');
+  body.appendChild(nav);
+}
+
+function initFooterEnhancements(){
+  const footerGrid = document.querySelector('.site-footer .footer-grid');
+  if(!footerGrid || footerGrid.dataset.enhanced === '1') return;
+  footerGrid.dataset.enhanced = '1';
+  const box = document.createElement('div');
+  box.innerHTML = `
+    <strong>נגישות ועדכונים</strong>
+    <p class="muted small" style="margin:0 0 10px;">האתר תומך בדילוג לתוכן, טקסט מוגדל, מצב כהה ושיתוף נגיש.</p>
+    <div class="footer-actions">
+      <a class="btn small" href="${siteUrl('about.html')}#accessibility">הצהרת נגישות</a>
+      <a class="btn small" href="${siteUrl('about.html')}#how">הוספת תוכן</a>
+    </div>`;
+  footerGrid.appendChild(box);
+}
+
+function initPlaceCardPhotos(){
+  document.querySelectorAll('.names-grid .person-card').forEach(card=>{
+    if(card.querySelector('.person-thumb')) return;
+    const href = card.getAttribute('href') || '';
+    const m = href.match(/p\/(p\d+)\.html/);
+    if(!m) return;
+    const pid = m[1];
+    const img = document.createElement('span');
+    img.className = 'person-thumb';
+    img.style.backgroundImage = `url(${siteUrl('assets/og-person/'+pid+'.png')})`;
+    card.insertAdjacentElement('afterbegin', img);
+  });
+}
+
+function initPersonNavigation(){
+  const body = document.body;
+  const pid = body?.dataset?.personId;
+  if(!pid) return;
+  loadPeople().then(people=>{
+    const person = people.find(p=>p.id === pid);
+    if(!person) return;
+    const samePlace = people.filter(p=>p.place === person.place).sort((a,b)=> String(a.name).localeCompare(String(b.name), 'he'));
+    const idx = samePlace.findIndex(p=>p.id === pid);
+    const prev = idx > 0 ? samePlace[idx - 1] : null;
+    const next = idx >= 0 && idx < samePlace.length - 1 ? samePlace[idx + 1] : null;
+
+    const header = document.querySelector('.memorial-header');
+    if(header && !header.querySelector('.breadcrumbs')){
+      const bc = document.createElement('nav');
+      bc.className = 'breadcrumbs memorial-breadcrumbs';
+      bc.setAttribute('aria-label', 'פירורי לחם');
+      bc.innerHTML = `
+        <a href="${siteUrl('index.html')}">דף הבית</a><span aria-hidden="true">/</span>
+        <a href="${siteUrl('places.html')}">יישובים</a><span aria-hidden="true">/</span>
+        <a href="${siteUrl('place/'+encodeURIComponent(placeSlug(person.place))+'.html')}">${escapeHtml(person.place)}</a><span aria-hidden="true">/</span>
+        <span>${escapeHtml(person.name)}</span>`;
+      header.insertAdjacentElement('afterbegin', bc);
+    }
+
+    const actions = document.querySelector('.person-actions');
+    if(actions && !document.getElementById('waShareBtnLite')){
+      const wa = document.createElement('button');
+      wa.className = 'btn';
+      wa.id = 'waShareBtnLite';
+      wa.type = 'button';
+      wa.textContent = 'וואטסאפ';
+      wa.addEventListener('click', ()=>{
+        const msg = `לזכר ${person.name} — ${location.href}`;
+        window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank', 'noopener');
+      });
+      actions.appendChild(wa);
+    }
+
+    if(document.getElementById('personPager')) return;
+    const nav = document.createElement('nav');
+    nav.id = 'personPager';
+    nav.className = 'person-pager';
+    nav.setAttribute('aria-label', 'מעבר בין פרופילים');
+    nav.innerHTML = `
+      ${prev ? `<a class="card pager-link" href="../p/${prev.id}.html"><span class="pager-dir">הקודם</span><strong>${escapeHtml(prev.name)}</strong><span class="muted small">${escapeHtml(prev.place)}</span></a>` : `<span class="card pager-link is-disabled"><span class="pager-dir">הקודם</span><strong>אין פרופיל קודם</strong></span>`}
+      <a class="card pager-link pager-link-center" href="../place/${placeSlug(person.place)}.html"><span class="pager-dir">חזרה לקהילה</span><strong>${escapeHtml(person.place)}</strong><span class="muted small">כל השמות ביישוב</span></a>
+      ${next ? `<a class="card pager-link" href="../p/${next.id}.html"><span class="pager-dir">הבא</span><strong>${escapeHtml(next.name)}</strong><span class="muted small">${escapeHtml(next.place)}</span></a>` : `<span class="card pager-link is-disabled"><span class="pager-dir">הבא</span><strong>אין פרופיל נוסף</strong></span>`}
+    `;
+    const main = document.querySelector('main#main');
+    if(main) main.appendChild(nav);
+  }).catch(()=>{});
+}
+
+
 document.addEventListener("DOMContentLoaded", async () => {
   try{ initTheme(); }catch{}
   try{ initHeaderExtras(); }catch{}
@@ -1446,6 +1593,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     await initPlaces();
     await initPlacePage();
     await initPersonPage();
+    try{ initAnimatedCounters(); }catch{}
+    try{ initBottomNav(); }catch{}
+    try{ initFooterEnhancements(); }catch{}
+    try{ initPlaceCardPhotos(); }catch{}
+    try{ initPersonNavigation(); }catch{}
   } catch (e) {
     const err = document.getElementById("fatal");
     if (err) err.textContent = "אירעה שגיאה בטעינת הנתונים.";

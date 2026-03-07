@@ -2873,3 +2873,64 @@ body.memorial-page::after{
   line-height: 1.65;
 }
 
+
+
+/* === memorial polish additions === */
+.hero-card::before{
+  background:
+    linear-gradient(180deg, var(--hero-ol-a), var(--hero-ol-b)),
+    url("hero-bg.jpg");
+  background-size: cover;
+  background-position: center;
+}
+.hero-card .stats-bar{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:12px;
+  align-items:stretch;
+}
+.stat-counter{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:10px 8px;
+  min-height:76px;
+}
+.stat-number{ font-size:clamp(1.6rem,4vw,2.6rem); font-weight:800; line-height:1; color:#fff; }
+.stat-word{ font-size:clamp(1.2rem,3vw,1.6rem); }
+.stat-label{ margin-top:6px; font-size:.86rem; color:rgba(255,255,255,.8); }
+.stat-divider{ width:1px; justify-self:center; background:rgba(255,255,255,.16); }
+.person-thumb{
+  width:54px; height:54px; border-radius:50%; flex:0 0 54px; background-size:cover; background-position:center; border:1px solid rgba(255,255,255,.45); box-shadow:0 8px 20px rgba(15,23,42,.14);
+}
+.names-grid .person-card{ align-items:center; }
+.names-grid .person-card .person-name{ display:block; }
+.names-grid .person-card .person-place{ margin-inline-start:auto; }
+.bottom-nav{
+  position:fixed; inset-inline:12px; bottom:12px; z-index:120; display:none; grid-template-columns:repeat(4,1fr); gap:8px; padding:10px; border-radius:22px; background:rgba(255,255,255,.84); backdrop-filter:blur(14px); border:1px solid rgba(148,163,184,.28); box-shadow:0 20px 40px rgba(15,23,42,.14);
+}
+.bottom-nav-link{
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; min-height:52px; text-decoration:none; font-size:12px; color:var(--muted); border-radius:16px;
+}
+.bottom-nav-link.is-active{ background:rgba(37,99,235,.08); color:var(--ink); font-weight:800; }
+.bottom-nav-icon{ font-size:18px; line-height:1; }
+.person-pager{
+  max-width:1180px; margin:22px auto 0; padding:0 18px 90px; display:grid; gap:14px; grid-template-columns:repeat(3,minmax(0,1fr));
+}
+.pager-link{ text-decoration:none; display:flex; flex-direction:column; gap:4px; min-height:110px; justify-content:center; }
+.pager-link strong{ font-size:1rem; }
+.pager-dir{ font-size:.8rem; color:var(--muted2); font-weight:700; }
+.pager-link.is-disabled{ opacity:.55; }
+.memorial-breadcrumbs{ margin-bottom:10px; }
+#waShareBtnLite{ white-space:nowrap; }
+#accessibility{ scroll-margin-top: 90px; }
+@media (max-width: 860px){
+  .person-pager{ grid-template-columns:1fr; padding-bottom:100px; }
+  .hero-card .stats-bar{ grid-template-columns:1fr; }
+  .stat-divider{ display:none; }
+}
+@media (max-width: 780px){
+  .bottom-nav{ display:grid; }
+  body{ padding-bottom:88px; }
+}
