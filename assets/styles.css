@@ -3098,3 +3098,81 @@ html[data-theme="dark"] body.memorial-page .site-footer{
   background:transparent !important;
   color:#4b4f46 !important;
 }
+
+
+/* === Homepage warm content card fix (March 2026, pass 2) === */
+body:not(.memorial-page) .section .card,
+body:not(.memorial-page) .card.longform,
+body:not(.memorial-page) .card.article,
+body:not(.memorial-page) .section-card,
+body:not(.memorial-page) .content-card,
+body:not(.memorial-page) .panel{
+  background:#fffdf9 !important;
+  color:#1a1c1e !important;
+  border:1px solid rgba(107,115,77,.12) !important;
+  box-shadow:0 18px 40px rgba(26,28,30,.06) !important;
+}
+
+body:not(.memorial-page) .section .card h2,
+body:not(.memorial-page) .section .card h3,
+body:not(.memorial-page) .section-title,
+body:not(.memorial-page) .page-title{
+  color:#8b2626 !important;
+}
+
+body:not(.memorial-page) .section .card p,
+body:not(.memorial-page) .section .card li,
+body:not(.memorial-page) .section .card .muted,
+body:not(.memorial-page) .section .card .small,
+body:not(.memorial-page) .directory .muted{
+  color:#4c5148 !important;
+}
+
+body:not(.memorial-page) .page-hero .hero-card,
+body:not(.memorial-page) .hero-card{
+  background:linear-gradient(180deg, rgba(255,251,245,.98), rgba(248,241,232,.96)) !important;
+  border:1px solid rgba(107,115,77,.12) !important;
+  box-shadow:0 24px 60px rgba(26,28,30,.08) !important;
+}
+
+body:not(.memorial-page) .stats-bar,
+body:not(.memorial-page) .stats-pill,
+body:not(.memorial-page) .stat-card{
+  background:rgba(255,252,247,.88) !important;
+  color:#5b4033 !important;
+  border:1px solid rgba(107,115,77,.12) !important;
+}
+
+body:not(.memorial-page) .site-header,
+html[data-theme="dark"] body:not(.memorial-page) .site-header{
+  background:rgba(255,251,245,.92) !important;
+  border-bottom:1px solid rgba(107,115,77,.12) !important;
+  box-shadow:0 8px 24px rgba(26,28,30,.04) !important;
+}
+
+body:not(.memorial-page) .site-nav .pill,
+body:not(.memorial-page) .silent-toggle,
+body:not(.memorial-page) .menu-btn,
+html[data-theme="dark"] body:not(.memorial-page) .site-nav .pill,
+html[data-theme="dark"] body:not(.memorial-page) .silent-toggle,
+html[data-theme="dark"] body:not(.memorial-page) .menu-btn{
+  background:#fffdf9 !important;
+  color:#5b4033 !important;
+  border:1px solid rgba(139,38,38,.12) !important;
+}
+
+body:not(.memorial-page) .site-nav .pill.is-active,
+body:not(.memorial-page) .site-nav .pill[aria-current="page"],
+body:not(.memorial-page) .cta,
+html[data-theme="dark"] body:not(.memorial-page) .site-nav .pill.is-active,
+html[data-theme="dark"] body:not(.memorial-page) .site-nav .pill[aria-current="page"],
+html[data-theme="dark"] body:not(.memorial-page) .cta{
+  background:#8b2626 !important;
+  color:#fffaf5 !important;
+  border-color:#8b2626 !important;
+}
+
+body:not(.memorial-page) .directory li{
+  background:#fffdf9 !important;
+  border:1px solid rgba(107,115,77,.10) !important;
+}
