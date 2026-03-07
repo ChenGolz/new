@@ -764,15 +764,14 @@ async function initPeopleList() {
       const href = siteUrl("p/" + escapeHtml(p.id) + ".html");
       const imgPrimary = siteUrl("assets/people/" + escapeHtml(p.id) + ".jpg");
       return `
-        <article class="person-card person-tile memorial-gallery-card" data-letter="${letter}" data-place="${escapeAttr(p.place || "")}" id="person-${escapeAttr(p.id)}">
+        <article class="person-card person-tile" data-letter="${letter}" data-place="${escapeAttr(p.place || "")}" id="person-${escapeAttr(p.id)}">
           <a class="person-tile-link" href="${href}" aria-label="לפתיחה: ${name}">
-            <div class="person-tile-media avatar-container">
-              <img class="person-tile-img person-img" data-person-id="${escapeAttr(p.id)}" src="${imgPrimary}" alt="${name}" loading="lazy" decoding="async"/>
-              <div class="anemone-placeholder" aria-hidden="true">🌸</div>
+            <div class="person-tile-media">
+              <img class="person-tile-img" data-person-id="${escapeAttr(p.id)}" src="${imgPrimary}" alt="" loading="lazy" decoding="async"/>
             </div>
-            <div class="person-tile-overlay">
-              <div class="person-tile-name">${name}</div>
+            <div class="person-tile-overlay" aria-hidden="true">
               ${place ? `<div class="person-tile-place">${place}</div>` : ``}
+              <div class="person-tile-name">${name}</div>
               ${(() => {
                 const meta = (metaAll && metaAll[p.id]) ? metaAll[p.id] : null;
                 const dateIso = meta && meta.date ? String(meta.date) : "";
@@ -784,9 +783,12 @@ async function initPeopleList() {
         </article>`;
     }).join("");
 
+    // Fallback: if there is no photo in /assets/people, use the per-person OG image.
     root.querySelectorAll("img.person-tile-img[data-person-id]").forEach(img => {
+      const pid = img.getAttribute("data-person-id");
       img.addEventListener("error", () => {
-        img.classList.add("is-missing");
+        img.src = siteUrl("assets/og-person/" + pid + ".png");
+        img.classList.add("is-og");
       }, { once: true });
     });
 }
@@ -886,10 +888,10 @@ async function initPlacesMap(){
 function initTheme(){
   const key = "theme-mode";
   const html = document.documentElement;
-  const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
   const saved = localStorage.getItem(key);
-  const mode = saved || "dark";
+  const mode = saved === "dark" ? "light" : (saved || "light");
   html.dataset.theme = mode;
+  localStorage.setItem(key, mode);
 }
 
 function toggleTheme(){
