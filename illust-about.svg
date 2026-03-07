@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 520" role="img" aria-label="איור ספר זיכרון">
+  <defs>
+    <linearGradient id="bg" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0" stop-color="#eff6ff"/>
+      <stop offset="1" stop-color="#f8fbff"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="520" rx="28" fill="url(#bg)"/>
+
+  <!-- book shadow -->
+  <ellipse cx="410" cy="410" rx="250" ry="38" fill="#0f172a" opacity=".06"/>
+
+  <!-- left page -->
+  <path d="M170 150h250c28 0 52 12 70 32v240c-18-20-42-32-70-32H170c-22 0-40-18-40-40V190c0-22 18-40 40-40z" fill="#fff" opacity=".94" stroke="#1e3a8a" stroke-opacity=".14"/>
+
+  <!-- right page -->
+  <path d="M630 150H380c-28 0-52 12-70 32v240c18-20 42-32 70-32h250c22 0 40-18 40-40V190c0-22-18-40-40-40z" fill="#fff" opacity=".92" stroke="#1e3a8a" stroke-opacity=".14"/>
+
+  <!-- spine -->
+  <path d="M400 170v230" stroke="#1e3a8a" stroke-opacity=".20" stroke-width="6" stroke-linecap="round"/>
+
+  <!-- lines -->
+  <g stroke="#1d4ed8" stroke-opacity=".22" stroke-width="6" stroke-linecap="round">
+    <path d="M200 220h220"/>
+    <path d="M200 260h200"/>
+    <path d="M200 300h210"/>
+    <path d="M420 220h220"/>
+    <path d="M420 260h200"/>
+    <path d="M420 300h210"/>
+  </g>
+
+  <!-- bookmark -->
+  <path d="M520 150v86l20-14 20 14v-86" fill="#93c5fd" opacity=".45"/>
+
+  <rect x="18" y="18" width="764" height="484" rx="22" fill="none" stroke="#1e3a8a" stroke-opacity=".10"/>
+</svg>
