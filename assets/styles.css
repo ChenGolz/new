@@ -3335,3 +3335,43 @@ body::after{ opacity:.08 !important; }
 }
 
 .theme-toggle, #themeToggle{ display:none !important; }
+
+
+/* === Anemones pass === */
+.hero-media, .hero-illust{ align-items:center; }
+.hero-img,
+.hero-illust img{
+  width:100%;
+  max-width:560px;
+  max-height:290px;
+  object-fit:cover;
+  object-position:center;
+  border-radius:24px !important;
+  background:#f7f1e6 !important;
+}
+.hero-anemones img,
+.page-hero .hero-illust img[src*="anemone"],
+.page-hero .hero-illust img[src*="anemones"],
+.hero-media img[src*="anemone"],
+.hero-media img[src*="anemones"]{
+  padding:0 !important;
+  border:1px solid rgba(139,38,38,.10) !important;
+  box-shadow:0 18px 42px rgba(117,79,48,.12) !important;
+}
+.page-hero .card{
+  overflow:hidden;
+}
+.page-hero .card::after{
+  content:"";
+  position:absolute;
+  inset:auto 0 0 0;
+  height:92px;
+  pointer-events:none;
+  background:linear-gradient(180deg, rgba(252,249,242,0), rgba(252,249,242,.74) 55%, rgba(252,249,242,.95));
+}
+.page-hero .card > *{ position:relative; z-index:1; }
+.page-title{ max-width:18ch; }
+.person-tile-img.is-placeholder{
+  background:#fcf7ef !important;
+  padding:16px !important;
+}
