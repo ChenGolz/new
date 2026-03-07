@@ -763,28 +763,33 @@ async function initPeopleList() {
       const name = escapeHtml(p.name);
       const href = siteUrl("p/" + escapeHtml(p.id) + ".html");
       const imgPrimary = siteUrl("assets/people/" + escapeHtml(p.id) + ".jpg");
-      const meta = (metaAll && metaAll[p.id]) ? metaAll[p.id] : null;
-      const dateIso = meta && meta.date ? String(meta.date) : "";
-      const dateText = dateIso ? formatHebrewDate(dateIso) : "";
       return `
-        <article class="person-card memorial-gallery-card" data-letter="${letter}" data-place="${escapeAttr(p.place || "")}" id="person-${escapeAttr(p.id)}">
-          <a class="person-card-link" href="${href}" aria-label="לפתיחה: ${name}">
-            <div class="avatar-container">
-              <img class="person-img" data-person-id="${escapeAttr(p.id)}" src="${imgPrimary}" alt="${name}" loading="lazy" decoding="async"/>
-              <div class="anemone-placeholder" aria-hidden="true"></div>
+        <article class="person-card person-tile" data-letter="${letter}" data-place="${escapeAttr(p.place || "")}" id="person-${escapeAttr(p.id)}">
+          <a class="person-tile-link" href="${href}" aria-label="לפתיחה: ${name}">
+            <div class="person-tile-media">
+              <img class="person-tile-img" data-person-id="${escapeAttr(p.id)}" src="${imgPrimary}" alt="" loading="lazy" decoding="async"/>
             </div>
-            <h3 class="person-name">${name}</h3>
-            ${place ? `<div class="person-meta">${place}</div>` : ``}
-            ${dateText ? `<div class="person-date">${escapeHtml(dateText)}</div>` : ``}
+            <div class="person-tile-overlay" aria-hidden="true">
+              ${place ? `<div class="person-tile-place">${place}</div>` : ``}
+              <div class="person-tile-name">${name}</div>
+              ${(() => {
+                const meta = (metaAll && metaAll[p.id]) ? metaAll[p.id] : null;
+                const dateIso = meta && meta.date ? String(meta.date) : "";
+                const dateText = dateIso ? formatHebrewDate(dateIso) : "";
+                return dateText ? `<div class="person-tile-date">${escapeHtml(dateText)}</div>` : ``;
+              })()}
+            </div>
           </a>
         </article>`;
     }).join("");
 
-    root.querySelectorAll("img.person-img[data-person-id]").forEach(img => {
+    // Respectful light fallback if there is no photo.
+    root.querySelectorAll("img.person-tile-img[data-person-id]").forEach(img => {
+      const pid = img.getAttribute("data-person-id");
       img.addEventListener("error", () => {
-        img.remove();
+        img.src = siteUrl("assets/person-placeholder.svg");
+        img.classList.add("is-placeholder");
       }, { once: true });
-      if (img.complete && img.naturalWidth === 0) img.remove();
     });
 }
 
@@ -883,23 +888,14 @@ async function initPlacesMap(){
 function initTheme(){
   const key = "theme-mode";
   const html = document.documentElement;
-  const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
-  const saved = localStorage.getItem(key);
-  const mode = saved || "light";
-  html.dataset.theme = mode;
+  try{ localStorage.setItem(key, "light"); }catch{}
+  html.dataset.theme = "light";
 }
 
 function toggleTheme(){
-  const key = "theme-mode";
   const html = document.documentElement;
-  const next = (html.dataset.theme === "dark") ? "light" : "dark";
-  html.dataset.theme = next;
-  localStorage.setItem(key, next);
-  const btn = document.getElementById("themeToggle");
-  if(btn){
-    btn.setAttribute("aria-pressed", next === "dark" ? "true" : "false");
-    btn.textContent = next === "dark" ? "מצב בהיר" : "מצב כהה";
-  }
+  html.dataset.theme = "light";
+  try{ localStorage.setItem("theme-mode", "light"); }catch{}
 }
 
 let ambientCtx = null;
@@ -965,24 +961,15 @@ function initHeaderExtras(){
     silent.id = "silentToggle";
     silent.type = "button";
     silent.setAttribute("aria-pressed","false");
-    silent.textContent = "תצוגה שקטה";
+    silent.textContent = "";
+    silent.setAttribute("aria-label","תצוגה שקטה");
     const menu = bar.querySelector(".menu-btn") || bar.querySelector("button");
     if(menu) menu.insertAdjacentElement("afterend", silent);
     else bar.appendChild(silent);
   }
 
-  // theme toggle
-  if(!document.getElementById("themeToggle")){
-    const btn = document.createElement("button");
-    btn.className = "theme-toggle";
-    btn.id = "themeToggle";
-    btn.type = "button";
-    const isDark = document.documentElement.dataset.theme === "dark";
-    btn.setAttribute("aria-pressed", isDark ? "true" : "false");
-    btn.textContent = isDark ? "מצב בהיר" : "מצב כהה";
-    const silent = document.getElementById("silentToggle");
-    silent?.insertAdjacentElement("afterend", btn);
-  }
+  // remove legacy theme toggle – site is light-only now
+  document.getElementById("themeToggle")?.remove();
 
   // optional ambient
   if(!document.getElementById("audioToggle")){
@@ -992,11 +979,9 @@ function initHeaderExtras(){
     btn.type = "button";
     btn.setAttribute("aria-pressed","false");
     btn.innerHTML = `<span aria-hidden="true">🔇</span><span class="sr">סאונד</span>`;
-    const theme = document.getElementById("themeToggle");
-    theme?.insertAdjacentElement("afterend", btn);
+    const silent = document.getElementById("silentToggle");
+    silent?.insertAdjacentElement("afterend", btn);
   }
-
-  document.getElementById("themeToggle")?.addEventListener("click", toggleTheme);
 
   document.getElementById("audioToggle")?.addEventListener("click", (ev)=>{
     const btn = ev.currentTarget;
@@ -1074,24 +1059,26 @@ async function initPlacePage() {
     const dateText = dateIso ? formatHebrewDate(dateIso) : "";
 
     return `
-      <article class="person-card memorial-gallery-card" data-letter="${letter}" data-place="${escapeAttr(pl || "")}" id="person-${escapeAttr(p.id)}">
-        <a class="person-card-link" href="${href}" aria-label="לפתיחה: ${name}">
-          <div class="avatar-container">
-            <img class="person-img" data-person-id="${escapeAttr(p.id)}" src="${imgPrimary}" alt="${name}" loading="lazy" decoding="async"/>
-            <div class="anemone-placeholder" aria-hidden="true"></div>
+      <article class="person-card person-tile memorial-card" data-letter="${letter}" data-place="${escapeAttr(pl || "")}" id="person-${escapeAttr(p.id)}">
+        <a class="person-tile-link" href="${href}" aria-label="לפתיחה: ${name}">
+          <div class="person-tile-media">
+            <img class="person-tile-img" data-person-id="${escapeAttr(p.id)}" src="${imgPrimary}" alt="" loading="lazy" decoding="async"/>
           </div>
-          <h3 class="person-name">${name}</h3>
-          ${place ? `<div class="person-meta">${place}</div>` : ``}
-          ${dateText ? `<div class="person-date">${escapeHtml(dateText)}</div>` : ``}
+          <div class="person-tile-overlay" aria-hidden="true">
+            ${place ? `<div class="person-tile-place">${place}</div>` : ``}
+            <div class="person-tile-name">${name}</div>
+            ${dateText ? `<div class="person-tile-date">${escapeHtml(dateText)}</div>` : ``}
+          </div>
         </a>
       </article>`;
   }).join("");
 
-  root.querySelectorAll("img.person-img[data-person-id]").forEach(img => {
+  // Respectful light fallback if there is no photo.
+  root.querySelectorAll("img.person-tile-img[data-person-id]").forEach(img => {
     img.addEventListener("error", () => {
-      img.remove();
+      img.src = siteUrl("assets/person-placeholder.svg");
+      img.classList.add("is-placeholder");
     }, { once: true });
-    if (img.complete && img.naturalWidth === 0) img.remove();
   });
 }
 
