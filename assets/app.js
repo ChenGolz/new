@@ -890,7 +890,7 @@ function initTheme(){
   const html = document.documentElement;
   const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
   const saved = localStorage.getItem(key);
-  const mode = saved || "dark";
+  const mode = saved || "light";
   html.dataset.theme = mode;
 }
 
