@@ -3375,3 +3375,56 @@ body::after{ opacity:.08 !important; }
   background:#fcf7ef !important;
   padding:16px !important;
 }
+
+/* === Image adjustment pass (anemones19) === */
+.hero-media,
+.hero-illust{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+.hero-media .hero-img{
+  width:min(640px, 100%) !important;
+  aspect-ratio: 16 / 10;
+  height:auto !important;
+  object-fit:cover !important;
+  object-position:center 68% !important;
+  display:block;
+}
+
+.hero-illust img{
+  width:min(520px, 100%) !important;
+  aspect-ratio: 4 / 3;
+  height:auto !important;
+  object-fit:cover !important;
+  object-position:center 62% !important;
+  display:block;
+}
+
+.hero-anemones img{
+  width:min(500px, 100%) !important;
+  aspect-ratio: 5 / 4;
+  object-position:center 66% !important;
+}
+
+.page-hero .card{
+  min-height:auto !important;
+}
+
+.page-hero .card::after{
+  height:64px !important;
+}
+
+.page-hero .page-title{
+  max-width:none !important;
+}
+
+@media (max-width: 860px){
+  .hero-media .hero-img,
+  .hero-illust img,
+  .hero-anemones img{
+    width:100% !important;
+    max-width:100% !important;
+  }
+}
