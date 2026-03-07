@@ -763,33 +763,28 @@ async function initPeopleList() {
       const name = escapeHtml(p.name);
       const href = siteUrl("p/" + escapeHtml(p.id) + ".html");
       const imgPrimary = siteUrl("assets/people/" + escapeHtml(p.id) + ".jpg");
+      const meta = (metaAll && metaAll[p.id]) ? metaAll[p.id] : null;
+      const dateIso = meta && meta.date ? String(meta.date) : "";
+      const dateText = dateIso ? formatHebrewDate(dateIso) : "";
       return `
-        <article class="person-card person-tile" data-letter="${letter}" data-place="${escapeAttr(p.place || "")}" id="person-${escapeAttr(p.id)}">
-          <a class="person-tile-link" href="${href}" aria-label="לפתיחה: ${name}">
-            <div class="person-tile-media">
-              <img class="person-tile-img" data-person-id="${escapeAttr(p.id)}" src="${imgPrimary}" alt="" loading="lazy" decoding="async"/>
+        <article class="person-card memorial-gallery-card" data-letter="${letter}" data-place="${escapeAttr(p.place || "")}" id="person-${escapeAttr(p.id)}">
+          <a class="person-card-link" href="${href}" aria-label="לפתיחה: ${name}">
+            <div class="avatar-container">
+              <img class="person-img" data-person-id="${escapeAttr(p.id)}" src="${imgPrimary}" alt="${name}" loading="lazy" decoding="async"/>
+              <div class="anemone-placeholder" aria-hidden="true"></div>
             </div>
-            <div class="person-tile-overlay" aria-hidden="true">
-              ${place ? `<div class="person-tile-place">${place}</div>` : ``}
-              <div class="person-tile-name">${name}</div>
-              ${(() => {
-                const meta = (metaAll && metaAll[p.id]) ? metaAll[p.id] : null;
-                const dateIso = meta && meta.date ? String(meta.date) : "";
-                const dateText = dateIso ? formatHebrewDate(dateIso) : "";
-                return dateText ? `<div class="person-tile-date">${escapeHtml(dateText)}</div>` : ``;
-              })()}
-            </div>
+            <h3 class="person-name">${name}</h3>
+            ${place ? `<div class="person-meta">${place}</div>` : ``}
+            ${dateText ? `<div class="person-date">${escapeHtml(dateText)}</div>` : ``}
           </a>
         </article>`;
     }).join("");
 
-    // Fallback: if there is no photo in /assets/people, use the per-person OG image.
-    root.querySelectorAll("img.person-tile-img[data-person-id]").forEach(img => {
-      const pid = img.getAttribute("data-person-id");
+    root.querySelectorAll("img.person-img[data-person-id]").forEach(img => {
       img.addEventListener("error", () => {
-        img.src = siteUrl("assets/og-person/" + pid + ".png");
-        img.classList.add("is-og");
+        img.remove();
       }, { once: true });
+      if (img.complete && img.naturalWidth === 0) img.remove();
     });
 }
 
@@ -890,7 +885,7 @@ function initTheme(){
   const html = document.documentElement;
   const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
   const saved = localStorage.getItem(key);
-  const mode = "light";
+  const mode = saved || "light";
   html.dataset.theme = mode;
 }
 
@@ -1079,27 +1074,24 @@ async function initPlacePage() {
     const dateText = dateIso ? formatHebrewDate(dateIso) : "";
 
     return `
-      <article class="person-card person-tile memorial-card" data-letter="${letter}" data-place="${escapeAttr(pl || "")}" id="person-${escapeAttr(p.id)}">
-        <a class="person-tile-link" href="${href}" aria-label="לפתיחה: ${name}">
-          <div class="person-tile-media">
-            <img class="person-tile-img" data-person-id="${escapeAttr(p.id)}" src="${imgPrimary}" alt="" loading="lazy" decoding="async"/>
+      <article class="person-card memorial-gallery-card" data-letter="${letter}" data-place="${escapeAttr(pl || "")}" id="person-${escapeAttr(p.id)}">
+        <a class="person-card-link" href="${href}" aria-label="לפתיחה: ${name}">
+          <div class="avatar-container">
+            <img class="person-img" data-person-id="${escapeAttr(p.id)}" src="${imgPrimary}" alt="${name}" loading="lazy" decoding="async"/>
+            <div class="anemone-placeholder" aria-hidden="true"></div>
           </div>
-          <div class="person-tile-overlay" aria-hidden="true">
-            ${place ? `<div class="person-tile-place">${place}</div>` : ``}
-            <div class="person-tile-name">${name}</div>
-            ${dateText ? `<div class="person-tile-date">${escapeHtml(dateText)}</div>` : ``}
-          </div>
+          <h3 class="person-name">${name}</h3>
+          ${place ? `<div class="person-meta">${place}</div>` : ``}
+          ${dateText ? `<div class="person-date">${escapeHtml(dateText)}</div>` : ``}
         </a>
       </article>`;
   }).join("");
 
-  // Fallback: if there is no photo in /assets/people, use the per-person OG image.
-  root.querySelectorAll("img.person-tile-img[data-person-id]").forEach(img => {
-    const pid = img.getAttribute("data-person-id");
+  root.querySelectorAll("img.person-img[data-person-id]").forEach(img => {
     img.addEventListener("error", () => {
-      img.src = siteUrl("assets/og-person/" + pid + ".png");
-      img.classList.add("is-og");
+      img.remove();
     }, { once: true });
+    if (img.complete && img.naturalWidth === 0) img.remove();
   });
 }
 
