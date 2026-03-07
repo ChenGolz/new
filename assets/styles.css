@@ -2993,3 +2993,108 @@ body{
   box-shadow:0 22px 44px rgba(26,28,30,.08) !important;
 }
 .person-card .btn, .person-card .person-cta{ display:none !important; }
+
+/* === person memorial pages: force light memorial theme === */
+html{ color-scheme: light !important; }
+html[data-theme="dark"]{ color-scheme: light !important; }
+body.memorial-page{
+  background: linear-gradient(180deg, #fcf9f2 0%, #f4eee4 100%) !important;
+  color:#1a1c1e !important;
+}
+body.memorial-page::before,
+body.memorial-page::after{
+  opacity:.08 !important;
+  filter:none !important;
+}
+body.memorial-page .site-header,
+html[data-theme="dark"] body.memorial-page .site-header{
+  background: rgba(255,251,245,.92) !important;
+  border-bottom:1px solid rgba(107,115,77,.12) !important;
+  box-shadow: 0 8px 24px rgba(26,28,30,.04) !important;
+}
+body.memorial-page .site-nav .pill,
+body.memorial-page .silent-toggle,
+body.memorial-page .menu-btn{
+  background:#fffdf9 !important;
+  color:#5b4033 !important;
+  border:1px solid rgba(139,38,38,.12) !important;
+}
+body.memorial-page .site-nav .pill.is-active,
+body.memorial-page .site-nav .pill[aria-current="page"],
+body.memorial-page .cta{
+  background:#8b2626 !important;
+  color:#fffaf5 !important;
+  border-color:#8b2626 !important;
+}
+body.memorial-page .memorial-container{
+  background:transparent !important;
+}
+body.memorial-page .memorial-shell,
+html[data-theme="dark"] body.memorial-page .memorial-shell{
+  background: rgba(255,252,247,.96) !important;
+  border:1px solid rgba(107,115,77,.12) !important;
+  box-shadow:0 24px 60px rgba(26,28,30,.06) !important;
+}
+body.memorial-page .memorial-header h1,
+body.memorial-page .section-title,
+body.memorial-page h2,
+body.memorial-page h3{
+  color:#8b2626 !important;
+}
+body.memorial-page .memorial-header p,
+body.memorial-page .muted,
+body.memorial-page .small,
+body.memorial-page .id-dl dt,
+body.memorial-page .photo-note{
+  color:#5d635d !important;
+}
+body.memorial-page .id-card,
+body.memorial-page .story-section,
+body.memorial-page .card.article,
+body.memorial-page .section,
+html[data-theme="dark"] body.memorial-page .id-card,
+html[data-theme="dark"] body.memorial-page .story-section,
+html[data-theme="dark"] body.memorial-page .card.article,
+html[data-theme="dark"] body.memorial-page .section{
+  background:#fffdf9 !important;
+  border:1px solid rgba(107,115,77,.12) !important;
+  color:#1a1c1e !important;
+}
+body.memorial-page .memorial-photo,
+html[data-theme="dark"] body.memorial-page .memorial-photo{
+  background: linear-gradient(180deg, #faf4ea 0%, #f5eee4 100%) !important;
+  border:1px solid rgba(107,115,77,.12) !important;
+}
+body.memorial-page .profile-img{
+  background:#f5eee4 !important;
+  border-radius:20px !important;
+  opacity:.96 !important;
+}
+body.memorial-page .quote{
+  background:#fcf6ee !important;
+  border-inline-start: 4px solid #8b2626 !important;
+  color:#3d403a !important;
+}
+body.memorial-page .btn,
+html[data-theme="dark"] body.memorial-page .btn{
+  background:#fffdf9 !important;
+  color:#5b4033 !important;
+  border:1px solid rgba(139,38,38,.14) !important;
+}
+body.memorial-page .btn:hover{
+  background:#fff8f0 !important;
+}
+body.memorial-page .navigation-links a,
+html[data-theme="dark"] body.memorial-page .navigation-links a{
+  background:#fffdf9 !important;
+  color:#8b2626 !important;
+  border:1px solid rgba(139,38,38,.14) !important;
+}
+body.memorial-page .navigation-links a:hover{
+  background:#fcf6ee !important;
+}
+body.memorial-page .site-footer,
+html[data-theme="dark"] body.memorial-page .site-footer{
+  background:transparent !important;
+  color:#4b4f46 !important;
+}
