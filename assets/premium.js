@@ -6,7 +6,7 @@
   function addAmbient(){
     const amb = document.createElement('div');
     amb.id = 'ambient';
-    const count = 5;
+    const count = 4;
     for(let i=0;i<count;i++){
       const s = document.createElement('span');
       // distributed positions (rtl-friendly)
@@ -14,12 +14,22 @@
       const top  = (i===0)? '6%' : (i===1? '18%' : (i===2? '62%' : '78%'));
       s.style.left = left;
       s.style.top = top;
-      s.style.animationDelay = (i * -5) + 's';
-      s.style.width = (i===0? '34vw' : i===1 ? '26vw' : i===2 ? '22vw' : i===3 ? '30vw' : '18vw');
-      s.style.height = s.style.width;
+      s.style.animationDelay = (i * -4) + 's';
       amb.appendChild(s);
     }
     document.body.appendChild(amb);
+  }
+
+  function initMouseGlow(){
+    const amb = document.getElementById("ambient");
+    if(!amb) return;
+    const glow = document.createElement("span");
+    glow.className = "mouse-glow";
+    amb.appendChild(glow);
+    let tx = window.innerWidth * .65, ty = 180, x = tx, y = ty;
+    window.addEventListener("pointermove", (e)=>{ tx = e.clientX; ty = e.clientY; }, {passive:true});
+    function tick(){ x += (tx - x) * .06; y += (ty - y) * .06; glow.style.left = x + "px"; glow.style.top = y + "px"; requestAnimationFrame(tick); }
+    requestAnimationFrame(tick);
   }
 
   function addProgress(){
@@ -61,6 +71,7 @@
 
     // add subtle polish
     addAmbient();
+    initMouseGlow();
     addProgress();
     initReveal();
 

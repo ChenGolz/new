@@ -3430,174 +3430,172 @@ body::after{ opacity:.08 !important; }
 }
 
 
-/* === Memorial polish: March 2026 === */
+/* === refinement pass: memorial polish 20 === */
+:root{
+  --anemone-red:#b33a35;
+  --anemone-gold:#f3c980;
+}
+
+/* Softer, more memorial ambient glows */
 #ambient span{
-  background: radial-gradient(circle, rgba(245, 158, 11, 0.09) 0%, rgba(245, 158, 11, 0.035) 24%, rgba(245, 158, 11, 0) 72%) !important;
-  filter: blur(42px) !important;
-  mix-blend-mode: soft-light;
-  opacity: .52;
+  background: radial-gradient(circle, rgba(245,158,11,.08) 0%, rgba(245,158,11,0) 70%) !important;
+  filter: blur(40px) !important;
+  width: 40vw !important;
+  height: 40vw !important;
+  mix-blend-mode: soft-light !important;
+  opacity:.22 !important;
 }
-#ambient span:nth-child(2){ background: radial-gradient(circle, rgba(214, 74, 74, 0.10) 0%, rgba(214, 74, 74, 0) 70%) !important; }
-#ambient span:nth-child(3){ background: radial-gradient(circle, rgba(245, 191, 94, 0.12) 0%, rgba(245, 191, 94, 0) 72%) !important; }
-#ambient span:nth-child(4){ background: radial-gradient(circle, rgba(143, 151, 121, 0.10) 0%, rgba(143, 151, 121, 0) 70%) !important; }
-#ambient span:nth-child(5){ background: radial-gradient(circle, rgba(255,255,255,0.16) 0%, rgba(255,255,255,0) 74%) !important; }
+#ambient span:nth-child(2){ background: radial-gradient(circle, rgba(179,58,53,.10) 0%, rgba(179,58,53,0) 72%) !important; }
+#ambient span:nth-child(3){ background: radial-gradient(circle, rgba(243,201,128,.10) 0%, rgba(243,201,128,0) 72%) !important; }
+#ambient span:nth-child(4){ background: radial-gradient(circle, rgba(143,151,121,.08) 0%, rgba(143,151,121,0) 72%) !important; }
+#ambient .mouse-glow{
+  position:absolute; inset:auto auto 0 0;
+  width:34vw; height:34vw; border-radius:50%;
+  pointer-events:none; transform:translate(-50%,-50%);
+  background: radial-gradient(circle, rgba(179,58,53,.09) 0%, rgba(179,58,53,0) 70%);
+  filter: blur(46px); opacity:.20;
+}
 
-.global-candles{
-  display:inline-flex;
-  align-items:center;
-  gap:.55rem;
-  margin-top:1rem;
-  padding:.7rem 1rem;
-  border-radius:999px;
-  background:rgba(255,255,255,.66);
-  border:1px solid rgba(139,38,38,.12);
-  color:var(--ink);
-  box-shadow:0 8px 28px rgba(26,28,30,.06);
-  backdrop-filter: blur(10px);
-}
-.global-candles-icon{ font-size:1.1rem; }
-
-.people-grid{
-  grid-template-columns:repeat(auto-fit,minmax(240px,1fr)) !important;
-  gap:24px !important;
-}
-.people-grid .person-card.person-tile,
-.card.person-card.memorial-card,
-.names-grid .person-card{
-  background:rgba(255,255,255,.74) !important;
-  backdrop-filter:blur(12px);
-  -webkit-backdrop-filter:blur(12px);
-  border:1px solid rgba(255,255,255,.45) !important;
-  box-shadow:0 8px 32px rgba(15,23,42,.06) !important;
-  border-radius:24px !important;
-  overflow:hidden;
-}
-.people-grid .person-card.person-tile:hover,
-.card.person-card.memorial-card:hover,
-.names-grid .person-card:hover{
-  transform:translateY(-8px) !important;
-  box-shadow:0 20px 44px rgba(15,23,42,.10) !important;
-}
-.person-tile-link{ min-height:100%; }
-.person-tile-media,
-.memorial-media-frame{
-  position:relative;
-  overflow:hidden;
-  isolation:isolate;
-  background:linear-gradient(180deg, rgba(255,252,246,.96), rgba(245,238,227,.92));
-}
-.person-tile-media::after,
-.memorial-photo::after,
-.memorial-shell .memorial-photo::after{
-  content:"";
-  position:absolute;
-  inset:0;
-  pointer-events:none;
-  background:radial-gradient(circle at center, transparent 48%, rgba(252,249,242,.14) 72%, rgba(252,249,242,.75) 100%);
-}
-.person-tile-img,
-.profile-img,
-img.memorial-photo,
-.memorial-photo img{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  filter:grayscale(100%) sepia(.10) contrast(1.06);
-  transition:filter .55s ease, transform .55s ease;
-}
-.person-card:hover .person-tile-img,
-.person-tile-link:hover .person-tile-img,
-.memorial-photo:hover img,
-.memorial-photo:hover .profile-img,
-.profile-img:hover{
-  filter:grayscale(0%) sepia(.04) contrast(1.04);
-  transform:scale(1.03);
-}
-.person-tile-img.is-placeholder,
-.profile-img.is-placeholder{
-  object-fit:contain;
-  padding:20px;
-  filter:none !important;
-  transform:none !important;
-  background:linear-gradient(180deg, rgba(255,252,246,.98), rgba(243,238,227,.98));
-}
-.person-tile-overlay,
-.card.person-card.memorial-card .person-main{
-  background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.72) 52%, rgba(255,255,255,.96));
-}
-.person-tile-name,
-.person-name{
-  font-family:'Frank Ruhl Libre', serif;
-  font-size:1.28rem !important;
-  font-weight:700;
-  line-height:1.25;
-}
-.person-tile-place,
-.person-place,
-.person-meta{
-  font-family:'Assistant', sans-serif;
-  letter-spacing:.05em;
-  opacity:.74;
-  font-size:.85rem !important;
-}
-.memorial-shell,
+/* Cleaner glass cards */
+.card,
+.person-card,
+.id-card,
 .story-section,
 .links-section,
-.id-card,
-.id-dl > div,
-blockquote.quote,
-.link-grid .card{
-  background:rgba(255,255,255,.74) !important;
-  backdrop-filter:blur(12px);
-  -webkit-backdrop-filter:blur(12px);
-  border:1px solid rgba(255,255,255,.42) !important;
-  box-shadow:0 8px 30px rgba(15,23,42,.05);
+.mapbox,
+.longform,
+.article,
+.place-card{
+  -webkit-backdrop-filter: blur(12px) saturate(165%);
+  backdrop-filter: blur(12px) saturate(165%);
+  border-color: rgba(255,255,255,.32) !important;
+  box-shadow: 0 8px 32px rgba(15,23,42,.05), 0 1px 0 rgba(255,255,255,.35) inset !important;
 }
-.story-section p,
-.memorial-shell p,
-blockquote.quote{
-  line-height:2 !important;
+
+/* Stronger type hierarchy for memorial cards */
+.person-card .person-name,
+.person-tile-name,
+.names-grid .person-name{
+  font-family: var(--serif) !important;
+  font-size: clamp(1.12rem, 1rem + .35vw, 1.32rem) !important;
+  font-weight: 700 !important;
+  display:block;
+  margin-bottom: 4px;
+}
+.person-card .person-place,
+.person-tile-place,
+.names-grid .person-place,
+.person-meta{
+  font-family: var(--sans) !important;
+  letter-spacing: .05em;
+  opacity: .76;
+  font-size: .84rem !important;
+}
+
+/* Photos: grayscale memorial look, revived on hover */
+img.memorial-photo,
+.memorial-photo img.profile-img,
+.person-tile-img,
+.place-image img,
+.hero-media .hero-img{
+  transition: filter .5s ease, transform .6s ease, opacity .5s ease;
+}
+.memorial-photo img.profile-img,
+.person-tile-img,
+.place-image img{
+  filter: grayscale(100%) contrast(1.02);
+}
+@media (hover:hover){
+  .memorial-photo:hover img.profile-img,
+  .person-tile-link:hover .person-tile-img,
+  .place-image:hover img{
+    filter: grayscale(0%) contrast(1.04);
+  }
+  .hero-media:hover .hero-img{ transform: scale(1.015); }
+}
+
+/* Editorial reading feel */
+.story-section p{
+  line-height: 1.95 !important;
+  letter-spacing: .01em;
 }
 .story-section p:first-of-type::first-letter,
-.longform p:first-of-type::first-letter{
+.story-in-grid p:first-of-type::first-letter{
   float:right;
-  font-family:'Frank Ruhl Libre', serif;
-  font-size:3.2rem;
-  line-height:.9;
-  padding-inline:0 10px;
-  color:var(--accent);
+  font-family: var(--serif);
+  font-size: 3.2rem;
+  line-height: .82;
+  margin: .12em 0 0 .2em;
+  color: var(--accent);
 }
-.memorial-photo{
+
+/* Vignette / soft edge around media */
+.hero-media,
+.memorial-photo,
+.place-image{
   position:relative;
   overflow:hidden;
-  border-radius:28px;
+  border-radius: 22px;
 }
-.memorial-photo,
-.hero-media{
-  -webkit-mask-image: radial-gradient(circle at center, #000 62%, rgba(0,0,0,.94) 80%, rgba(0,0,0,.08) 100%);
-  mask-image: radial-gradient(circle at center, #000 62%, rgba(0,0,0,.94) 80%, rgba(0,0,0,.08) 100%);
+.hero-media::after,
+.memorial-photo::after,
+.place-image::after{
+  content:"";
+  position:absolute; inset:0;
+  pointer-events:none;
+  box-shadow: inset 0 0 70px rgba(252,249,242,.38), inset 0 -12px 32px rgba(252,249,242,.30);
 }
-.navigation-links{
-  direction:rtl;
+.hero-media img,
+.memorial-photo img,
+.place-image img{
+  -webkit-mask-image: radial-gradient(circle at center, #000 67%, rgba(0,0,0,.84) 84%, rgba(0,0,0,.08) 100%);
+  mask-image: radial-gradient(circle at center, #000 67%, rgba(0,0,0,.84) 84%, rgba(0,0,0,.08) 100%);
 }
-.navigation-links a{
-  min-width:140px;
-  text-align:center;
+
+/* Global candle badge on home */
+.candle-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:.5rem;
+  margin-top:12px;
+  padding:.65rem .95rem;
+  border-radius:999px;
+  background:rgba(255,255,255,.72);
+  border:1px solid rgba(179,58,53,.14);
+  color:var(--ink);
+  box-shadow: 0 10px 24px rgba(15,23,42,.05);
 }
+.candle-badge strong{ color:var(--accent); font-family:var(--serif); }
+.candle-badge .spark{ font-size:1rem; }
+
+/* Candle button feedback */
+.btn.lit,
 #candleBtnLite.lit,
 #candleBtn.lit{
-  box-shadow:0 0 0 1px rgba(245,158,11,.20), 0 12px 28px rgba(245,158,11,.20) !important;
+  background: linear-gradient(180deg, #fff7e8, #f7e2ba) !important;
+  color:#7c3d0a !important;
+  border-color: rgba(245,158,11,.28) !important;
+  box-shadow: 0 0 0 1px rgba(245,158,11,.10), 0 10px 26px rgba(245,158,11,.18) !important;
 }
-.spark-pop{
-  animation:sparkPop .9s ease-out;
+.candle-spark{
+  position:fixed;
+  width:8px; height:8px; border-radius:999px;
+  background: radial-gradient(circle, rgba(255,226,158,1) 0%, rgba(245,158,11,.9) 48%, rgba(245,158,11,0) 72%);
+  pointer-events:none; z-index:70;
+  animation:spark-rise .9s ease-out forwards;
 }
-@keyframes sparkPop{
-  0%{ box-shadow:0 0 0 rgba(245,158,11,0); transform:translateY(0); }
-  30%{ box-shadow:0 0 0 8px rgba(245,158,11,.14), 0 14px 32px rgba(245,158,11,.18); transform:translateY(-1px); }
-  100%{ box-shadow:0 0 0 rgba(245,158,11,0), 0 10px 24px rgba(245,158,11,.08); transform:translateY(0); }
+@keyframes spark-rise{
+  0%{ transform:translate(0,0) scale(.8); opacity:0; }
+  20%{ opacity:1; }
+  100%{ transform:translate(var(--dx,0px), calc(var(--dy,-48px) - 24px)) scale(0); opacity:0; }
 }
-@media (max-width: 720px){
-  .story-section p:first-of-type::first-letter,
-  .longform p:first-of-type::first-letter{ font-size:2.6rem; padding-inline:0 8px; }
-  .global-candles{ width:100%; justify-content:center; }
+
+/* Better RTL previous / next affordance */
+.navigation-links a{
+  display:inline-flex; align-items:center; gap:.45rem;
 }
+.navigation-links a[href$=".html"]:first-child::before{ content:"←"; }
+.navigation-links a[href$=".html"]:last-child::after{ content:"→"; }
+
+/* Ensure portraits lazy-load smoothly */
+img[loading="lazy"]{ content-visibility:auto; }

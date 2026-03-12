@@ -764,13 +764,13 @@ async function initPeopleList() {
       const href = siteUrl("p/" + escapeHtml(p.id) + ".html");
       const imgPrimary = siteUrl("assets/people/" + escapeHtml(p.id) + ".jpg");
       return `
-        <article class="person-card person-tile reveal" data-letter="${letter}" data-place="${escapeAttr(p.place || "")}" id="person-${escapeAttr(p.id)}">
+        <article class="person-card person-tile" data-letter="${letter}" data-place="${escapeAttr(p.place || "")}" id="person-${escapeAttr(p.id)}">
           <a class="person-tile-link" href="${href}" aria-label="לפתיחה: ${name}">
-            <div class="person-tile-media memorial-media-frame">
-              <img class="person-tile-img memorial-photo" data-person-id="${escapeAttr(p.id)}" src="${imgPrimary}" alt="${name}" loading="lazy" decoding="async"/>
+            <div class="person-tile-media">
+              <img class="person-tile-img" data-person-id="${escapeAttr(p.id)}" src="${imgPrimary}" alt="" loading="lazy" decoding="async"/>
             </div>
-            <div class="person-tile-overlay">
-              ${place ? `<div class="person-tile-place person-place">${place}</div>` : ``}
+            <div class="person-tile-overlay" aria-hidden="true">
+              ${place ? `<div class="person-tile-place">${place}</div>` : ``}
               <div class="person-tile-name">${name}</div>
               ${(() => {
                 const meta = (metaAll && metaAll[p.id]) ? metaAll[p.id] : null;
@@ -783,7 +783,14 @@ async function initPeopleList() {
         </article>`;
     }).join("");
 
-    applyMemorialImageFallback(root);
+    // Respectful light fallback if there is no photo.
+    root.querySelectorAll("img.person-tile-img[data-person-id]").forEach(img => {
+      const pid = img.getAttribute("data-person-id");
+      img.addEventListener("error", () => {
+        img.src = siteUrl("assets/person-placeholder.svg");
+        img.classList.add("is-placeholder");
+      }, { once: true });
+    });
 }
 
     updateTags(pl);
@@ -1055,7 +1062,7 @@ async function initPlacePage() {
       <article class="person-card person-tile memorial-card" data-letter="${letter}" data-place="${escapeAttr(pl || "")}" id="person-${escapeAttr(p.id)}">
         <a class="person-tile-link" href="${href}" aria-label="לפתיחה: ${name}">
           <div class="person-tile-media">
-            <img class="person-tile-img memorial-photo" data-person-id="${escapeAttr(p.id)}" src="${imgPrimary}" alt="${name}" loading="lazy" decoding="async"/>
+            <img class="person-tile-img" data-person-id="${escapeAttr(p.id)}" src="${imgPrimary}" alt="" loading="lazy" decoding="async"/>
           </div>
           <div class="person-tile-overlay" aria-hidden="true">
             ${place ? `<div class="person-tile-place">${place}</div>` : ``}
@@ -1066,7 +1073,13 @@ async function initPlacePage() {
       </article>`;
   }).join("");
 
-  applyMemorialImageFallback(root);
+  // Respectful light fallback if there is no photo.
+  root.querySelectorAll("img.person-tile-img[data-person-id]").forEach(img => {
+    img.addEventListener("error", () => {
+      img.src = siteUrl("assets/person-placeholder.svg");
+      img.classList.add("is-placeholder");
+    }, { once: true });
+  });
 }
 
 /* =======================
@@ -1121,8 +1134,6 @@ async function initPersonPage() {
     placeLink.href = siteUrl(`place/${encodeURIComponent(placeSlug(person.place))}.html`);
     placeLink.textContent = person.place;
   }
-
-  applyMemorialImageFallback(document);
 
   const usingShared = isSupabaseReady();
   if (backendNote) {
@@ -1394,58 +1405,6 @@ async function initPersonPage() {
   }
 }
 
-
-function applyMemorialImageFallback(scope=document){
-  scope.querySelectorAll("img.person-tile-img[data-person-id], img.profile-img").forEach(img => {
-    if (img.dataset.fallbackBound === "1") return;
-    img.dataset.fallbackBound = "1";
-    img.addEventListener("error", () => {
-      const pid = img.getAttribute("data-person-id") || (document.body?.dataset?.personId || "");
-      const fallback = siteUrl("assets/person-placeholder.svg");
-      if (img.getAttribute("src") !== fallback) {
-        img.src = fallback;
-      }
-      img.classList.add("is-placeholder");
-      img.removeAttribute("srcset");
-    }, { once:false });
-  });
-}
-
-function pulseCandleFeedback(btn){
-  if(!btn) return;
-  btn.classList.remove("spark-pop");
-  void btn.offsetWidth;
-  btn.classList.add("spark-pop");
-  setTimeout(()=>btn.classList.remove("spark-pop"), 900);
-}
-
-async function initGlobalCandleBadge(){
-  const statsBar = document.querySelector('.stats-bar');
-  const heroCard = document.querySelector('.hero-copy') || document.querySelector('.page-hero .card');
-  if(!heroCard || document.getElementById('globalCandleBadge')) return;
-
-  const badge = document.createElement('div');
-  badge.id = 'globalCandleBadge';
-  badge.className = 'global-candles';
-  badge.textContent = 'נרות זיכרון נדלקים ברחבי האתר';
-  (statsBar || heroCard).insertAdjacentElement(statsBar ? 'afterend' : 'beforeend', badge);
-
-  let total = 0;
-  try{
-    if(isSupabaseReady()){
-      const client = supa();
-      const { data } = await client.from('candles').select('count');
-      total = Array.isArray(data) ? data.reduce((sum,row)=> sum + (Number(row?.count)||0), 0) : 0;
-    }else{
-      for(let i=0;i<localStorage.length;i++){
-        const key = localStorage.key(i) || '';
-        if(key.startsWith('candles_')) total += Number(loadLocal(key, 0)) || 0;
-      }
-    }
-  }catch(e){}
-  badge.innerHTML = `<span class="global-candles-icon" aria-hidden="true">🕯️</span><span>${total.toLocaleString('he-IL')} נרות הודלקו לזכרם</span>`;
-}
-
 /* =======================
    Init
 ======================= */
@@ -1461,13 +1420,11 @@ document.addEventListener("DOMContentLoaded", async () => {
   try {
     try{ initHomeSearch(); }catch{}
     try{ await initPlacesMap(); }catch{}
-    try{ await initGlobalCandleBadge(); }catch{}
     await initField();
     await initPeopleList();
     await initPlaces();
     await initPlacePage();
     await initPersonPage();
-    applyMemorialImageFallback(document);
   } catch (e) {
     const err = document.getElementById("fatal");
     if (err) err.textContent = "אירעה שגיאה בטעינת הנתונים.";
@@ -1574,8 +1531,6 @@ function initLitePersonPage(){
   }
 })();
 
-  applyMemorialImageFallback(document);
-
   const usingShared = isSupabaseReady();
 
   const candleBtn = document.getElementById("candleBtnLite") || document.getElementById("candleBtn");
@@ -1630,7 +1585,7 @@ function initLitePersonPage(){
       localStorage.setItem(litKey, lit ? "1" : "0");
       saveLocal(localCountKey, c);
       setLit(lit);
-      pulseCandleFeedback(candleBtn);
+      sparkFromButton(candleBtn);
       renderLocalCount();
       return;
     }
@@ -1640,7 +1595,6 @@ function initLitePersonPage(){
     const last = loadLocal(throttleKey, "");
     if(last === today){
       setLit(true);
-      pulseCandleFeedback(candleBtn);
       if(status) status.textContent = "כבר הודלק נר היום במכשיר זה. תודה.";
       await renderSharedCount();
       return;
@@ -1651,7 +1605,7 @@ function initLitePersonPage(){
       if(error) throw error;
       saveLocal(throttleKey, today);
       setLit(true);
-      pulseCandleFeedback(candleBtn);
+      sparkFromButton(candleBtn);
       if(countEl) countEl.textContent = `${data ?? "—"} נרות הודלקו (סה״כ)`;
     }catch(e){
       console.error(e);
@@ -2171,3 +2125,56 @@ document.addEventListener("DOMContentLoaded", ()=>{
   try{ initFooterMemoryModal(); }catch(e){}
   try{ initMemorialTTS(); }catch(e){}
 });
+
+function ensureHomeCandleBadge(){
+  if(!/\/index\.html$|\/$/.test(location.pathname)) return;
+  const stats = document.querySelector('.stats-bar');
+  if(!stats || document.getElementById('globalCandleBadge')) return;
+  const host = stats.parentElement || stats;
+  const badge = document.createElement('div');
+  badge.id = 'globalCandleBadge';
+  badge.className = 'candle-badge';
+  badge.innerHTML = '<span class="spark" aria-hidden="true">🕯️</span><span>נרות הודלקו לזכרם: <strong id="globalCandleCount">—</strong></span>';
+  host.insertBefore(badge, stats.nextSibling);
+
+  const localTotal = Object.keys(localStorage).filter(k => k.startsWith('candles_')).reduce((sum,k)=>{ const v = parseInt(localStorage.getItem(k)||'0',10); return sum + (Number.isFinite(v)?v:0); }, 0);
+  const countEl = badge.querySelector('#globalCandleCount');
+  if(countEl) countEl.textContent = String(localTotal);
+  if(typeof supa === 'function' && isSupabaseReady()){
+    (async()=>{
+      try{
+        const client = supa();
+        const { data } = await client.from('candles').select('count');
+        const total = Array.isArray(data) ? data.reduce((s,row)=> s + (Number(row.count)||0), 0) : localTotal;
+        if(countEl) countEl.textContent = total.toLocaleString('he-IL');
+      }catch(e){}
+    })();
+  }
+}
+
+function enhanceLazyMedia(){
+  document.querySelectorAll('img:not([loading])').forEach(img=>{
+    img.setAttribute('loading','lazy');
+    img.setAttribute('decoding','async');
+  });
+}
+
+function sparkFromButton(btn){
+  if(!btn) return;
+  const r = btn.getBoundingClientRect();
+  const cx = r.left + r.width/2;
+  const cy = r.top + r.height/2;
+  for(let i=0;i<9;i++){
+    const s = document.createElement('span');
+    s.className = 'candle-spark';
+    s.style.left = cx + 'px';
+    s.style.top = cy + 'px';
+    s.style.setProperty('--dx', ((Math.random()*80)-40).toFixed(0)+'px');
+    s.style.setProperty('--dy', (-(24 + Math.random()*64)).toFixed(0)+'px');
+    document.body.appendChild(s);
+    s.addEventListener('animationend', ()=> s.remove(), {once:true});
+  }
+}
+
+
+document.addEventListener("DOMContentLoaded", () => { try{ ensureHomeCandleBadge(); }catch(e){} try{ enhanceLazyMedia(); }catch(e){} });
