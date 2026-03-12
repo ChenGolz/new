@@ -3197,3 +3197,407 @@ blockquote.quote cite,
   .people-grid{ grid-template-columns:repeat(auto-fill,minmax(180px,1fr)) !important; }
   .names-grid,.places-gallery{ grid-template-columns:1fr !important; }
 }
+
+/* ============================================================
+   2026-03 FINAL hotfix — force warm light UI everywhere
+   ============================================================ */
+html, html[data-theme], body{
+  color-scheme: light !important;
+}
+html[data-theme="dark"], html[data-theme="light"], html{
+  --bg0:#fcf8f2 !important;
+  --bg1:#f1ebdf !important;
+  --card:#fffdfa !important;
+  --card2:#fffdfa !important;
+  --ink:#23211d !important;
+  --muted:#605a4f !important;
+  --muted2:#8d8578 !important;
+  --stroke:rgba(107,115,77,.18) !important;
+  --stroke2:rgba(107,115,77,.13) !important;
+  --accent:#8b2626 !important;
+  --accent2:#6b734d !important;
+  --chip:rgba(139,38,38,.08) !important;
+  --shadow:0 18px 45px rgba(55,43,26,.08) !important;
+  --shadow-sm:0 10px 24px rgba(55,43,26,.07) !important;
+}
+
+body{
+  background: linear-gradient(180deg,var(--bg0),var(--bg1)) !important;
+  color:var(--ink) !important;
+}
+body::after{ opacity:.08 !important; }
+
+/* Nav */
+.site-header, .site-header::before{ background:rgba(252,248,242,.96) !important; }
+.site-nav .pill, .pill, .audio-toggle, .silent-toggle, .menu-btn{
+  background:#fffdfa !important;
+  color:var(--ink) !important;
+  border:1px solid var(--stroke2) !important;
+  box-shadow:none !important;
+}
+.site-nav .pill.is-active, .site-nav .pill[aria-current="page"], .pill.is-active, .pill[aria-current="page"]{
+  background:var(--accent) !important;
+  color:#fff !important;
+  border-color:rgba(139,38,38,.22) !important;
+}
+
+/* Global cards */
+.card, section.card, article.card, div.card, .panel, .content-card, .section-card,
+.people-grid .person-card, .names-grid .person-card, .place-card, .memorial-shell,
+.story-section, .links-section, .navigation-links a, .directory li, .mapbox {
+  background:#fffdfa !important;
+  color:var(--ink) !important;
+  border:1px solid var(--stroke2) !important;
+  box-shadow:var(--shadow-sm) !important;
+}
+
+/* Hero blocks: kill old dark/blue overlay completely */
+.hero-card, .page-hero .card, .hero, .home-hero, .memorial-header, .hero-layout, .hero-copy, .hero-media {
+  background:linear-gradient(180deg,#fbf7ef,#f2ebdf) !important;
+  color:var(--ink) !important;
+  border-color:var(--stroke2) !important;
+}
+.hero-card::before, .hero-card::after, .hero::before, .hero::after, .page-hero .card::before, .page-hero .card::after {
+  content:"" !important;
+  background:linear-gradient(180deg, rgba(255,255,255,.22), rgba(255,255,255,.02)) !important;
+  opacity:1 !important;
+  filter:none !important;
+  transform:none !important;
+}
+.hero-card .page-title, .hero-card .section-title, .hero-card h1, .hero-card h2,
+.page-hero .page-title, .page-hero h1, .page-hero h2 {
+  color:var(--accent) !important;
+  text-shadow:none !important;
+}
+.hero-card .page-sub, .hero-card .kicker, .hero-card .muted, .hero-card .breadcrumbs,
+.page-hero .page-sub, .page-hero .muted, .page-hero .kicker, .page-hero .breadcrumbs {
+  color:var(--muted) !important;
+  opacity:1 !important;
+}
+.hero-card .btn, .hero-card .btn.primary, .hero-card input[type="search"], .hero-card select,
+.page-hero .btn, .page-hero .btn.primary, .page-hero input[type="search"], .page-hero select {
+  background:#fffdfa !important;
+  color:var(--ink) !important;
+  border:1px solid var(--stroke2) !important;
+}
+.hero-card .btn.primary, .page-hero .btn.primary {
+  background:rgba(139,38,38,.08) !important;
+  color:var(--accent) !important;
+  border-color:rgba(139,38,38,.18) !important;
+}
+.hero-card .stats-bar, .stats-bar {
+  background:#fffdfa !important;
+  color:var(--ink) !important;
+  border:1px solid var(--stroke2) !important;
+}
+.hero-card .stats-bar strong, .stats-bar strong{ color:var(--accent) !important; }
+.hero-card .hero-img, .hero-img, .hero-illust img, .hero-card img {
+  opacity:1 !important;
+  filter:none !important;
+  background:#f7f1e6 !important;
+  border:1px solid var(--stroke2) !important;
+}
+
+/* People tiles */
+.people-grid .person-card.person-tile, .card.person-card.memorial-card, .names-grid .person-card {
+  background:#fffdfa !important;
+  border:1px solid var(--stroke2) !important;
+  color:var(--ink) !important;
+}
+.person-tile-media, .place-image {
+  background:linear-gradient(180deg,#f7f1e6,#eee5d5) !important;
+}
+.person-tile-overlay, .card.person-card.memorial-card .person-main {
+  background:linear-gradient(180deg, rgba(255,255,255,.15), rgba(255,253,250,.98)) !important;
+  color:var(--ink) !important;
+}
+.person-tile-name, .person-name, .place-info h3 { color:var(--ink) !important; }
+.person-tile-place, .person-meta, .place-info .muted, .place-count { color:var(--muted) !important; }
+.place-count{ background:rgba(107,115,77,.08) !important; }
+
+/* Person/place pages */
+.memorial-shell, .story-section, .links-section, .id-card, .id-dl > div, blockquote.quote, .link-grid .card{
+  background:#fffdfa !important;
+  color:var(--ink) !important;
+}
+.memorial-header{ background:transparent !important; }
+.memorial-header h1, .memorial-shell h1, .memorial-shell h2, .memorial-shell h3 { color:var(--accent) !important; }
+.memorial-shell p, .story-section p, .memorial-shell .muted, blockquote.quote cite { color:var(--muted) !important; }
+
+/* Places page specific */
+.places-gallery, #placesRoot { color:var(--ink) !important; }
+#placeMapBox, .map-dots .dot { background:#fffdfa !important; color:var(--ink) !important; }
+.dot-count{ background:rgba(139,38,38,.08) !important; color:var(--accent) !important; }
+
+/* remove any residual dark gradients */
+[style*="#0b"], [style*="#0B"], [style*="#0f1d3e"] {
+  background-image:none !important;
+}
+
+.theme-toggle, #themeToggle{ display:none !important; }
+
+
+/* === Anemones pass === */
+.hero-media, .hero-illust{ align-items:center; }
+.hero-img,
+.hero-illust img{
+  width:100%;
+  max-width:560px;
+  max-height:290px;
+  object-fit:cover;
+  object-position:center;
+  border-radius:24px !important;
+  background:#f7f1e6 !important;
+}
+.hero-anemones img,
+.page-hero .hero-illust img[src*="anemone"],
+.page-hero .hero-illust img[src*="anemones"],
+.hero-media img[src*="anemone"],
+.hero-media img[src*="anemones"]{
+  padding:0 !important;
+  border:1px solid rgba(139,38,38,.10) !important;
+  box-shadow:0 18px 42px rgba(117,79,48,.12) !important;
+}
+.page-hero .card{
+  overflow:hidden;
+}
+.page-hero .card::after{
+  content:"";
+  position:absolute;
+  inset:auto 0 0 0;
+  height:92px;
+  pointer-events:none;
+  background:linear-gradient(180deg, rgba(252,249,242,0), rgba(252,249,242,.74) 55%, rgba(252,249,242,.95));
+}
+.page-hero .card > *{ position:relative; z-index:1; }
+.page-title{ max-width:18ch; }
+.person-tile-img.is-placeholder{
+  background:#fcf7ef !important;
+  padding:16px !important;
+}
+
+/* === Image adjustment pass (anemones19) === */
+.hero-media,
+.hero-illust{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+.hero-media .hero-img{
+  width:min(640px, 100%) !important;
+  aspect-ratio: 16 / 10;
+  height:auto !important;
+  object-fit:cover !important;
+  object-position:center 68% !important;
+  display:block;
+}
+
+.hero-illust img{
+  width:min(520px, 100%) !important;
+  aspect-ratio: 4 / 3;
+  height:auto !important;
+  object-fit:cover !important;
+  object-position:center 62% !important;
+  display:block;
+}
+
+.hero-anemones img{
+  width:min(500px, 100%) !important;
+  aspect-ratio: 5 / 4;
+  object-position:center 66% !important;
+}
+
+.page-hero .card{
+  min-height:auto !important;
+}
+
+.page-hero .card::after{
+  height:64px !important;
+}
+
+.page-hero .page-title{
+  max-width:none !important;
+}
+
+@media (max-width: 860px){
+  .hero-media .hero-img,
+  .hero-illust img,
+  .hero-anemones img{
+    width:100% !important;
+    max-width:100% !important;
+  }
+}
+
+
+/* === Memorial polish: March 2026 === */
+#ambient span{
+  background: radial-gradient(circle, rgba(245, 158, 11, 0.09) 0%, rgba(245, 158, 11, 0.035) 24%, rgba(245, 158, 11, 0) 72%) !important;
+  filter: blur(42px) !important;
+  mix-blend-mode: soft-light;
+  opacity: .52;
+}
+#ambient span:nth-child(2){ background: radial-gradient(circle, rgba(214, 74, 74, 0.10) 0%, rgba(214, 74, 74, 0) 70%) !important; }
+#ambient span:nth-child(3){ background: radial-gradient(circle, rgba(245, 191, 94, 0.12) 0%, rgba(245, 191, 94, 0) 72%) !important; }
+#ambient span:nth-child(4){ background: radial-gradient(circle, rgba(143, 151, 121, 0.10) 0%, rgba(143, 151, 121, 0) 70%) !important; }
+#ambient span:nth-child(5){ background: radial-gradient(circle, rgba(255,255,255,0.16) 0%, rgba(255,255,255,0) 74%) !important; }
+
+.global-candles{
+  display:inline-flex;
+  align-items:center;
+  gap:.55rem;
+  margin-top:1rem;
+  padding:.7rem 1rem;
+  border-radius:999px;
+  background:rgba(255,255,255,.66);
+  border:1px solid rgba(139,38,38,.12);
+  color:var(--ink);
+  box-shadow:0 8px 28px rgba(26,28,30,.06);
+  backdrop-filter: blur(10px);
+}
+.global-candles-icon{ font-size:1.1rem; }
+
+.people-grid{
+  grid-template-columns:repeat(auto-fit,minmax(240px,1fr)) !important;
+  gap:24px !important;
+}
+.people-grid .person-card.person-tile,
+.card.person-card.memorial-card,
+.names-grid .person-card{
+  background:rgba(255,255,255,.74) !important;
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  border:1px solid rgba(255,255,255,.45) !important;
+  box-shadow:0 8px 32px rgba(15,23,42,.06) !important;
+  border-radius:24px !important;
+  overflow:hidden;
+}
+.people-grid .person-card.person-tile:hover,
+.card.person-card.memorial-card:hover,
+.names-grid .person-card:hover{
+  transform:translateY(-8px) !important;
+  box-shadow:0 20px 44px rgba(15,23,42,.10) !important;
+}
+.person-tile-link{ min-height:100%; }
+.person-tile-media,
+.memorial-media-frame{
+  position:relative;
+  overflow:hidden;
+  isolation:isolate;
+  background:linear-gradient(180deg, rgba(255,252,246,.96), rgba(245,238,227,.92));
+}
+.person-tile-media::after,
+.memorial-photo::after,
+.memorial-shell .memorial-photo::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:radial-gradient(circle at center, transparent 48%, rgba(252,249,242,.14) 72%, rgba(252,249,242,.75) 100%);
+}
+.person-tile-img,
+.profile-img,
+img.memorial-photo,
+.memorial-photo img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  filter:grayscale(100%) sepia(.10) contrast(1.06);
+  transition:filter .55s ease, transform .55s ease;
+}
+.person-card:hover .person-tile-img,
+.person-tile-link:hover .person-tile-img,
+.memorial-photo:hover img,
+.memorial-photo:hover .profile-img,
+.profile-img:hover{
+  filter:grayscale(0%) sepia(.04) contrast(1.04);
+  transform:scale(1.03);
+}
+.person-tile-img.is-placeholder,
+.profile-img.is-placeholder{
+  object-fit:contain;
+  padding:20px;
+  filter:none !important;
+  transform:none !important;
+  background:linear-gradient(180deg, rgba(255,252,246,.98), rgba(243,238,227,.98));
+}
+.person-tile-overlay,
+.card.person-card.memorial-card .person-main{
+  background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.72) 52%, rgba(255,255,255,.96));
+}
+.person-tile-name,
+.person-name{
+  font-family:'Frank Ruhl Libre', serif;
+  font-size:1.28rem !important;
+  font-weight:700;
+  line-height:1.25;
+}
+.person-tile-place,
+.person-place,
+.person-meta{
+  font-family:'Assistant', sans-serif;
+  letter-spacing:.05em;
+  opacity:.74;
+  font-size:.85rem !important;
+}
+.memorial-shell,
+.story-section,
+.links-section,
+.id-card,
+.id-dl > div,
+blockquote.quote,
+.link-grid .card{
+  background:rgba(255,255,255,.74) !important;
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  border:1px solid rgba(255,255,255,.42) !important;
+  box-shadow:0 8px 30px rgba(15,23,42,.05);
+}
+.story-section p,
+.memorial-shell p,
+blockquote.quote{
+  line-height:2 !important;
+}
+.story-section p:first-of-type::first-letter,
+.longform p:first-of-type::first-letter{
+  float:right;
+  font-family:'Frank Ruhl Libre', serif;
+  font-size:3.2rem;
+  line-height:.9;
+  padding-inline:0 10px;
+  color:var(--accent);
+}
+.memorial-photo{
+  position:relative;
+  overflow:hidden;
+  border-radius:28px;
+}
+.memorial-photo,
+.hero-media{
+  -webkit-mask-image: radial-gradient(circle at center, #000 62%, rgba(0,0,0,.94) 80%, rgba(0,0,0,.08) 100%);
+  mask-image: radial-gradient(circle at center, #000 62%, rgba(0,0,0,.94) 80%, rgba(0,0,0,.08) 100%);
+}
+.navigation-links{
+  direction:rtl;
+}
+.navigation-links a{
+  min-width:140px;
+  text-align:center;
+}
+#candleBtnLite.lit,
+#candleBtn.lit{
+  box-shadow:0 0 0 1px rgba(245,158,11,.20), 0 12px 28px rgba(245,158,11,.20) !important;
+}
+.spark-pop{
+  animation:sparkPop .9s ease-out;
+}
+@keyframes sparkPop{
+  0%{ box-shadow:0 0 0 rgba(245,158,11,0); transform:translateY(0); }
+  30%{ box-shadow:0 0 0 8px rgba(245,158,11,.14), 0 14px 32px rgba(245,158,11,.18); transform:translateY(-1px); }
+  100%{ box-shadow:0 0 0 rgba(245,158,11,0), 0 10px 24px rgba(245,158,11,.08); transform:translateY(0); }
+}
+@media (max-width: 720px){
+  .story-section p:first-of-type::first-letter,
+  .longform p:first-of-type::first-letter{ font-size:2.6rem; padding-inline:0 8px; }
+  .global-candles{ width:100%; justify-content:center; }
+}

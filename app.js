@@ -764,13 +764,13 @@ async function initPeopleList() {
       const href = siteUrl("p/" + escapeHtml(p.id) + ".html");
       const imgPrimary = siteUrl("assets/people/" + escapeHtml(p.id) + ".jpg");
       return `
-        <article class="person-card person-tile" data-letter="${letter}" data-place="${escapeAttr(p.place || "")}" id="person-${escapeAttr(p.id)}">
+        <article class="person-card person-tile reveal" data-letter="${letter}" data-place="${escapeAttr(p.place || "")}" id="person-${escapeAttr(p.id)}">
           <a class="person-tile-link" href="${href}" aria-label="לפתיחה: ${name}">
-            <div class="person-tile-media">
-              <img class="person-tile-img" data-person-id="${escapeAttr(p.id)}" src="${imgPrimary}" alt="" loading="lazy" decoding="async"/>
+            <div class="person-tile-media memorial-media-frame">
+              <img class="person-tile-img memorial-photo" data-person-id="${escapeAttr(p.id)}" src="${imgPrimary}" alt="${name}" loading="lazy" decoding="async"/>
             </div>
-            <div class="person-tile-overlay" aria-hidden="true">
-              ${place ? `<div class="person-tile-place">${place}</div>` : ``}
+            <div class="person-tile-overlay">
+              ${place ? `<div class="person-tile-place person-place">${place}</div>` : ``}
               <div class="person-tile-name">${name}</div>
               ${(() => {
                 const meta = (metaAll && metaAll[p.id]) ? metaAll[p.id] : null;
@@ -783,14 +783,7 @@ async function initPeopleList() {
         </article>`;
     }).join("");
 
-    // Respectful light fallback if there is no photo.
-    root.querySelectorAll("img.person-tile-img[data-person-id]").forEach(img => {
-      const pid = img.getAttribute("data-person-id");
-      img.addEventListener("error", () => {
-        img.src = siteUrl("assets/person-placeholder.svg");
-        img.classList.add("is-placeholder");
-      }, { once: true });
-    });
+    applyMemorialImageFallback(root);
 }
 
     updateTags(pl);
@@ -961,7 +954,8 @@ function initHeaderExtras(){
     silent.id = "silentToggle";
     silent.type = "button";
     silent.setAttribute("aria-pressed","false");
-    silent.textContent = "תצוגה שקטה";
+    silent.textContent = "";
+    silent.setAttribute("aria-label","תצוגה שקטה");
     const menu = bar.querySelector(".menu-btn") || bar.querySelector("button");
     if(menu) menu.insertAdjacentElement("afterend", silent);
     else bar.appendChild(silent);
@@ -1061,7 +1055,7 @@ async function initPlacePage() {
       <article class="person-card person-tile memorial-card" data-letter="${letter}" data-place="${escapeAttr(pl || "")}" id="person-${escapeAttr(p.id)}">
         <a class="person-tile-link" href="${href}" aria-label="לפתיחה: ${name}">
           <div class="person-tile-media">
-            <img class="person-tile-img" data-person-id="${escapeAttr(p.id)}" src="${imgPrimary}" alt="" loading="lazy" decoding="async"/>
+            <img class="person-tile-img memorial-photo" data-person-id="${escapeAttr(p.id)}" src="${imgPrimary}" alt="${name}" loading="lazy" decoding="async"/>
           </div>
           <div class="person-tile-overlay" aria-hidden="true">
             ${place ? `<div class="person-tile-place">${place}</div>` : ``}
@@ -1072,13 +1066,7 @@ async function initPlacePage() {
       </article>`;
   }).join("");
 
-  // Respectful light fallback if there is no photo.
-  root.querySelectorAll("img.person-tile-img[data-person-id]").forEach(img => {
-    img.addEventListener("error", () => {
-      img.src = siteUrl("assets/person-placeholder.svg");
-      img.classList.add("is-placeholder");
-    }, { once: true });
-  });
+  applyMemorialImageFallback(root);
 }
 
 /* =======================
@@ -1133,6 +1121,8 @@ async function initPersonPage() {
     placeLink.href = siteUrl(`place/${encodeURIComponent(placeSlug(person.place))}.html`);
     placeLink.textContent = person.place;
   }
+
+  applyMemorialImageFallback(document);
 
   const usingShared = isSupabaseReady();
   if (backendNote) {
@@ -1404,6 +1394,58 @@ async function initPersonPage() {
   }
 }
 
+
+function applyMemorialImageFallback(scope=document){
+  scope.querySelectorAll("img.person-tile-img[data-person-id], img.profile-img").forEach(img => {
+    if (img.dataset.fallbackBound === "1") return;
+    img.dataset.fallbackBound = "1";
+    img.addEventListener("error", () => {
+      const pid = img.getAttribute("data-person-id") || (document.body?.dataset?.personId || "");
+      const fallback = siteUrl("assets/person-placeholder.svg");
+      if (img.getAttribute("src") !== fallback) {
+        img.src = fallback;
+      }
+      img.classList.add("is-placeholder");
+      img.removeAttribute("srcset");
+    }, { once:false });
+  });
+}
+
+function pulseCandleFeedback(btn){
+  if(!btn) return;
+  btn.classList.remove("spark-pop");
+  void btn.offsetWidth;
+  btn.classList.add("spark-pop");
+  setTimeout(()=>btn.classList.remove("spark-pop"), 900);
+}
+
+async function initGlobalCandleBadge(){
+  const statsBar = document.querySelector('.stats-bar');
+  const heroCard = document.querySelector('.hero-copy') || document.querySelector('.page-hero .card');
+  if(!heroCard || document.getElementById('globalCandleBadge')) return;
+
+  const badge = document.createElement('div');
+  badge.id = 'globalCandleBadge';
+  badge.className = 'global-candles';
+  badge.textContent = 'נרות זיכרון נדלקים ברחבי האתר';
+  (statsBar || heroCard).insertAdjacentElement(statsBar ? 'afterend' : 'beforeend', badge);
+
+  let total = 0;
+  try{
+    if(isSupabaseReady()){
+      const client = supa();
+      const { data } = await client.from('candles').select('count');
+      total = Array.isArray(data) ? data.reduce((sum,row)=> sum + (Number(row?.count)||0), 0) : 0;
+    }else{
+      for(let i=0;i<localStorage.length;i++){
+        const key = localStorage.key(i) || '';
+        if(key.startsWith('candles_')) total += Number(loadLocal(key, 0)) || 0;
+      }
+    }
+  }catch(e){}
+  badge.innerHTML = `<span class="global-candles-icon" aria-hidden="true">🕯️</span><span>${total.toLocaleString('he-IL')} נרות הודלקו לזכרם</span>`;
+}
+
 /* =======================
    Init
 ======================= */
@@ -1419,11 +1461,13 @@ document.addEventListener("DOMContentLoaded", async () => {
   try {
     try{ initHomeSearch(); }catch{}
     try{ await initPlacesMap(); }catch{}
+    try{ await initGlobalCandleBadge(); }catch{}
     await initField();
     await initPeopleList();
     await initPlaces();
     await initPlacePage();
     await initPersonPage();
+    applyMemorialImageFallback(document);
   } catch (e) {
     const err = document.getElementById("fatal");
     if (err) err.textContent = "אירעה שגיאה בטעינת הנתונים.";
@@ -1530,6 +1574,8 @@ function initLitePersonPage(){
   }
 })();
 
+  applyMemorialImageFallback(document);
+
   const usingShared = isSupabaseReady();
 
   const candleBtn = document.getElementById("candleBtnLite") || document.getElementById("candleBtn");
@@ -1584,6 +1630,7 @@ function initLitePersonPage(){
       localStorage.setItem(litKey, lit ? "1" : "0");
       saveLocal(localCountKey, c);
       setLit(lit);
+      pulseCandleFeedback(candleBtn);
       renderLocalCount();
       return;
     }
@@ -1593,6 +1640,7 @@ function initLitePersonPage(){
     const last = loadLocal(throttleKey, "");
     if(last === today){
       setLit(true);
+      pulseCandleFeedback(candleBtn);
       if(status) status.textContent = "כבר הודלק נר היום במכשיר זה. תודה.";
       await renderSharedCount();
       return;
@@ -1603,6 +1651,7 @@ function initLitePersonPage(){
       if(error) throw error;
       saveLocal(throttleKey, today);
       setLit(true);
+      pulseCandleFeedback(candleBtn);
       if(countEl) countEl.textContent = `${data ?? "—"} נרות הודלקו (סה״כ)`;
     }catch(e){
       console.error(e);

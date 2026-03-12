@@ -6,7 +6,7 @@
   function addAmbient(){
     const amb = document.createElement('div');
     amb.id = 'ambient';
-    const count = 4;
+    const count = 5;
     for(let i=0;i<count;i++){
       const s = document.createElement('span');
       // distributed positions (rtl-friendly)
@@ -14,7 +14,9 @@
       const top  = (i===0)? '6%' : (i===1? '18%' : (i===2? '62%' : '78%'));
       s.style.left = left;
       s.style.top = top;
-      s.style.animationDelay = (i * -4) + 's';
+      s.style.animationDelay = (i * -5) + 's';
+      s.style.width = (i===0? '34vw' : i===1 ? '26vw' : i===2 ? '22vw' : i===3 ? '30vw' : '18vw');
+      s.style.height = s.style.width;
       amb.appendChild(s);
     }
     document.body.appendChild(amb);
