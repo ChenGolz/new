@@ -4,20 +4,79 @@
   function clamp(v, a, b){ return Math.max(a, Math.min(b, v)); }
 
   function addAmbient(){
+    if(document.getElementById('ambient')) return document.getElementById('ambient');
     const amb = document.createElement('div');
     amb.id = 'ambient';
-    const count = 4;
-    for(let i=0;i<count;i++){
+    const positions = [
+      ['8%','6%'],
+      ['74%','18%'],
+      ['22%','62%'],
+      ['58%','78%'],
+      ['48%','34%']
+    ];
+    positions.forEach((pos, i) => {
       const s = document.createElement('span');
-      // distributed positions (rtl-friendly)
-      const left = (i===0)? '8%' : (i===1? '74%' : (i===2? '22%' : '58%'));
-      const top  = (i===0)? '6%' : (i===1? '18%' : (i===2? '62%' : '78%'));
-      s.style.left = left;
-      s.style.top = top;
-      s.style.animationDelay = (i * -4) + 's';
+      s.style.left = pos[0];
+      s.style.top = pos[1];
+      s.style.animationDelay = (i * -0.8) + 's';
+      if(i === positions.length - 1) s.classList.add('ambient-follower');
       amb.appendChild(s);
-    }
+    });
     document.body.appendChild(amb);
+
+    const follower = amb.querySelector('.ambient-follower');
+    if(follower){
+      let tx = window.innerWidth * 0.5;
+      let ty = window.innerHeight * 0.3;
+      const move = (x, y) => {
+        tx = x; ty = y;
+        follower.style.left = x + 'px';
+        follower.style.top = y + 'px';
+      };
+      move(tx, ty);
+      window.addEventListener('mousemove', (e) => {
+        move(e.clientX - follower.offsetWidth * 0.5, e.clientY - follower.offsetHeight * 0.5);
+      }, { passive: true });
+    }
+    return amb;
+  }
+
+  function addCommunityLanterns(){
+    if(document.getElementById('communityLanterns')) return;
+    const root = document.createElement('div');
+    root.id = 'communityLanterns';
+    root.innerHTML = `<div class="lantern-dots" aria-hidden="true"></div><div class="lantern-label">זוכרים יחד</div>`;
+    document.body.appendChild(root);
+    const dots = root.querySelector('.lantern-dots');
+    const label = root.querySelector('.lantern-label');
+
+    function render(count){
+      const shown = Math.max(1, Math.min(Number(count) || 1, 8));
+      dots.innerHTML = Array.from({length: shown}, (_,i) => `<span class="lantern-dot" style="animation-delay:${i * .35}s"></span>`).join('');
+      label.textContent = count > 1 ? `כרגע ישנם ${count} אנשים שמתייחדים עם זכרם` : 'זוכרים יחד';
+    }
+    render(1);
+
+    try{
+      const cfg = window.BACKEND || null;
+      if(!(cfg && cfg.provider === 'supabase' && cfg.supabaseUrl && cfg.supabaseAnonKey && window.supabase)) return;
+      const client = window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseAnonKey);
+      const channel = client.channel('memorial-presence', {
+        config: { presence: { key: `visitor-${Math.random().toString(36).slice(2,10)}` } }
+      });
+      channel
+        .on('presence', { event: 'sync' }, () => {
+          const state = channel.presenceState();
+          const count = Object.keys(state || {}).length || 1;
+          render(count);
+        })
+        .subscribe(async (status) => {
+          if(status === 'SUBSCRIBED'){
+            await channel.track({ page: location.pathname, at: Date.now() });
+          }
+        });
+      window.addEventListener('beforeunload', () => { try{ channel.untrack(); }catch(e){} });
+    }catch(e){}
   }
 
   function addProgress(){
@@ -54,15 +113,11 @@
   }
 
   document.addEventListener('DOMContentLoaded', () => {
-    // “loaded” transition
     requestAnimationFrame(() => document.body.classList.add('is-loaded'));
-
-    // add subtle polish
     addAmbient();
     addProgress();
     initReveal();
-
-    // re-run reveal after the app renders dynamic lists
+    addCommunityLanterns();
     setTimeout(initReveal, 300);
     setTimeout(initReveal, 900);
   });
@@ -100,150 +155,4 @@
   }
 
   upgradeMemorialCards();
-})();
-
-
-(function(){
-  function addAmbientFollower(){
-    const amb = document.getElementById('ambient');
-    if(!amb) return;
-    if(amb.querySelector('.ambient-follower')) return;
-    const f = document.createElement('span');
-    f.className = 'ambient-follower';
-    amb.appendChild(f);
-    let tx = window.innerWidth * 0.35, ty = window.innerHeight * 0.25;
-    let x = tx, y = ty;
-    const onMove = (ev)=>{
-      tx = ev.clientX;
-      ty = ev.clientY;
-    };
-    window.addEventListener('mousemove', onMove, { passive:true });
-    function tick(){
-      x += (tx - x) * 0.06;
-      y += (ty - y) * 0.06;
-      f.style.left = x + 'px';
-      f.style.top = y + 'px';
-      requestAnimationFrame(tick);
-    }
-    tick();
-  }
-
-  function initUnityCandle(){
-    if(document.querySelector('.unity-candle-btn')) return;
-    const key = 'global-memory-candle-count';
-    const litKey = 'global-memory-candle-lit';
-    const current = parseInt(localStorage.getItem(key) || '7240', 10) || 7240;
-    const btn = document.createElement('button');
-    btn.type = 'button';
-    btn.className = 'unity-candle-btn';
-    btn.innerHTML = '<span class="flame-dot" aria-hidden="true"></span><span class="txt">הדלקת נר</span><span class="count">'+ current.toLocaleString('he-IL') +'</span>';
-    document.body.appendChild(btn);
-
-    const host = document.querySelector('.site-header .brand .meta') || document.querySelector('.site-header .nav');
-    let badge = document.querySelector('.header-flame-badge');
-    if(!badge && host){
-      badge = document.createElement('span');
-      badge.className = 'header-flame-badge';
-      badge.innerHTML = '<span class="header-flame-dot" aria-hidden="true"></span><span>נר זיכרון</span>';
-      host.appendChild(badge);
-    }
-    const setLit = (lit)=>{
-      btn.classList.toggle('is-lit', lit);
-      badge?.querySelector('.header-flame-dot')?.classList.toggle('is-lit', lit);
-      const txt = btn.querySelector('.txt');
-      if(txt) txt.textContent = lit ? 'הנר דולק' : 'הדלקת נר';
-    };
-    setLit(localStorage.getItem(litKey)==='1');
-    btn.addEventListener('click', ()=>{
-      let count = parseInt(localStorage.getItem(key) || String(current), 10) || current;
-      const lit = localStorage.getItem(litKey)==='1';
-      if(!lit){
-        count += 1;
-        localStorage.setItem(key, String(count));
-        localStorage.setItem(litKey, '1');
-        const countEl = btn.querySelector('.count');
-        if(countEl) countEl.textContent = count.toLocaleString('he-IL');
-      }
-      setLit(true);
-      if(navigator.vibrate) try{ navigator.vibrate(45); }catch(e){}
-    }, { passive:true });
-  }
-
-  document.addEventListener('DOMContentLoaded', ()=>{
-    setTimeout(addAmbientFollower, 60);
-    setTimeout(initUnityCandle, 180);
-  });
-})();
-
-
-(function(){
-  function premiumBase(){
-    try{
-      const me = Array.from(document.scripts || []).find(s => (s.src || '').includes('/assets/premium.js'));
-      if(!me || !me.src) return './';
-      const u = new URL(me.src, location.href);
-      return u.href.replace(/assets\/premium\.js.*$/, '');
-    }catch(e){ return './'; }
-  }
-
-  function loadScript(src){
-    return new Promise((resolve,reject)=>{
-      const existing = Array.from(document.scripts).find(s => s.src === src);
-      if(existing){ if(existing.dataset.loaded === '1' || existing.readyState === 'complete') return resolve(); existing.addEventListener('load', ()=>resolve(), {once:true}); existing.addEventListener('error', reject, {once:true}); return; }
-      const s = document.createElement('script');
-      s.src = src; s.defer = true;
-      s.onload = ()=>{ s.dataset.loaded = '1'; resolve(); };
-      s.onerror = reject;
-      document.head.appendChild(s);
-    });
-  }
-
-  async function ensurePresenceDeps(){
-    const base = premiumBase();
-    if(!window.BACKEND){
-      try{ await loadScript(base + 'assets/backend-config.js'); }catch(e){}
-    }
-    if(window.BACKEND && window.BACKEND.provider === 'supabase' && !window.supabase){
-      try{ await loadScript('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2'); }catch(e){}
-    }
-    return !!(window.BACKEND && window.BACKEND.provider === 'supabase' && window.BACKEND.supabaseUrl && window.BACKEND.supabaseAnonKey && window.supabase);
-  }
-
-  async function initLivePulse(){
-    const ok = await ensurePresenceDeps();
-    if(!ok) return;
-    try{
-      const client = window.supabase.createClient(window.BACKEND.supabaseUrl, window.BACKEND.supabaseAnonKey);
-      const host = document.querySelector('.site-header .nav') || document.querySelector('.site-header .wrap');
-      const footer = document.querySelector('.site-footer .footer-bottom') || document.querySelector('.site-footer .wrap');
-      const badge = document.createElement('div');
-      badge.className = 'live-presence-badge';
-      badge.hidden = true;
-      badge.innerHTML = '<span class="live-dot" aria-hidden="true"></span><span class="live-label">כרגע ישנם — אנשים שמתייחדים עם זכרם</span>';
-      host && host.appendChild(badge);
-      let footerBadge = null;
-      if(footer){ footerBadge = badge.cloneNode(true); footer.appendChild(footerBadge); }
-      const renderCount = (n)=>{
-        const text = `כרגע ישנם ${n} אנשים שמתייחדים עם זכרם`;
-        [badge, footerBadge].filter(Boolean).forEach(el=>{ el.hidden = false; const label = el.querySelector('.live-label'); if(label) label.textContent = text; });
-      };
-      const channel = client.channel('memorial-presence', {
-        config:{ presence:{ key: `visitor-${Math.random().toString(36).slice(2,10)}` } }
-      });
-      channel
-        .on('presence', { event:'sync' }, ()=>{
-          const state = channel.presenceState();
-          const count = Object.keys(state || {}).length;
-          renderCount(Math.max(count,1));
-        })
-        .subscribe(async (status)=>{
-          if(status === 'SUBSCRIBED'){
-            await channel.track({ path: location.pathname, at: Date.now() });
-          }
-        });
-      window.addEventListener('pagehide', ()=>{ try{ client.removeChannel(channel); }catch(e){} }, { once:true });
-    }catch(e){}
-  }
-
-  document.addEventListener('DOMContentLoaded', ()=>{ setTimeout(initLivePulse, 260); });
 })();
