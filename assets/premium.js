@@ -20,18 +20,6 @@
     document.body.appendChild(amb);
   }
 
-  function initMouseGlow(){
-    const amb = document.getElementById("ambient");
-    if(!amb) return;
-    const glow = document.createElement("span");
-    glow.className = "mouse-glow";
-    amb.appendChild(glow);
-    let tx = window.innerWidth * .65, ty = 180, x = tx, y = ty;
-    window.addEventListener("pointermove", (e)=>{ tx = e.clientX; ty = e.clientY; }, {passive:true});
-    function tick(){ x += (tx - x) * .06; y += (ty - y) * .06; glow.style.left = x + "px"; glow.style.top = y + "px"; requestAnimationFrame(tick); }
-    requestAnimationFrame(tick);
-  }
-
   function addProgress(){
     const bar = document.createElement('div');
     bar.id = 'scrollProgress';
@@ -71,7 +59,6 @@
 
     // add subtle polish
     addAmbient();
-    initMouseGlow();
     addProgress();
     initReveal();
 
@@ -113,4 +100,77 @@
   }
 
   upgradeMemorialCards();
+})();
+
+
+(function(){
+  function addAmbientFollower(){
+    const amb = document.getElementById('ambient');
+    if(!amb) return;
+    if(amb.querySelector('.ambient-follower')) return;
+    const f = document.createElement('span');
+    f.className = 'ambient-follower';
+    amb.appendChild(f);
+    let tx = window.innerWidth * 0.35, ty = window.innerHeight * 0.25;
+    let x = tx, y = ty;
+    const onMove = (ev)=>{
+      tx = ev.clientX;
+      ty = ev.clientY;
+    };
+    window.addEventListener('mousemove', onMove, { passive:true });
+    function tick(){
+      x += (tx - x) * 0.06;
+      y += (ty - y) * 0.06;
+      f.style.left = x + 'px';
+      f.style.top = y + 'px';
+      requestAnimationFrame(tick);
+    }
+    tick();
+  }
+
+  function initUnityCandle(){
+    if(document.querySelector('.unity-candle-btn')) return;
+    const key = 'global-memory-candle-count';
+    const litKey = 'global-memory-candle-lit';
+    const current = parseInt(localStorage.getItem(key) || '7240', 10) || 7240;
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'unity-candle-btn';
+    btn.innerHTML = '<span class="flame-dot" aria-hidden="true"></span><span class="txt">הדלקת נר</span><span class="count">'+ current.toLocaleString('he-IL') +'</span>';
+    document.body.appendChild(btn);
+
+    const host = document.querySelector('.site-header .brand .meta') || document.querySelector('.site-header .nav');
+    let badge = document.querySelector('.header-flame-badge');
+    if(!badge && host){
+      badge = document.createElement('span');
+      badge.className = 'header-flame-badge';
+      badge.innerHTML = '<span class="header-flame-dot" aria-hidden="true"></span><span>נר זיכרון</span>';
+      host.appendChild(badge);
+    }
+    const setLit = (lit)=>{
+      btn.classList.toggle('is-lit', lit);
+      badge?.querySelector('.header-flame-dot')?.classList.toggle('is-lit', lit);
+      const txt = btn.querySelector('.txt');
+      if(txt) txt.textContent = lit ? 'הנר דולק' : 'הדלקת נר';
+    };
+    setLit(localStorage.getItem(litKey)==='1');
+    btn.addEventListener('click', ()=>{
+      let count = parseInt(localStorage.getItem(key) || String(current), 10) || current;
+      const lit = localStorage.getItem(litKey)==='1';
+      if(!lit){
+        count += 1;
+        localStorage.setItem(key, String(count));
+        localStorage.setItem(litKey, '1');
+        const countEl = btn.querySelector('.count');
+        if(countEl) countEl.textContent = count.toLocaleString('he-IL');
+      }
+      setLit(true);
+      if(navigator.vibrate) try{ navigator.vibrate(45); }catch(e){}
+    }, { passive:true });
+  }
+
+  document.addEventListener('DOMContentLoaded', ()=>{
+    setTimeout(addAmbientFollower, 60);
+    setTimeout(initUnityCandle, 180);
+  });
 })();

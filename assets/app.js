@@ -1419,6 +1419,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   try {
     try{ initHomeSearch(); }catch{}
+    try{ initHomeAlphaIndex(); }catch{}
     try{ await initPlacesMap(); }catch{}
     await initField();
     await initPeopleList();
@@ -1431,6 +1432,42 @@ document.addEventListener("DOMContentLoaded", async () => {
     console.error(e);
   }
 });
+
+
+function initHomeAlphaIndex(){
+  const list = document.getElementById("homeDirectory");
+  if(!list || document.getElementById('homeAlphaWrap')) return;
+  const items = Array.from(list.querySelectorAll('li'));
+  if(!items.length) return;
+  const letters = [];
+  const firstByLetter = new Map();
+  items.forEach(li=>{
+    const t = normalizeHe(li.textContent || '').replace(/^[^א-ת]*/, '');
+    const ch = t.charAt(0);
+    if(ch && !firstByLetter.has(ch)){
+      firstByLetter.set(ch, li);
+      letters.push(ch);
+    }
+  });
+  if(!letters.length) return;
+  const wrap = document.createElement('div');
+  wrap.id = 'homeAlphaWrap';
+  wrap.className = 'home-alpha-wrap';
+  const nav = document.createElement('nav');
+  nav.className = 'alpha-jump';
+  nav.setAttribute('aria-label', 'קפיצה לפי אות');
+  letters.forEach(ch=>{
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.textContent = ch;
+    btn.addEventListener('click', ()=>{
+      firstByLetter.get(ch)?.scrollIntoView({ behavior:'smooth', block:'start' });
+    });
+    nav.appendChild(btn);
+  });
+  wrap.appendChild(nav);
+  document.body.appendChild(wrap);
+}
 
 function initSilentMode(){
   const btn = document.getElementById("silentToggle");
@@ -1585,7 +1622,6 @@ function initLitePersonPage(){
       localStorage.setItem(litKey, lit ? "1" : "0");
       saveLocal(localCountKey, c);
       setLit(lit);
-      sparkFromButton(candleBtn);
       renderLocalCount();
       return;
     }
@@ -1605,7 +1641,6 @@ function initLitePersonPage(){
       if(error) throw error;
       saveLocal(throttleKey, today);
       setLit(true);
-      sparkFromButton(candleBtn);
       if(countEl) countEl.textContent = `${data ?? "—"} נרות הודלקו (סה״כ)`;
     }catch(e){
       console.error(e);
@@ -2125,56 +2160,3 @@ document.addEventListener("DOMContentLoaded", ()=>{
   try{ initFooterMemoryModal(); }catch(e){}
   try{ initMemorialTTS(); }catch(e){}
 });
-
-function ensureHomeCandleBadge(){
-  if(!/\/index\.html$|\/$/.test(location.pathname)) return;
-  const stats = document.querySelector('.stats-bar');
-  if(!stats || document.getElementById('globalCandleBadge')) return;
-  const host = stats.parentElement || stats;
-  const badge = document.createElement('div');
-  badge.id = 'globalCandleBadge';
-  badge.className = 'candle-badge';
-  badge.innerHTML = '<span class="spark" aria-hidden="true">🕯️</span><span>נרות הודלקו לזכרם: <strong id="globalCandleCount">—</strong></span>';
-  host.insertBefore(badge, stats.nextSibling);
-
-  const localTotal = Object.keys(localStorage).filter(k => k.startsWith('candles_')).reduce((sum,k)=>{ const v = parseInt(localStorage.getItem(k)||'0',10); return sum + (Number.isFinite(v)?v:0); }, 0);
-  const countEl = badge.querySelector('#globalCandleCount');
-  if(countEl) countEl.textContent = String(localTotal);
-  if(typeof supa === 'function' && isSupabaseReady()){
-    (async()=>{
-      try{
-        const client = supa();
-        const { data } = await client.from('candles').select('count');
-        const total = Array.isArray(data) ? data.reduce((s,row)=> s + (Number(row.count)||0), 0) : localTotal;
-        if(countEl) countEl.textContent = total.toLocaleString('he-IL');
-      }catch(e){}
-    })();
-  }
-}
-
-function enhanceLazyMedia(){
-  document.querySelectorAll('img:not([loading])').forEach(img=>{
-    img.setAttribute('loading','lazy');
-    img.setAttribute('decoding','async');
-  });
-}
-
-function sparkFromButton(btn){
-  if(!btn) return;
-  const r = btn.getBoundingClientRect();
-  const cx = r.left + r.width/2;
-  const cy = r.top + r.height/2;
-  for(let i=0;i<9;i++){
-    const s = document.createElement('span');
-    s.className = 'candle-spark';
-    s.style.left = cx + 'px';
-    s.style.top = cy + 'px';
-    s.style.setProperty('--dx', ((Math.random()*80)-40).toFixed(0)+'px');
-    s.style.setProperty('--dy', (-(24 + Math.random()*64)).toFixed(0)+'px');
-    document.body.appendChild(s);
-    s.addEventListener('animationend', ()=> s.remove(), {once:true});
-  }
-}
-
-
-document.addEventListener("DOMContentLoaded", () => { try{ ensureHomeCandleBadge(); }catch(e){} try{ enhanceLazyMedia(); }catch(e){} });
