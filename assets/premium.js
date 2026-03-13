@@ -174,3 +174,76 @@
     setTimeout(initUnityCandle, 180);
   });
 })();
+
+
+(function(){
+  function premiumBase(){
+    try{
+      const me = Array.from(document.scripts || []).find(s => (s.src || '').includes('/assets/premium.js'));
+      if(!me || !me.src) return './';
+      const u = new URL(me.src, location.href);
+      return u.href.replace(/assets\/premium\.js.*$/, '');
+    }catch(e){ return './'; }
+  }
+
+  function loadScript(src){
+    return new Promise((resolve,reject)=>{
+      const existing = Array.from(document.scripts).find(s => s.src === src);
+      if(existing){ if(existing.dataset.loaded === '1' || existing.readyState === 'complete') return resolve(); existing.addEventListener('load', ()=>resolve(), {once:true}); existing.addEventListener('error', reject, {once:true}); return; }
+      const s = document.createElement('script');
+      s.src = src; s.defer = true;
+      s.onload = ()=>{ s.dataset.loaded = '1'; resolve(); };
+      s.onerror = reject;
+      document.head.appendChild(s);
+    });
+  }
+
+  async function ensurePresenceDeps(){
+    const base = premiumBase();
+    if(!window.BACKEND){
+      try{ await loadScript(base + 'assets/backend-config.js'); }catch(e){}
+    }
+    if(window.BACKEND && window.BACKEND.provider === 'supabase' && !window.supabase){
+      try{ await loadScript('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2'); }catch(e){}
+    }
+    return !!(window.BACKEND && window.BACKEND.provider === 'supabase' && window.BACKEND.supabaseUrl && window.BACKEND.supabaseAnonKey && window.supabase);
+  }
+
+  async function initLivePulse(){
+    const ok = await ensurePresenceDeps();
+    if(!ok) return;
+    try{
+      const client = window.supabase.createClient(window.BACKEND.supabaseUrl, window.BACKEND.supabaseAnonKey);
+      const host = document.querySelector('.site-header .nav') || document.querySelector('.site-header .wrap');
+      const footer = document.querySelector('.site-footer .footer-bottom') || document.querySelector('.site-footer .wrap');
+      const badge = document.createElement('div');
+      badge.className = 'live-presence-badge';
+      badge.hidden = true;
+      badge.innerHTML = '<span class="live-dot" aria-hidden="true"></span><span class="live-label">כרגע ישנם — אנשים שמתייחדים עם זכרם</span>';
+      host && host.appendChild(badge);
+      let footerBadge = null;
+      if(footer){ footerBadge = badge.cloneNode(true); footer.appendChild(footerBadge); }
+      const renderCount = (n)=>{
+        const text = `כרגע ישנם ${n} אנשים שמתייחדים עם זכרם`;
+        [badge, footerBadge].filter(Boolean).forEach(el=>{ el.hidden = false; const label = el.querySelector('.live-label'); if(label) label.textContent = text; });
+      };
+      const channel = client.channel('memorial-presence', {
+        config:{ presence:{ key: `visitor-${Math.random().toString(36).slice(2,10)}` } }
+      });
+      channel
+        .on('presence', { event:'sync' }, ()=>{
+          const state = channel.presenceState();
+          const count = Object.keys(state || {}).length;
+          renderCount(Math.max(count,1));
+        })
+        .subscribe(async (status)=>{
+          if(status === 'SUBSCRIBED'){
+            await channel.track({ path: location.pathname, at: Date.now() });
+          }
+        });
+      window.addEventListener('pagehide', ()=>{ try{ client.removeChannel(channel); }catch(e){} }, { once:true });
+    }catch(e){}
+  }
+
+  document.addEventListener('DOMContentLoaded', ()=>{ setTimeout(initLivePulse, 260); });
+})();

@@ -3633,3 +3633,200 @@ img.memorial-photo:hover{
 
 /* quick look cards / home directory */
 #homeDirectory li{ scroll-margin-top:120px; }
+
+/* === Premium polish pass: editorial memory / presence / traits === */
+:root{
+  --darom-red:#b33a32;
+}
+
+body,
+.longform p,
+.story-section p,
+.memorial-shell p,
+.directory li{
+  letter-spacing:.01em;
+}
+
+.longform p,
+.story-section p,
+.memorial-shell p{
+  line-height:1.85 !important;
+}
+
+.hero-media,
+.memorial-photo{
+  position:relative;
+  overflow:hidden;
+  -webkit-mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+  mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+}
+
+.hero-media img,
+.hero-media .hero-img,
+.memorial-photo img.profile-img{
+  filter: sepia(.10) contrast(1.05) saturate(.96);
+}
+
+.hero-media img,
+.hero-media .hero-img{
+  border-radius:0 0 40px 40px;
+}
+
+.memorial-photo img.profile-img{
+  animation: kenBurns 20s infinite alternate linear;
+  transform-origin:center center;
+}
+
+@keyframes kenBurns{
+  from{ transform:scale(1); }
+  to{ transform:scale(1.08); }
+}
+
+.longform > p:first-of-type::first-letter,
+.story-section > p:first-of-type::first-letter{
+  font-family:var(--serif);
+  font-size:3.1rem;
+  line-height:.9;
+  float:right;
+  margin-left:.25rem;
+  margin-top:.14rem;
+  color:var(--darom-red);
+}
+
+.person-card,
+.names-grid .person-card,
+.people-grid .person-card,
+.card.person-card.memorial-card,
+.people-grid .person-card.person-tile{
+  background:rgba(255,255,255,.6) !important;
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,.4) !important;
+  transition:all .4s cubic-bezier(.165,.84,.44,1) !important;
+}
+.person-card:hover,
+.names-grid .person-card:hover,
+.people-grid .person-card:hover,
+.card.person-card.memorial-card:hover,
+.people-grid .person-card.person-tile:hover{
+  transform:translateY(-5px);
+  background:rgba(255,255,255,.9) !important;
+  box-shadow:0 15px 30px rgba(0,0,0,.05) !important;
+}
+
+.person-card .person-name,
+.person-tile-name,
+.card.person-card.memorial-card .person-name{
+  font-family:var(--serif);
+  font-size:1.25rem;
+  display:block;
+  margin-bottom:4px;
+}
+.person-card .person-place,
+.person-card .person-meta,
+.person-tile-place,
+.card.person-card.memorial-card .person-meta{
+  font-family:var(--sans);
+  letter-spacing:.05em;
+  opacity:.74;
+  font-size:.85rem;
+}
+
+.person-tile-tags{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  margin-top:8px;
+}
+.person-tile-tags span{
+  display:inline-flex;
+  align-items:center;
+  padding:4px 8px;
+  border-radius:999px;
+  background:rgba(179,58,50,.08);
+  color:var(--darom-red);
+  font-size:.74rem;
+  font-weight:700;
+}
+
+.traitbar,
+.directory-az{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  align-items:center;
+  margin-top:10px;
+}
+.traitbar-label{
+  font-size:.82rem;
+  color:var(--muted);
+  font-weight:700;
+}
+.trait-chip,
+.directory-az .az-btn{
+  appearance:none;
+  border:1px solid rgba(179,58,50,.14);
+  background:rgba(255,255,255,.86);
+  color:var(--ink);
+  border-radius:999px;
+  padding:7px 11px;
+  font:inherit;
+  cursor:pointer;
+}
+.trait-chip:hover,
+.directory-az .az-btn:hover{ border-color:rgba(179,58,50,.3); color:var(--darom-red); }
+
+.quote-overlay{
+  position:absolute;
+  inset:auto 8% 10% 8%;
+  z-index:2;
+  font-family:var(--serif);
+  font-size:clamp(1.4rem, 2.2vw, 2.4rem);
+  line-height:1.25;
+  font-weight:400;
+  color:rgba(70,50,30,.86);
+  mix-blend-mode:multiply;
+  text-shadow:0 2px 12px rgba(255,252,245,.28);
+  pointer-events:none;
+  max-width:80%;
+}
+.memorial-photo::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(to top, rgba(252,249,242,.75), rgba(252,249,242,0) 38%);
+  pointer-events:none;
+}
+
+#ambient .ambient-follower{
+  transition:all 2s ease-out;
+  mix-blend-mode:screen;
+}
+.live-presence-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:9px 12px;
+  border-radius:999px;
+  border:1px solid rgba(179,58,50,.14);
+  background:rgba(255,255,255,.82);
+  color:var(--muted);
+  font-size:.85rem;
+  box-shadow:0 10px 24px rgba(15,23,42,.05);
+}
+.live-dot{
+  width:8px;height:8px;border-radius:999px;
+  background:var(--darom-red);
+  box-shadow:0 0 0 0 rgba(179,58,50,.35);
+  animation:presencePulse 2.6s infinite;
+}
+@keyframes presencePulse{
+  0%{ box-shadow:0 0 0 0 rgba(179,58,50,.32); }
+  70%{ box-shadow:0 0 0 10px rgba(179,58,50,0); }
+  100%{ box-shadow:0 0 0 0 rgba(179,58,50,0); }
+}
+
+@media (max-width: 900px){
+  .quote-overlay{ font-size:1.2rem; inset:auto 6% 9% 6%; max-width:88%; }
+  .live-presence-badge{ width:100%; justify-content:center; }
+}

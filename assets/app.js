@@ -78,20 +78,50 @@ function bigramSimilarity(a, b) {
   return (2 * inter) / (A.length + B.length);
 }
 
-function matchesQuery(person, query) {
+function deriveTraitTags(person, meta) {
+  const out = new Set();
+  const add = (v) => { if (v) out.add(String(v).trim()); };
+  const addMany = (arr) => (arr || []).forEach(add);
+
+  addMany(meta?.tags);
+  addMany(person?.tags);
+  add(person?.place);
+
+  const hay = normalizeHe([
+    person?.name,
+    person?.place,
+    ...(person?.articles || []).flatMap(a => [a?.title, a?.source, a?.url])
+  ].filter(Boolean).join(' | '));
+
+  const rules = [
+    [/ספורט|אופני|ריצה|מרתון|sport|bike|cycling|runner/, ['ספורט','אופניים']],
+    [/מוזיק|נגנ|שיר|פסטיבל|nova|dj|music/, ['מוזיקה']],
+    [/טבע|חקלא|שדה|garden|nature/, ['טבע']],
+    [/כיבוי|מדא|רפואה|חובש|rescue|fire|ems/, ['הצלה']],
+    [/צבא|לוחמ|קצינ|מילואימ|combat|army/, ['לוחם/ת']],
+    [/משפחה|אבא|אמא|ילד|ילדה|הורים|family/, ['משפחה']],
+    [/חבר|קהילה|קיבוץ|community|friend/, ['חבר/ה','קהילה']]
+  ];
+  for (const [re, tags] of rules) {
+    if (re.test(hay)) addMany(tags);
+  }
+
+  return Array.from(out);
+}
+
+function matchesQuery(person, query, meta) {
   const q = normalizeHe(query);
   if (!q) return true;
   const tokens = q.split(" ").filter(Boolean);
   const name = normalizeHe(person?.name);
   const place = normalizeHe(person?.place);
-  const hay = (name + " " + place).trim();
+  const tags = normalizeHe(deriveTraitTags(person, meta).join(' '));
+  const hay = (name + " " + place + " " + tags).trim();
 
-  // all tokens must appear somewhere
   const tokenOk = tokens.every((t) => hay.includes(t));
   if (tokenOk) return true;
 
-  // tolerate typos: fuzzy against name
-  const sim = bigramSimilarity(q, name);
+  const sim = Math.max(bigramSimilarity(q, name), bigramSimilarity(q, tags));
   return sim >= 0.56;
 }
 /**
@@ -644,6 +674,7 @@ async function initPeopleList() {
   const placeSelect = document.getElementById("peoplePlace");
   const tagsRoot = document.getElementById("peopleTags");
   const azBar = document.getElementById("azBar");
+  let traitRoot = document.getElementById("peopleTraitTags");
   if (!root) return;
 
   const people = await loadPeople();
@@ -719,6 +750,33 @@ async function initPeopleList() {
     tagsRoot.innerHTML = `<button type="button" class="${!activePlace ? "is-active" : ""}" data-place="">כל היישובים</button>` + btns.join("");
   }
 
+  function ensureTraitRoot(){
+    if(traitRoot) return traitRoot;
+    const bar = document.getElementById("peopleStickyBar") || document.querySelector(".page-hero .card");
+    if(!bar) return null;
+    traitRoot = document.createElement("div");
+    traitRoot.id = "peopleTraitTags";
+    traitRoot.className = "traitbar";
+    bar.appendChild(traitRoot);
+    return traitRoot;
+  }
+
+  function updateTraitTags(list){
+    const rootEl = ensureTraitRoot();
+    if(!rootEl) return;
+    const counts = new Map();
+    for(const p of list){
+      const tags = deriveTraitTags(p, metaAll && metaAll[p.id]);
+      for(const t of tags){
+        if(t === p.place) continue;
+        counts.set(t, (counts.get(t)||0)+1);
+      }
+    }
+    const top = Array.from(counts.entries()).sort((a,b)=> b[1]-a[1] || a[0].localeCompare(b[0], 'he')).slice(0,8);
+    if(!top.length){ rootEl.innerHTML = ''; return; }
+    rootEl.innerHTML = '<span class="traitbar-label">חיפוש לפי מאפיין</span>' + top.map(([tag,n]) => `<button type="button" class="trait-chip" data-trait="${escapeAttr(tag)}">${escapeHtml(tag)} <span class="muted">(${n})</span></button>`).join('');
+  }
+
   function updateAz(list) {
     if (!azBar) return;
     const available = new Set(list.map(p => initialOfName(p.name)));
@@ -744,7 +802,7 @@ async function initPeopleList() {
       const okKind = !kind || (pKind && pKind === kind);
       const okDate = !dateF || (dateF.length === 10 ? pDate === dateF : pDate.startsWith(dateF));
 
-      const okQuery = matchesQuery(p, q);
+      const okQuery = matchesQuery(p, q, meta);
       return okPlace && okKind && okDate && okQuery;
     });
 
@@ -763,6 +821,7 @@ async function initPeopleList() {
       const name = escapeHtml(p.name);
       const href = siteUrl("p/" + escapeHtml(p.id) + ".html");
       const imgPrimary = siteUrl("assets/people/" + escapeHtml(p.id) + ".jpg");
+      const tags = deriveTraitTags(p, metaAll && metaAll[p.id]).filter(t => t && t !== p.place).slice(0,2);
       return `
         <article class="person-card person-tile" data-letter="${letter}" data-place="${escapeAttr(p.place || "")}" id="person-${escapeAttr(p.id)}">
           <a class="person-tile-link" href="${href}" aria-label="לפתיחה: ${name}">
@@ -772,7 +831,7 @@ async function initPeopleList() {
             <div class="person-tile-overlay" aria-hidden="true">
               ${place ? `<div class="person-tile-place">${place}</div>` : ``}
               <div class="person-tile-name">${name}</div>
-              ${(() => {
+              ${tags.length ? `<div class="person-tile-tags">${tags.map(t => `<span>${escapeHtml(t)}</span>`).join("")}</div>` : ``}${(() => {
                 const meta = (metaAll && metaAll[p.id]) ? metaAll[p.id] : null;
                 const dateIso = meta && meta.date ? String(meta.date) : "";
                 const dateText = dateIso ? formatHebrewDate(dateIso) : "";
@@ -795,6 +854,7 @@ async function initPeopleList() {
 
     updateTags(pl);
     updateAz(list);
+    updateTraitTags(list);
 
     const count = document.getElementById("peopleCount");
     if (count) count.textContent = `${list.length} מתוך ${people.length}`;
@@ -810,6 +870,15 @@ async function initPeopleList() {
     if (!btn || !placeSelect) return;
     placeSelect.value = btn.dataset.place || "";
     render();
+  });
+
+
+  document.addEventListener("click", (ev) => {
+    const btn = ev.target?.closest?.("button.trait-chip[data-trait]");
+    if(!btn || !search) return;
+    search.value = btn.dataset.trait || "";
+    render();
+    search.focus();
   });
 
   azBar?.addEventListener("click", (ev) => {
@@ -832,16 +901,18 @@ function initHomeSearch(){
   const list = document.getElementById("homeDirectory");
   if(!input || !list) return;
   const items = Array.from(list.querySelectorAll("li"));
+
   function apply(){
     const q = input.value.trim();
     let shown = 0;
     for(const li of items){
-      const text = li.textContent || "";
-      const ok = matchesQuery({ name: text, place: text }, q);
+      const a = li.querySelector('a');
+      const name = a?.textContent || li.textContent || '';
+      const place = li.querySelector('.muted')?.textContent || '';
+      const ok = matchesQuery({ name, place }, q);
       li.style.display = ok ? "" : "none";
       if(ok) shown++;
     }
-    // gentle hint if nothing
     let empty = document.getElementById("homeEmpty");
     if(!empty){
       empty = document.createElement("p");
@@ -854,6 +925,26 @@ function initHomeSearch(){
   }
   input.addEventListener("input", apply);
   apply();
+}
+
+function initHomePreload(){
+  const root = document.getElementById('featuredRoot');
+  if(!root) return;
+  const hrefs = Array.from(root.querySelectorAll('a[href]')).slice(0,5).map(a => a.getAttribute('href')).filter(Boolean);
+  for(const href of hrefs){
+    const pre = document.createElement('link');
+    pre.rel = 'prefetch';
+    pre.href = href;
+    document.head.appendChild(pre);
+    const idm = href.match(/p\/(p\d+)\.html/);
+    if(idm){
+      const img = document.createElement('link');
+      img.rel = 'preload';
+      img.as = 'image';
+      img.href = siteUrl(`assets/og-person/${idm[1]}.png`);
+      document.head.appendChild(img);
+    }
+  }
 }
 
 /* =======================
@@ -1419,6 +1510,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   try {
     try{ initHomeSearch(); }catch{}
+    try{ initHomePreload(); }catch{}
     try{ initHomeAlphaIndex(); }catch{}
     try{ await initPlacesMap(); }catch{}
     await initField();
@@ -1567,6 +1659,37 @@ function initLitePersonPage(){
     if(valueEl) valueEl.textContent = `${prettyDate}${details ? ' ('+details+')' : ''}`;
   }
 })();
+
+  const peoplePromise = loadPeople();
+
+  function enhanceQuoteOverlay(){
+    const photo = document.querySelector('.memorial-photo');
+    if(!photo || photo.querySelector('.quote-overlay')) return;
+    const quoteText = (document.querySelector('.story-section blockquote.quote')?.childNodes?.[0]?.textContent || '').trim()
+      || ((document.querySelector('.story-section p')?.textContent || '').split(/[.!?]|׃/)[0] || '').trim();
+    if(!quoteText || quoteText.includes('טרם הוזן')) return;
+    const quote = document.createElement('div');
+    quote.className = 'quote-overlay';
+    quote.textContent = quoteText.replace(/^"|"$/g,'');
+    photo.appendChild(quote);
+  }
+  enhanceQuoteOverlay();
+
+  (async ()=>{
+    try{
+      const people = await peoplePromise;
+      const idx = people.findIndex(p => p.id === pid);
+      if(idx === -1) return;
+      const nav = document.querySelector('.navigation-links');
+      if(nav){
+        const links = nav.querySelectorAll('a');
+        const prev = people[idx-1];
+        const next = people[idx+1];
+        if(links[0] && prev){ links[0].textContent = `→ לזכר ${prev.name}`; links[0].setAttribute('aria-label', `הקודם: ${prev.name}`); }
+        if(links[2] && next){ links[2].textContent = `${next.name} ←`; links[2].setAttribute('aria-label', `הבא: ${next.name}`); }
+      }
+    }catch(e){}
+  })();
 
   const usingShared = isSupabaseReady();
 
